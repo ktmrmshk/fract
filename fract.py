@@ -64,8 +64,6 @@ class FractTest(object):
     def __str__(self):
         return json.dumps(self.query)
 
-
-
 def test_FractTest():
     f=FractTest()
     f.get_template('hassert')
@@ -74,7 +72,38 @@ def test_FractTest():
     print(f)
 
 
+class FractResult(object):
+    HASSERT='hassert'
+    HDIFF='hdiff'
+    def __init__(self):
+        self.query=dict()
+
+    def get_template(self, TestType):
+        if TestType == FractResult.HASSERT:
+            self.query = self._template_hassert()
+        
+
+    def _template_hassert(self):
+        query=dict()
+        query['TestType'] = FractResult.HASSERT
+
+        query['Passed'] = True
+        query['Response'] = {'status_code': 200, 'Content-Length': 1234, 'Content-Type': 'text/html'}
+        query['HeaderCase'] = { 'Cache-Control': {'Passed': True, 'Value': 'no-store', 'testcase': {'type': 'regex', 'query': '(200|404)' } } }
+        return query
+
+
+    def __str__(self):
+        return json.dumps( self.query )
+
+def test_FractResult():
+    f=FractResult()
+    f.get_template('hassert')
+    print(f)
+
 
 if __name__ == '__main__':
-    test_FractTest()
+    #test_FractTest()
+    test_FractResult()
+
 

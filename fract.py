@@ -26,8 +26,8 @@ class FractTest(object):
         query['Request'] = req
         
         testcase = list()
-        testcase.append( {'status_code': {'type': 'regex', 'query': '(200|404)'}} )
-        testcase.append( {'Content-Type': {'type': 'regex', 'query': 'text\/html'}} )
+        testcase.append( {'status_code': [{'type': 'regex', 'query': '(200|404)'}, {'type': 'regex', 'query': '[^403]'}] } )
+        testcase.append( {'Content-Type': [{'type': 'regex', 'query': 'text\/html'}] } )
         query['TestCase'] = testcase
         return query
 
@@ -81,17 +81,31 @@ class FractResult(object):
     def get_template(self, TestType):
         if TestType == FractResult.HASSERT:
             self.query = self._template_hassert()
-        
-
+        elif TestType == FractResult.HDIFF:
+            self.query = self._template_hdiff()
+        else:
+            pass
+    
     def _template_hassert(self):
         query=dict()
         query['TestType'] = FractResult.HASSERT
 
         query['Passed'] = True
         query['Response'] = {'status_code': 200, 'Content-Length': 1234, 'Content-Type': 'text/html'}
-        query['HeaderCase'] = { 'Cache-Control': {'Passed': True, 'Value': 'no-store', 'testcase': {'type': 'regex', 'query': '(200|404)' } } }
+        query['HeaderCase'] = { 'Cache-Control': [ {'Passed': True, 'Value': 'no-store', 'testcase': {'type': 'regex', 'query': '(200|404)' } } ] }
         return query
 
+    def _template_hdiff(self):
+        query=dict()
+        query['TestType'] = FractResult.HDIFF
+
+        query['Passed'] = True
+        
+        query['ResponseA'] = {'status_code': 200, 'Content-Length': 1234, 'Content-Type': 'text/html'}
+        query['ResponseB'] = {'status_code': 200, 'Content-Length': 4567, 'Content-Type': 'text/html'}
+        query['HeaderCase'] = {'Content-Length': [False, 1234, 4567], 'status_code': [True, 200, 200]}
+        
+        return query
 
     def __str__(self):
         return json.dumps( self.query )
@@ -99,6 +113,8 @@ class FractResult(object):
 def test_FractResult():
     f=FractResult()
     f.get_template('hassert')
+    print(f)
+    f.get_template('hdiff')
     print(f)
 
 

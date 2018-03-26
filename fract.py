@@ -5,13 +5,13 @@ import re, requests
 Backlog:
 
 * negative regex match support
-* base class of FactDset: DONE
+* base class of FactDset: __DONE__
 * start with, end with, contain, doesnot, equal function
-* example json with text not code: DONE
+* example json with text not code: __DONE__
 * using class to define each TestType Structures
 
-* testcode: DONE
-* 
+* testcode: __DONE__
+* validate function
 '''
 
 
@@ -32,7 +32,7 @@ class FractDset(object):
         pass
 
     def export_query(self):
-        pass
+        return json.dumps(self.query)
 
     def __str__(self):
         return json.dumps(self.query)
@@ -64,9 +64,6 @@ class FractTest(FractDset):
         return json.loads( query_json )
         
     def valid_query(self, query):
-        pass
-
-    def export_query(self):
         pass
 
 
@@ -207,54 +204,70 @@ class Fract(object):
         res.setResponse(self.actor.get_status_code(), self.actor.get_headers() )
         
         # validation process
-        for hdr,tlist in fracttest.query['TestCase'].items():
+        for hdr,tlist in fracttest.query['TestCase'].items(): ### Per Header
+            res.query['ResultCase'][hdr] = self._check_headercase(hdr, tlist, self.actor.get_headers())
             
-            logging.debug('testcase hdr={}'.format(hdr))
-            hdr_resultcase = list()
-            has_this_header = False
-
-            if hdr in self.actor.get_headers():
-                has_this_header = True
-                logging.debug('hdr value: {}: {}'.format(hdr, self.actor.resh( hdr )))
-            else:
-                logging.debug('hdr value: {}: Not Included on Response'.format(hdr))
-
-            for t in tlist:
-                logging.debug('  --> test={}'.format(t))
-                
-                assert t['type'] == 'regex'
-                if has_this_header:
-                    if t['type'] == 'regex':
-                        match = re.search( t['query'], str( self.actor.resh( hdr ) ) )
-                        if match is not None: # test passed
-                            logging.debug('  -> test passed: testcase={}'.format(t['query']) )
-                            hdr_resultcase.append(\
-                                    {'Passed': True,\
-                                    'Value':self.actor.resh( hdr ),\
-                                    'testcase': t })
-                        else: # test failed
-                            logging.debug('  -> test failed: testcase={}'.format(t['query']) )
-                            hdr_resultcase.append(\
-                                    {'Passed': False,\
-                                    'Value':self.actor.resh( hdr ),\
-                                    'testcase': t })
-
-                    else: # type is not regex
-                        pass
-                else: # header not in response
-                    logging.debug('  -> test failed: testcase={}'.format(t['query']) )
-                    hdr_resultcase.append(\
-                            {'Passed': False,\
-                            'Value':'This Header is not in Response',\
-                            'testcase': t })
-            res.query['ResultCase'][hdr] = hdr_resultcase            
-
         # check if passed at whole testcase
         psd = res.check_passed()
         logging.debug('ResultCase: {}'.format(res))
 
         return res
+ 
+    def _check_headercase(self, header_name, testlist, response_header):
+        '''
+        return: list of test result per header:
+            ex) [{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}]
+        '''
+        hdr_resultcase = list()
+        has_this_header = False
+        if header_name in response_header:
+            has_this_header = True
+            logging.debug('hdr value: {}: {}'.format(header_name, response_header[ header_name ]))
+        else:
+            logging.debug('hdr value: {}: Not Included on Response'.format(header_name))
+
+        # parse each testcase
+        for t in testlist:
+            logging.debug('  --> test={}'.format(t))
+            assert t['type'] == 'regex'
+
+            if has_this_header:
+                hdr_resultcase.append(\
+                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]) ),\
+                        'Value': response_header[ header_name ],\
+                        'testcase': t })
+            else: # header not in response
+                logging.debug('  -> test failed: testcase={}'.format(t['query']) )
+                hdr_resultcase.append(\
+                        {'Passed': False,\
+                        'Value':'This Header is not in Response',\
+                        'testcase': t })
             
+        #res.query['ResultCase'][header_name] = hdr_resultcase            
+        return hdr_resultcase
+    
+    def _passed(self, mode, query, text):
+        'return (bool) passed'
+
+        if mode == 'regex':
+            match = re.search( query, text)
+            if match is not None:
+                return True
+            else:
+                return False
+        elif mode == 'startswith':
+            return text.startswith(query)
+        elif mode == 'endswith':
+            return text.endswith(query)
+        elif mode == 'contain':
+            if text.find(query) != -1:
+                return True
+            else:
+                return False
+        else:
+            pass # should raise exception!
+
+
     def _run_hdiff(self, fracttest):
         pass
 

@@ -1,15 +1,16 @@
 import json, logging
+import re, requests
 
 '''
 Backlog:
 
 * negative regex match support
-* base class of FactDset
+* base class of FactDset: DONE
 * start with, end with, contain, doesnot, equal function
-* example json with text not code
+* example json with text not code: DONE
 * using class to define each TestType Structures
 
-* testcode
+* testcode: DONE
 * 
 '''
 
@@ -24,7 +25,8 @@ class FractDset(object):
         pass
 
     def import_query(self, query_json):
-        pass
+        self.valid_query(query_json)
+        self.query = json.loads(query_json)
 
     def valid_query(self, query):
         pass
@@ -33,13 +35,11 @@ class FractDset(object):
         pass
 
     def __str__(self):
-        pass
+        return json.dumps(self.query)
 
-class FractTest(object):
-    HASSERT='hassert'
-    HDIFF='hdiff'
+class FractTest(FractDset):
     def __init__(self):
-        self.query=dict()
+        super().__init__()
     
     def init_template(self):
         self.query = { \
@@ -56,36 +56,21 @@ class FractTest(object):
             pass
 
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text\\/html$"}]}}'''
+        query_json='''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
         query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeader":["Last-Modified","Cache-Control"]}'''
         return json.loads( query_json )
         
-    def import_query(self, query_json):
-        pass
-
     def valid_query(self, query):
         pass
 
     def export_query(self):
         pass
 
-    def __str__(self):
-        return json.dumps(self.query)
 
-def test_FractTest():
-    f=FractTest()
-    f.init_example('hassert')
-    logging.debug(f)
-    f.init_example('hdiff')
-    logging.debug(f)
-
-
-class FractResult(object):
-    HASSERT='hassert'
-    HDIFF='hdiff'
+class FractResult(FractDset):
     def __init__(self):
         self.query={'TestType':str(),\
                 'Passed' : bool(),\
@@ -95,19 +80,19 @@ class FractResult(object):
     def init_template(self, TestType):
         pass
 
-    def get_template(self, TestType):
+    def init_example(self, TestType):
         if TestType == FractResult.HASSERT:
-            self.query = self._template_hassert()
+            self.query = self._example_hassert()
         elif TestType == FractResult.HDIFF:
-            self.query = self._template_hdiff()
+            self.query = self._example_hdiff()
         else:
             pass
     
-    def _template_hassert(self):
+    def _example_hassert(self):
         query_json='''{"TestType":"hassert","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}}'''
         return json.loads( query_json )
 
-    def _template_hdiff(self):
+    def _example_hdiff(self):
         query=dict()
         query['TestType'] = FractResult.HDIFF
 
@@ -136,12 +121,6 @@ class FractResult(object):
         self.query['Response'] = res
         logging.debug('response: {}'.format(self.query['Response']))
 
-    def setResultCase(self, hdrname, passed, val, testcase):
-        self.query[Header]
-
-    def setPassed(self, passed):
-        self.query['Passed'] = passed
-
     def check_passed(self):
         '''
         return: (bool) passed, (int) cnt_testcase, (int) cnt_passed, (int) not_passed
@@ -164,23 +143,8 @@ class FractResult(object):
                 passed=False
 
         self.query['Passed'] = passed
-        return passed, cnt_test, cnt_passed, cnt_failed
-    
+        return (passed, cnt_test, cnt_passed, cnt_failed)
 
-    def __str__(self):
-        return json.dumps( self.query )
-
-def test_FractResult():
-    f=FractResult()
-    f.get_template('hassert')
-    logging.debug(f)
-    f.get_template('hdiff')
-    logging.debug(f)
-    f.setResponse(200, {'Content-Length': 9821, 'Content-Encoding': 'gzip'})
-    
-
-
-import re, requests
 class Actor(object):
     def __init__(self):
         pass
@@ -217,17 +181,6 @@ class Actor(object):
     
     def get_status_code(self):
         return self.r.status_code
-
-
-def test_Actor():
-    a = Actor()
-    a.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip'})
-    logging.debug( a.headers() )
-    logging.debug( a.status_code() )
-    a.get('https://space.ktmrmshk.com/abc/example.html?abc=123')
-    logging.debug( a.headers() )
-    logging.debug( a.status_code() )
-
 
 class Fract(object):
     def __init__(self):
@@ -296,24 +249,15 @@ class Fract(object):
                             'testcase': t })
             res.query['ResultCase'][hdr] = hdr_resultcase            
 
-            # check if passed at whole testcase
-            psd = res.check_passed()
-            logging.debug('ResultCase: {}'.format(res))
+        # check if passed at whole testcase
+        psd = res.check_passed()
+        logging.debug('ResultCase: {}'.format(res))
+
+        return res
             
     def _run_hdiff(self, fracttest):
         pass
 
-def test_Fract():
-    fr=Fract()
-    testcase=FractTest()
-    testcase.init_example('hassert')
-    fr._run_hassert(testcase)
-
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    test_FractTest()
-    test_FractResult()
-    #test_Actor()
-    test_Fract()
-
+    

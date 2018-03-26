@@ -102,8 +102,15 @@ class test_Fract(unittest.TestCase):
         self.assertTrue( ret.query['Passed'] == False )
         logging.info('FractResult: {}'.format(ret))
 
-
-
+    def test_passed(self):
+        self.assertTrue( self.fr._passed('regex', '(200|404)', '404') )
+        self.assertFalse( self.fr._passed('regex', '(200|404)', '403') )
+        self.assertTrue( self.fr._passed('startswith', 'http://', 'http://www.jins.com') )
+        self.assertFalse( self.fr._passed('startswith', 'http://', 'https://www.jins.com') )
+        self.assertTrue( self.fr._passed('endswith', '.com', 'http://www.jins.com') )
+        self.assertFalse( self.fr._passed('endswith', '.com', 'https://www.jins.co.jp') )
+        self.assertTrue( self.fr._passed('contain', 'jins', 'http://www.jins.com') )
+        self.assertFalse( self.fr._passed('contain', 'jeans', 'https://www.jins.co.jp') )
 
 
 

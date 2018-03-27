@@ -65,26 +65,26 @@ class test_FracResult(unittest.TestCase):
 
 
 
-from fract import Actor
+from fract import Actor, ActorResponse
 class test_Actor(unittest.TestCase):
     def setUp(self):
         self.actor = Actor()
-        self.actor.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip'})
+        self.actorresponse = self.actor.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip'})
     def tearDown(self):
         pass
 
     def test_get(self):
-        self.assertTrue( self.actor.r.status_code != 400 )
+        self.assertTrue( self.actorresponse.r.status_code != 400 )
 
     def test_get_headers(self):
-        self.assertTrue( 'status_code' in self.actor.get_headers() )
+        self.assertTrue( 'status_code' in self.actorresponse.headers() )
 
     def test_get_status_code(self):
-        self.assertTrue( self.actor.get_status_code() == self.actor.r.status_code ) 
+        self.assertTrue( self.actorresponse.status_code() == self.actorresponse.r.status_code ) 
 
     def test_resh(self):
-        self.assertTrue( self.actor.resh('status_code') == self.actor.r.status_code )
-        self.assertTrue( self.actor.resh('Date') == self.actor.r.headers['Date'] )
+        self.assertTrue( self.actorresponse.resh('status_code') == self.actorresponse.r.status_code )
+        self.assertTrue( self.actorresponse.resh('Date') == self.actorresponse.r.headers['Date'] )
 
 
 from fract import Fract
@@ -111,6 +111,12 @@ class test_Fract(unittest.TestCase):
         self.assertFalse( self.fr._passed('endswith', '.com', 'https://www.jins.co.jp') )
         self.assertTrue( self.fr._passed('contain', 'jins', 'http://www.jins.com') )
         self.assertFalse( self.fr._passed('contain', 'jeans', 'https://www.jins.co.jp') )
+
+    def test_check_headercase(self):
+        ret = self.fr._check_headercase('status_code', [{"type":"regex","query":"301"}], {'status_code': 301})
+        self.assertTrue( ret[0]['Passed'] == True )
+        self.assertTrue( ret[0]['Value'] == 301 )
+        self.assertTrue( ret[0]['testcase']['type'] == 'regex' )
 
 
 

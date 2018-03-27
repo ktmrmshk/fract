@@ -143,10 +143,16 @@ class FractResult(FractDset):
         return (passed, cnt_test, cnt_passed, cnt_failed)
 
 class Actor(object):
+    '''
+    role as factory of requests.response object
+    '''
     def __init__(self):
         pass
 
     def get(self, url, headers=None, ghost=None, ssl_verify=False):
+        '''
+        return ActorResponse object
+        '''
         req_headers = dict()
         if headers is not None:
             req_headers.update( headers )
@@ -162,22 +168,32 @@ class Actor(object):
         else:
             req_url = url
 
-        self.r = requests.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
+        # throw the http request
+        r = requests.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
         logging.debug(req_url)
         logging.debug(req_headers)
+        
+        return ActorResponse(r)
 
-    def get_headers(self):
+class ActorResponse(object):
+    '''
+    This object will be created by class Actor
+    '''
+    def __init__(self, response):
+        'in: response is requests.Response object'
+        #self.r = requests.Response()
+        self.r = response
+    def headers(self):
         hdr = self.r.headers
         hdr['status_code'] = self.r.status_code
         return hdr
-    
     def resh(self, headername):
         if headername == 'status_code':
             return self.r.status_code
         return self.r.headers[ headername ]
-    
-    def get_status_code(self):
+    def status_code(self):
         return self.r.status_code
+
 
 class Fract(object):
     def __init__(self):
@@ -185,6 +201,26 @@ class Fract(object):
 
     def run(self):
         pass
+
+    def _run_hdiff(self, fracttest):
+        '''
+        input: FractTest object
+        return: FractResult object
+        '''
+        pass
+        
+    def _throw_request(self, fractreq):
+        '''
+        input: fract request dict" like {"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}}
+        return: response object of 'requests' lib
+        '''
+        url = fractreq['Url']
+        ghost = fractreq['Ghost']
+        headers = fractreq['Headers']
+        
+        # throw HTTP request
+        return self.actor.get( url, headers, ghost )
+
 
     def _run_hassert(self, fracttest):
         '''
@@ -195,17 +231,18 @@ class Fract(object):
         res = FractResult()
         res.setTestType(FractResult.HASSERT)
 
-        url = fracttest.query['Request']['Url']
-        ghost = fracttest.query['Request']['Ghost']
-        headers = fracttest.query['Request']['Headers']
+        ##url = fracttest.query['Request']['Url']
+        ##ghost = fracttest.query['Request']['Ghost']
+        ##headers = fracttest.query['Request']['Headers']
     
         # throw HTTP request
-        self.actor.get( url, headers, ghost )
-        res.setResponse(self.actor.get_status_code(), self.actor.get_headers() )
+        ##self.actor.get( url, headers, ghost )
+        actres = self._throw_request(fracttest.query['Request'])
+        res.setResponse(actres.status_code, actres.headers() )
         
         # validation process
         for hdr,tlist in fracttest.query['TestCase'].items(): ### Per Header
-            res.query['ResultCase'][hdr] = self._check_headercase(hdr, tlist, self.actor.get_headers())
+            res.query['ResultCase'][hdr] = self._check_headercase(hdr, tlist, actres.headers())
             
         # check if passed at whole testcase
         psd = res.check_passed()

@@ -60,7 +60,7 @@ class FractTest(FractDset):
         return json.loads( query_json )
 
     def _example_hdiff(self):
-        query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeader":["Last-Modified","Cache-Control"]}'''
+        query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
         return json.loads( query_json )
         
     def valid_query(self, query):
@@ -90,17 +90,8 @@ class FractResult(FractDset):
         return json.loads( query_json )
 
     def _example_hdiff(self):
-        query=dict()
-        query['TestType'] = FractResult.HDIFF
-
-        query['Passed'] = True
-        
-        query['ResponseA'] = {'status_code': 200, 'Content-Length': 1234, 'Content-Type': 'text/html'}
-        query['ResponseB'] = {'status_code': 200, 'Content-Length': 4567, 'Content-Type': 'text/html'}
-        query['ResultCase'] = {'Content-Length': [False, 1234, 4567], 'status_code': [True, 200, 200]}
-        query['ResultCase'] = {'Content-Length': [False, 1234, 4567], 'status_code': [True, 200, 200]}
-        
-        return query
+        query_json = '''{"TestType":"hdiff","Passed":false,"ResponseA":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResponseB":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":{"Passed":true,"Value":[301,301]},"Content-Length":{"Passed":false,"Value":[123,345]}}}'''
+        return json.loads( query_json )
 
     def setTestType(self, TestType):
         assert TestType == FractResult.HASSERT or TestType == FractResult.HDIFF
@@ -110,12 +101,12 @@ class FractResult(FractDset):
         assert type(passed) == type(bool())
         self.query['Passed'] = passed
 
-    def setResponse(self, status_code, response_headers):
+    def setResponse(self, status_code, response_headers, keyname='Response'):
         res = dict()
         res['status_code'] = status_code
         for k,v in response_headers.items():
             res[k] = v
-        self.query['Response'] = res
+        self.query[keyname] = res
         logging.debug('response: {}'.format(self.query['Response']))
 
     def check_passed(self):
@@ -202,12 +193,6 @@ class Fract(object):
     def run(self):
         pass
 
-    def _run_hdiff(self, fracttest):
-        '''
-        input: FractTest object
-        return: FractResult object
-        '''
-        pass
         
     def _throw_request(self, fractreq):
         '''
@@ -231,12 +216,7 @@ class Fract(object):
         res = FractResult()
         res.setTestType(FractResult.HASSERT)
 
-        ##url = fracttest.query['Request']['Url']
-        ##ghost = fracttest.query['Request']['Ghost']
-        ##headers = fracttest.query['Request']['Headers']
-    
         # throw HTTP request
-        ##self.actor.get( url, headers, ghost )
         actres = self._throw_request(fracttest.query['Request'])
         res.setResponse(actres.status_code, actres.headers() )
         
@@ -249,7 +229,55 @@ class Fract(object):
         logging.debug('ResultCase: {}'.format(res))
 
         return res
- 
+
+    def _run_hdiff(self, fracttest):
+        '''
+        input: FractTest object
+        return: FractResult object
+        '''
+        logging.warning('hello')
+
+        res = FractResult()
+        res.setTestType(FractResult.HDIFF)
+        res.query['ResultCase'] = dict()
+
+        # throw HTTP request
+        actresA= self._throw_request(fracttest.query['RequestA'])
+        actresB= self._throw_request(fracttest.query['RequestB'])
+        
+        res.setResponse(actresA.status_code, actresA.headers(), 'ResponseA' )
+        res.setResponse(actresB.status_code, actresB.headers(), 'ResponseB' )
+
+        # validation process
+        for vh in fracttest.query['VerifyHeaders']:
+            logging.debug('_run_diff(): verify header ==> {}'.format(vh))
+            valA=str()
+            valB=str()
+            if vh in actresA.headers():
+                valA=actresA.resh(vh)
+            else:
+                valA='N/A'
+            if vh in actresB.headers():
+                valB=actresB.resh(vh)
+            else:
+                valB='N/A'
+
+            res.query['ResultCase'][vh] = {'Passed': valA==valB, 'Value': [valA, valB]}
+        
+        logging.debug('ResultCcase: {}'.format(res))
+        
+        # check if passed at whole testcase
+        # should be replaced later with chech_passed() functions
+        passed=True
+        for k,v in res.query['ResultCase'].items():
+            if v['Passed'] == False:
+                passed=False
+                break
+        res.query['Passed'] = passed
+        
+        return res
+
+
     def _check_headercase(self, header_name, testlist, response_header):
         '''
         return: list of test result per header:
@@ -304,9 +332,6 @@ class Fract(object):
         else:
             pass # should raise exception!
 
-
-    def _run_hdiff(self, fracttest):
-        pass
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

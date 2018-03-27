@@ -119,8 +119,15 @@ class test_Fract(unittest.TestCase):
         self.assertTrue( ret[0]['testcase']['type'] == 'regex' )
 
 
+    def test_run_hdiff(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control", "status_code", "Content-Length"]} ''')
+        fr =Fract()
+        ret = fr._run_hdiff(testcase)
+        logging.warning('fractresult= {}'.format(ret))
+        self.assertTrue( ret.query['TestType'] == 'hdiff')
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     unittest.main()
 

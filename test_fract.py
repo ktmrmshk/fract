@@ -127,6 +127,42 @@ class test_Fract(unittest.TestCase):
         logging.warning('fractresult= {}'.format(ret))
         self.assertTrue( ret.query['TestType'] == 'hdiff')
 
+    def test_run1(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}],"Location":[{"type":"regex","query":"https://www.akamai.com"}]}} ''')
+        ret = self.fr.run(testcase)
+        self.assertTrue( ret.query['TestType'] == 'hassert')
+        self.assertTrue( ret.query['Passed'] == False )
+        logging.info('FractResult: {}'.format(ret))
+        
+    def test_run2(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control", "status_code", "Content-Length"]} ''')
+        fr =Fract()
+        ret = fr.run(testcase)
+        logging.warning('fractresult= {}'.format(ret))
+        self.assertTrue( ret.query['TestType'] == 'hdiff')
+
+
+from fract import FractClient
+class test_FractClient(unittest.TestCase):
+    def setUp(self):
+        logging.basicConfig(level=logging.DEBUG)
+        self.testsuite = '''[{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}},{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}]'''
+
+    def test_init(self):
+        fclient = FractClient(self.testsuite)
+        self.assertTrue( len(fclient._testsuite) ==2 )
+
+    def test_run_suite(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite()
+        self.assertTrue( len(fclient._result_suite) ==2 )
+        logging.info('test_run_suite(): _result_suite={}'.format(fclient._result_suite[0]))
+        
+        fclient.export_result()
+    
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     unittest.main()

@@ -6,7 +6,7 @@ Backlog:
 
 * negative regex match support
 * base class of FactDset: __DONE__
-* start with, end with, contain, doesnot, equal function
+* start with, end with, contain, doesnot, equal function __DONE__
 * example json with text not code: __DONE__
 * using class to define each TestType Structures
 
@@ -71,7 +71,7 @@ class FractResult(FractDset):
     def __init__(self):
         self.query={'TestType':str(),\
                 'Passed' : bool(),\
-                'Response': {'status_code':int()},\
+                'Response': dict(),\
                 'ResultCase': dict()}
 
     def init_template(self, TestType):
@@ -190,9 +190,14 @@ class Fract(object):
     def __init__(self):
         self.actor=Actor()
 
-    def run(self):
-        pass
-
+    def run(self, fracttest):
+        if fracttest.query['TestType'] == FractDset.HASSERT:
+            return self._run_hassert(fracttest)
+        elif fracttest.query['TestType'] == FractDset.HDIFF:
+            return self._run_hdiff(fracttest)
+        else:
+            pass # should throw exception
+        return None
         
     def _throw_request(self, fractreq):
         '''
@@ -235,8 +240,6 @@ class Fract(object):
         input: FractTest object
         return: FractResult object
         '''
-        logging.warning('hello')
-
         res = FractResult()
         res.setTestType(FractResult.HDIFF)
         res.query['ResultCase'] = dict()
@@ -331,6 +334,53 @@ class Fract(object):
                 return False
         else:
             pass # should raise exception!
+
+
+class TestMaker(object):
+    def __init__(self, TestType):
+        self.t = FractTest()
+        self.t.setTestType(TestType)
+
+    def setRequest(self, url):
+        pass
+
+    def addTestCase(self, ):
+        pass
+
+    def publish(self):
+        pass
+
+class FractClient(object):
+    '''
+    This class for run Fract test suite and other useful tasks
+    '''
+    def __init__(self, fract_suite_json=None):
+        self._testsuite = list()
+        if fract_suite_json is not None:
+            _test_list = json.loads(fract_suite_json)
+            for t in _test_list:
+                f=FractTest()
+                f.import_query( json.dumps(t) )
+                self._testsuite.append(f)
+        else:
+            self._testsuite = list()
+        
+        self.fract = Fract()
+        self._result_suite = list()
+
+    def run_suite(self):
+        for t in self._testsuite:
+            self._result_suite.append( self.fract.run(t) )
+
+    def export_result(self, filename='fract_default.txt'):
+        ret_dict = list()
+        for ret in self._result_suite:
+            ret_dict.append( ret.query )
+
+        with open(filename, 'w') as f:
+            f.write(json.dumps(ret_dict, indent=2))
+
+    
 
 
 if __name__ == '__main__':

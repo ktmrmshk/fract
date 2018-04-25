@@ -14,6 +14,7 @@ Backlog:
 * validate function
 '''
 
+AKAMAI_PRAGMA='akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key'
 
 class FractDset(object):
     HASSERT='hassert'
@@ -42,29 +43,68 @@ class FractTest(FractDset):
         super().__init__()
     
     def init_template(self):
+        pass
+
+    def init_example(self):
+        pass
+     
+
+    def valid_query(self, query):
+        pass
+
+
+
+class FractTestHassert(FractTest):
+    def __init__(self):
+        super().__init__()
+
+    def init_template(self):
         self.query = { \
-                'TestType': str(),\
+                'TestType': self.HASSERT,\
                 'Request': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
                 'TestCase': dict() }
 
-    def init_example(self, TestType):
-        if TestType == FractTest.HASSERT:
-            self.query = self._example_hassert()
-        elif TestType == FractTest.HDIFF:
-            self.query = self._example_hdiff()
-        else:
-            pass
-
-    def _example_hassert(self):
+    def init_example(self):
         query_json='''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
-        return json.loads( query_json )
-
-    def _example_hdiff(self):
-        query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
-        return json.loads( query_json )
-        
+        self.query = json.loads( query_json )
+    
     def valid_query(self, query):
         pass
+
+    def add(self, header, value, valtype='regex'):
+        if header not in self.query['TestCase']:
+            self.query['TestCase'][header] = list()
+        self.query['TestCase'][header].append({'type':valtype, 'query':value})
+    
+    def setRequest(self, url, ghost, headers={}, method='GET'):
+        self.query['Request']['Url']=url
+        self.query['Request']['Ghost']=ghost
+        self.query['Request']['Method']=method
+        self.query['Request']['Headers']=headers
+
+
+
+class FractTestHdiff(FractTest):
+    def __init__(self):
+        super().__init__()
+
+    def init_template(self):
+        self.query = { \
+                'TestType': self.HDIFF,\
+                'RequestA': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
+                'RequestB': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
+                'TestCase': dict() }
+
+    def init_example(self):
+        query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
+        self.query = json.loads( query_json )
+    
+    def valid_query(self, query):
+        pass
+
+
+
+
 
 
 class FractResult(FractDset):
@@ -382,7 +422,24 @@ class FractClient(object):
 
     
 
-
+import sys
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     
+    def usage():
+        print('usage: $ pyton3 fract.py input.json output.json')
+
+    if len(sys.argv) != 3:
+        usage()
+        exit()
+
+    testsuite_json=str()
+    with open(sys.argv[1]) as f:
+        testsuite_json = f.read()    
+    fclient = FractClient(testsuite_json)
+    fclient.run_suite()
+    fclient.export_result(sys.argv[2])
+
+
+
+

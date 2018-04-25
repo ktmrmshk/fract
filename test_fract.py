@@ -1,28 +1,61 @@
 import unittest, json, logging
 
 
-from fract import FractTest
+from fract import FractTest, FractTestHassert, FractTestHdiff
 class test_FractTest(unittest.TestCase):
     def setUp(self):
         self.fracttest = FractTest()
     def tearDown(self):
         pass
     
-    def test_init_template(self):
-        self.fracttest.init_template()
-        self.assertTrue( 'TestType' in self.fracttest.query )
+    def test_init_template1(self):
+        ft=FractTestHassert()
+        ft.init_template()
+        self.assertTrue( 'TestType' in ft.query )
+        self.assertTrue( ft.query['TestType'] == 'hassert')
+
+    def test_init_template2(self):
+        ft=FractTestHdiff()
+        ft.init_template()
+        self.assertTrue( 'TestType' in ft.query )
+        self.assertTrue( ft.query['TestType'] == 'hdiff')
+        self.assertTrue( 'RequestA' in ft.query )
+        self.assertTrue( 'RequestB' in ft.query )
+        self.assertTrue( 'TestCase' in ft.query )
 
     def test_init_example_1(self):
-        self.fracttest.init_example('hassert')
-        self.assertTrue( self.fracttest.query['TestType'] == 'hassert' )
+        ft=FractTestHassert()
+        
+        ft.init_example()
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
     
     def test_init_example_2(self):
-        self.fracttest.init_example('hdiff')
-        self.assertTrue( self.fracttest.query['TestType'] == 'hdiff' )
+        ft=FractTestHdiff()
+
+        ft.init_example()
+        self.assertTrue( ft.query['TestType'] == 'hdiff' )
 
     def test_import_query(self):
         self.fracttest.import_query('''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}],"Location":[{"type":"regex","query":"https://www.akamai.com"}]}} ''')
         self.assertTrue( self.fracttest.query['TestType'] == 'hassert' )
+
+    def test_add1(self):
+        ft = FractTestHassert()
+        ft.init_template()
+        ft.add('status_code', '(301|302)')
+        ft.add('status_code', '301')
+        logging.warning(json.dumps(ft.query))
+        self.assertTrue( ft.query['TestCase'] == {"status_code": [{"type": "regex", "query":"(301|302)" }, {"type": "regex", "query":"301"}]})
+    
+    def test_setRequest1(self):
+        ft = FractTestHassert()
+        ft.init_template()
+        ft.setRequest('http://www.akamai.com/', 'www.akamai.com.edgekey.net')
+        self.assertTrue( ft.query['Request']['Url'] == 'http://www.akamai.com/')
+        self.assertTrue( ft.query['Request']['Ghost'] == 'www.akamai.com.edgekey.net')
+        self.assertTrue( ft.query['Request']['Method'] == 'GET')
+        
+
 
 
 from fract import FractResult
@@ -95,7 +128,7 @@ class test_Fract(unittest.TestCase):
         pass
 
     def test_run_hassert(self):
-        testcase = FractTest()
+        testcase = FractTestHassert()
         testcase.import_query('''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}],"Location":[{"type":"regex","query":"https://www.akamai.com"}]}} ''')
         ret = self.fr._run_hassert(testcase)
         self.assertTrue( ret.query['TestType'] == 'hassert')
@@ -120,7 +153,7 @@ class test_Fract(unittest.TestCase):
 
 
     def test_run_hdiff(self):
-        testcase = FractTest()
+        testcase = FractTestHdiff()
         testcase.import_query('''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control", "status_code", "Content-Length"]} ''')
         fr =Fract()
         ret = fr._run_hdiff(testcase)

@@ -46,15 +46,27 @@ class test_FraseGen(unittest.TestCase):
     
     def test_gen(self):
         fg=FraseGen()
-        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com')
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net')
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
         self.assertTrue( ft.query['Request']['Method'] == 'GET' )
-        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
         self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
         self.assertTrue( 'X-Cache-Key' in ft.query['TestCase'] )
         self.assertTrue( 'Location' in ft.query['TestCase'] )
         self.assertTrue( 'status_code' in ft.query['TestCase'] )
         self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+    
+    def test_replaceDP(self):
+        fg=FraseGen()
+        ret=fg._replaceDP('origin.ktmr.com/jp/css/top-140509.css', 'www.ktmr.com')
+        self.assertTrue( ret == 'www.ktmr.com/jp/css/top-140509.css')
+
+    def test_get_from_akamai_logurl(self):
+        fg=FraseGen()
+        fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        self.assertTrue( len(fg.testcases) == 30)
+        fg.save('out.txt')
 
 
 if __name__ == '__main__':

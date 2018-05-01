@@ -119,6 +119,10 @@ class test_Actor(unittest.TestCase):
         self.assertTrue( self.actorresponse.resh('status_code') == self.actorresponse.r.status_code )
         self.assertTrue( self.actorresponse.resh('Date') == self.actorresponse.r.headers['Date'] )
 
+    def test_siggleton(self):
+        a = Actor()
+        b = Actor()
+        self.assertTrue( a == b)
 
 from fract import Fract
 class test_Fract(unittest.TestCase):

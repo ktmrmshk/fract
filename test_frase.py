@@ -64,8 +64,8 @@ class test_FraseGen(unittest.TestCase):
 
     def test_get_from_akamai_logurl(self):
         fg=FraseGen()
-        fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
-        self.assertTrue( len(fg.testcases) == 30)
+        fg.get_from_akamai_logurl('testurls500.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        self.assertTrue( len(fg.testcases) == 500)
         fg.save('out.txt')
 
 

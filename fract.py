@@ -14,7 +14,22 @@ Backlog:
 * validate function
 '''
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import http.client  # or http.client if you're on Python 3
+http.client._MAXHEADERS = 1000
+
+
 AKAMAI_PRAGMA='akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key'
+
+def fractsingleton(cls):
+    instances={}
+    def getinstance():
+        if cls not in instances:
+            instances[cls] = cls()
+        return instances[cls]
+    return getinstance
+
 
 class FractDset(object):
     HASSERT='hassert'
@@ -173,12 +188,13 @@ class FractResult(FractDset):
         self.query['Passed'] = passed
         return (passed, cnt_test, cnt_passed, cnt_failed)
 
+@fractsingleton
 class Actor(object):
     '''
     role as factory of requests.response object
     '''
     def __init__(self):
-        pass
+        self.session=requests.Session()
 
     def get(self, url, headers=None, ghost=None, ssl_verify=False):
         '''
@@ -200,7 +216,7 @@ class Actor(object):
             req_url = url
 
         # throw the http request
-        r = requests.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
+        r = self.session.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
         logging.debug(req_url)
         logging.debug(req_headers)
         
@@ -420,7 +436,23 @@ class FractClient(object):
         with open(filename, 'w') as f:
             f.write(json.dumps(ret_dict, indent=2))
 
-    
+    def print_result(self):
+        cnt_test=0
+        cnt_error=0
+        for ret in self._result_suite:
+            if ret.query['Passed'] == False:
+                cnt_error+=1
+            else:
+                assert ret.query['Passed'] == True
+            cnt_test+=1
+
+        print('--------------------------')
+        print('Ran {} tests / {} errors'.format(cnt_test, cnt_error))
+        if cnt_error == 0:
+            print('=> OK')
+        else:
+            print('=> Not Good')
+
 
 import sys
 if __name__ == '__main__':
@@ -439,6 +471,8 @@ if __name__ == '__main__':
     fclient = FractClient(testsuite_json)
     fclient.run_suite()
     fclient.export_result(sys.argv[2])
+    fclient.print_result()
+
 
 
 

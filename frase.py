@@ -6,6 +6,9 @@ from html.parser import HTMLParser
 import requests
 import fract
 import logging
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 class Htmlpsr(HTMLParser):
     def start(self, html):
@@ -119,7 +122,7 @@ class FraseGen(object):
         cnt=0
         with open(filename) as f:
             for line in f:
-                url = proto + self._replaceDP(line, dp)
+                url = proto + self._replaceDP(line.strip(), dp)
                 tc = self.gen(url, src_ghost, dst_ghost) 
                 logging.debug('testcase => {}'.format(tc))
                 self.testcases.append( tc )
@@ -142,6 +145,19 @@ class FraseGen(object):
 
     def load(self, filename):
         pass
+
+
+class FractPret(object):
+    '''
+    pretty print from fract result json
+    '''
+    def __init__(self):
+        pass
+
+    def prettyFile(self, filename):
+        '''
+            
+        '''
 
 
 

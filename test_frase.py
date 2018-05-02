@@ -10,9 +10,112 @@ class test_Htmlpsr(unittest.TestCase):
     def test_handle_starttag(self):
         hp=Htmlpsr()
         html='''<!DOCTYPE html><html lang="en"><head> <title>Bootstrap Example</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> <script src="maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> <script src="//example.com/foo.js"></script></head><body><a target="_top" href="bootstrap_filters.asp">BS Filters</a><div class="jumbotron text-center"> <h1>My First Bootstrap Page</h1> <p>Resize this responsive page to see the effect!</p><img src="bs_themes.jpg" style="width:98%;margin:20px 0" alt="Theme Company"></div></body></html>'''
-        hp.start(html)
-        self.assertTrue( hp.anchors[0] == 'bootstrap_filters.asp')
+        hp.start(html, 'http://example.com/')
+        self.assertTrue( 'http://example.com/bootstrap_filters.asp' in hp.anchors  )
         self.assertTrue( len(hp.embs) == 5)
+ 
+    def test_handle_start_nonfilter(self):
+        example_html = str()
+        with open('example.html') as f:
+            example_html = f.read()
+        hp=Htmlpsr()
+        hp.start(example_html, 'http://www.uniqlo.com/jp/')
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/css/uniqlo.css']  )
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/js/top_rollover.js']  )
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/js/top_rollover.js']  )
+        self.assertTrue( hp.embs['http://service.maxymiser.net/cdn/uniqlo/desktop-jp/js/mmcore.js'] )
+        self.assertTrue( hp.embs['https://im.uniqlo.com/images/jp/pc/img/material/nav/btn_nav_global_001_UQ_JP.gif'] )
+        
+        self.assertTrue( hp.anchors['http://www.uniqlo.com/jp/store/feature/uq/new/kids/'] )
+        self.assertTrue( hp.anchors['http://utme.uniqlo.com/?locale=ja&utm_medium=pc_l1&utm_source=pc_l1&utm_campaign=utme'] )
+        self.assertTrue( hp.anchors['http://www.gu-japan.com/?utm_source=uq&utm_medium=refarral'] )
+        
+        showstr='anchors: total {}\n'.format(len(hp.anchors))
+        for l in hp.anchors.keys():
+            showstr += l + '\n'
+        else:
+            logging.debug( showstr )
+
+        showstr='embs: total {}\n'.format(len(hp.embs))
+        for l in hp.embs.keys():
+            showstr += l + '\n'
+        else:
+            logging.debug( showstr )
+
+        
+
+
+    def test_handle_start_filtered(self):
+        example_html = str()
+        with open('example.html') as f:
+            example_html = f.read()
+        hp=Htmlpsr()
+        hp.start(example_html, 'http://www.uniqlo.com/jp/', ['www.uniqlo.com', 'im.uniqlo.com'])
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/css/uniqlo.css']  )
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/js/top_rollover.js']  )
+        self.assertTrue( hp.embs['http://www.uniqlo.com/jp/js/top_rollover.js']  )
+        self.assertTrue( 'http://service.maxymiser.net/cdn/uniqlo/desktop-jp/js/mmcore.js' not in hp.embs )
+        self.assertTrue( hp.embs['https://im.uniqlo.com/images/jp/pc/img/material/nav/btn_nav_global_001_UQ_JP.gif'] )
+
+        self.assertTrue( hp.anchors['http://www.uniqlo.com/jp/store/feature/uq/new/kids/'] )
+        self.assertTrue( 'http://utme.uniqlo.com/?locale=ja&utm_medium=pc_l1&utm_source=pc_l1&utm_campaign=utme' not in hp.anchors )
+        self.assertTrue( 'http://www.gu-japan.com/?utm_source=uq&utm_medium=refarral' not in hp.anchors )
+
+
+from frase import Htmlcrwlr
+class test_Htmlcrwlr(unittest.TestCase):
+    def setUp(self):
+        pass
+    def tearDown(self):
+        pass
+
+    def test_init(self):
+        hc = Htmlcrwlr('http://www.abc.com/jp/', ['www.abc.com'])
+        self.assertTrue( hc.entrypoint == 'http://www.abc.com/jp/' )
+        self.assertTrue( hc.urllist['http://www.abc.com/jp/'] )
+        self.assertTrue( hc.anchors == {'parsed': {}, 'unparsed': {'http://www.abc.com/jp/': {'depth': 0}}} )
+        self.assertTrue( hc.maxdepth == 3)
+
+    def test_scan_singlepage_1(self):
+        hc = Htmlcrwlr('http://space.ktmrmshk.com/', ['space.ktmrmshk.com'])
+        
+        hc._scan_singlepage('http://space.ktmrmshk.com/', {'depth': 0})
+        logging.warning(hc)
+        
+        self.assertTrue( hc.urllist['http://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.anchors['parsed']['http://space.ktmrmshk.com/'] == {'depth' : 0} )
+        self.assertTrue( hc.anchors['unparsed']['https://space.ktmrmshk.com/'] == {'depth' : 1} )
+
+    def test_start1(self):
+        hc = Htmlcrwlr('http://space.ktmrmshk.com/', ['space.ktmrmshk.com'], 1)
+        hc.start()
+        logging.warning(hc)
+        
+        self.assertTrue( hc.urllist['http://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/images/project-image3.jpg'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/js/mobile.js'] )
+  
+    def test_start2(self):
+        hc = Htmlcrwlr('http://space.ktmrmshk.com/', ['space.ktmrmshk.com'], 10)
+        hc.start()
+        
+        self.assertTrue( hc.urllist['http://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/images/project-image3.jpg'] )
+        self.assertTrue( hc.urllist['https://space.ktmrmshk.com/js/mobile.js'] )
+    
+        logging.warning(hc)
+
+        
+    def test_start3(self):
+        hc = Htmlcrwlr('http://www.uniqlo.com/', ['www.uniqlo.com'], 3)
+        hc.start()
+        logging.warning(hc)
+
+
+        
 
 from frase import FraseGen
 class test_FraseGen(unittest.TestCase):

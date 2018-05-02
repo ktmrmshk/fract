@@ -8,12 +8,21 @@ import fract
 import logging
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from urllib.parse import urlparse, urljoin
+
 
 
 class Htmlpsr(HTMLParser):
-    def start(self, html):
-        self.anchors=list()
-        self.embs=list()
+    def start(self, html, baseurl, domains=[]):
+        '''
+        in: html - text
+        in: url - text e.g. https://space.ktmrmshk.com/static/img/
+        in: domains - list of domain that should be listed, as a filter  e.g. [space.ktmrmshk.com]
+        '''
+        self.baseurl=baseurl
+        self.domains=domains
+        self.anchors=dict()
+        self.embs=dict()
         self.feed(html)
 
     def handle_starttag(self, tag, attrs):
@@ -27,23 +36,146 @@ class Htmlpsr(HTMLParser):
         if tag == 'a':
             for a in attrs:
                 if a[0] == 'href':
-                    self.anchors.append(a[1])
+                    self.add_anchors( a[1] )
         elif tag == 'script':
             for a in attrs:
                 if a[0] == 'src':
-                    self.embs.append(a[1])
+                    self.add_embs( a[1] )
         elif tag == 'link':
             for a in attrs:
                 if a[0] == 'href':
-                    self.embs.append(a[1])
+                    self.add_embs( a[1] )
         elif tag == 'img':
             for a in attrs:
                 if a[0] == 'src':
-                    self.embs.append(a[1])
+                    self.add_embs( a[1] )
+
+    def add_embs(self, url):
+        fullurl = urljoin(self.baseurl, url)
+        if self.domains==[]:
+            self.embs[fullurl] = True
+        else:
+            for d in self.domains:
+                if d == urlparse(fullurl).netloc:
+                    self.embs[fullurl] = True
+                    break
+
+    def add_anchors(self, url):
+        fullurl = urljoin(self.baseurl, url)
+        if self.domains==[]:
+            self.anchors[fullurl] = True
+        else:
+            for d in self.domains:
+                if d == urlparse(fullurl).netloc:
+                    self.anchors[fullurl] = True
+                    break
+
+    def __str__(self):
+        return '{}, {}'.format( self.anchors.__str__(), self.embs.__str__() )
+
 
 class Htmlcrwlr(object):
-    def __init__(self):
-        pass
+    def __init__(self, entrypoint, domains, maxdepth=3):
+        '''
+        in: entrypoint - url of starting point: 'http://abc.com/jp/'
+        in: domains - list of domains for targets
+        in: maxdepth - max depth to be parsed over pages
+
+        ---
+        anchors is a dict like
+        { 'parsed'   : {'http://abc.com/'   : {'depth': 1}, ...}, 
+          'unparsed' : {'http://abc.com/jp/': {'depth': 2}, ...}
+        }
+
+        '''
+        self.hp=Htmlpsr()
+        self.urllist = dict()
+        self.anchors = {'parsed': dict(), 'unparsed': dict()}
+        self.entrypoint= entrypoint
+        self.urllist[entrypoint] = True
+        self.anchors['unparsed'][entrypoint] = {'depth':0}
+        self.domains = domains
+        self.maxdepth=maxdepth
+        self.a = fract.Actor()
+
+    def __str__(self):
+        line=str()
+        line+='urllist: total {}\n'.format(len(self.urllist))
+        for l in self.urllist:
+            line += l + '\n'
+        else:
+            line += '\n'
+
+        line+='anchors: total {}\n'.format(len(self.anchors['parsed']))
+        for k,v in self.anchors['parsed'].items():
+            line += '{}, {}\n'.format(k,v)
+        else:
+            line += '\n'
+
+        return line
+        #return 'urllist={}, anchors={}'.format(self.urllist.__str__(), self.anchors.__str__())
+
+    def start(self):
+        '''
+        breadth first search
+        '''
+        # pop a anchor url
+        url=str()
+        stat=dict()
+        while len( self.anchors['unparsed'] ) != 0: 
+            url, stat = self.anchors['unparsed'].popitem()
+            self._scan_singlepage(url, stat)
+        return
+
+
+    def _scan_singlepage(self, url, stat):
+
+        depth=stat['depth']
+        # get html
+        ret=self.a.get(url)
+        logging.warning('request: {} - {}'.format(url, ret.resh('status_code')))
+
+        if ret.resh('status_code') == 200:
+
+            # parse links
+            htmltext=ret.r.text
+            self.hp.start(htmltext, url, self.domains)
+
+            # append embs link
+            for e in self.hp.embs.keys():
+                self.urllist[e] = True
+        
+            # on anchors
+            for a in self.hp.anchors.keys():
+                if a is url:
+                    pass # do nothing
+                elif a not in self.anchors['parsed'] and a not in self.anchors['unparsed']:
+                    if depth < self.maxdepth:
+                        self.anchors['unparsed'][a] = { 'depth': depth+1 }
+
+        elif ret.resh('status_code') in (301, 302, 303, 307):
+            # get redirect link
+            red_url = urljoin( url, ret.resh('Location') )
+
+            # appdend anchors
+            if red_url not in self.anchors['parsed'] and red_url not in self.anchors['unparsed']:
+                if depth < self.maxdepth:
+                    self.anchors['unparsed'][red_url] = { 'depth': depth+1 }
+
+            # append urllist
+            self.urllist[red_url] = True
+
+        else:
+            pass
+
+        # append this url to embs link
+        self.urllist[url] = True
+            
+        # update anchors
+        if url not in self.anchors['parsed']:
+            self.anchors['parsed'][url] = stat
+
+        return 
 
 
 class FraseGen(object):

@@ -13,6 +13,8 @@ class test_FractTest(unittest.TestCase):
         ft.init_template()
         self.assertTrue( 'TestType' in ft.query )
         self.assertTrue( ft.query['TestType'] == 'hassert')
+        self.assertTrue( 'Comment' in ft.query )
+        self.assertTrue( 'TestId' in ft.query )
 
     def test_init_template2(self):
         ft=FractTestHdiff()
@@ -22,7 +24,9 @@ class test_FractTest(unittest.TestCase):
         self.assertTrue( 'RequestA' in ft.query )
         self.assertTrue( 'RequestB' in ft.query )
         self.assertTrue( 'TestCase' in ft.query )
-
+        self.assertTrue( 'TestId' in ft.query )
+        self.assertTrue( 'Comment' in ft.query )
+               
     def test_init_example_1(self):
         ft=FractTestHassert()
         

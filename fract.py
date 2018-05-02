@@ -77,10 +77,13 @@ class FractTestHassert(FractTest):
         self.query = { \
                 'TestType': self.HASSERT,\
                 'Request': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
-                'TestCase': dict() }
+                'TestCase': dict(),\
+                'Comment' : str(),\
+                'TestId' : str()
+                }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
@@ -108,10 +111,13 @@ class FractTestHdiff(FractTest):
                 'TestType': self.HDIFF,\
                 'RequestA': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
                 'RequestB': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
-                'TestCase': dict() }
+                'TestCase': dict(),\
+                'TestId'  : str(),\
+                'Comment' : str()
+                }
 
     def init_example(self):
-        query_json='''{"TestType":"hdiff","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
+        query_json='''{"TestType":"hdiff","Comment":"This is comment","TestID":"3606bd5770167eaca08586a8c77d05e6ed076899","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):

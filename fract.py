@@ -423,20 +423,6 @@ class Fract(object):
             pass # should raise exception!
 
 
-class TestMaker(object):
-    def __init__(self, TestType):
-        self.t = FractTest()
-        self.t.setTestType(TestType)
-
-    def setRequest(self, url):
-        pass
-
-    def addTestCase(self, ):
-        pass
-
-    def publish(self):
-        pass
-
 class FractClient(object):
     '''
     This class for run Fract test suite and other useful tasks
@@ -455,9 +441,15 @@ class FractClient(object):
         self.fract = Fract()
         self._result_suite = list()
 
-    def run_suite(self):
+    def run_suite(self, testids=None):
         for t in self._testsuite:
-            self._result_suite.append( self.fract.run(t) )
+            if testids is not None and t.query['TestId'] in testids:
+                self._result_suite.append( self.fract.run(t) )
+            elif testids is None:
+                self._result_suite.append( self.fract.run(t) )
+            else:
+                pass
+
 
     def export_result(self, filename='fract_default.txt'):
         ret_dict = list()

@@ -216,6 +216,14 @@ class test_FractClient(unittest.TestCase):
         
         fclient.export_result()
     
+    def test_run_suite2(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite( ['d704230e1206c259ddbb900004c185e46c42a32a'])
+        self.assertTrue( len(fclient._result_suite) ==1 )
+        logging.info('test_run_suite(): _result_suite={}'.format(fclient._result_suite[0]))
+        
+        fclient.export_result()
+    
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

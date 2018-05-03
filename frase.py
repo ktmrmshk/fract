@@ -228,7 +228,8 @@ class FraseGen(object):
         ft.add('X-Cache-Key', '/{}/'.format(ttl))
         ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'])
         ft.add('status_code', str(cstat['status_code']) )
-        
+        ft.set_comment('This test was gened by FraseGen')
+        ft.set_testid()
         if 'Location' in cstat:
             ft.add('Location', cstat['Location'])
             ft.add('status_code', str(cstat['status_code']) )

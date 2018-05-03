@@ -1,6 +1,6 @@
 import json, logging
 import re, requests
-
+import random, hashlib
 '''
 Backlog:
 
@@ -18,6 +18,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import http.client  # or http.client if you're on Python 3
 http.client._MAXHEADERS = 1000
+
 
 
 AKAMAI_PRAGMA='akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key'
@@ -53,6 +54,28 @@ class FractDset(object):
     def __str__(self):
         return json.dumps(self.query)
 
+    def set_comment(self, comment):
+        '''
+        update comment field
+        '''
+        assert type(comment) == type(str())
+        self.query['Comment'] = comment
+
+    def set_testid(self, testid=None):
+        '''
+        in: testid - testid text - if not set, hash val is set as a test id
+        '''
+        if testid is not None:
+            self.query['TestId'] = str(testid)
+        else:
+            m=hashlib.sha256()
+            m.update( str(random.random()).encode('utf-8'))
+            m.update( json.dumps(self.query).encode('utf-8'))
+            self.query['TestId'] = m.hexdigest()
+
+
+
+
 class FractTest(FractDset):
     def __init__(self):
         super().__init__()
@@ -66,8 +89,6 @@ class FractTest(FractDset):
 
     def valid_query(self, query):
         pass
-
-
 
 class FractTestHassert(FractTest):
     def __init__(self):
@@ -133,6 +154,8 @@ class FractResult(FractDset):
         self.query={'TestType':str(),\
                 'Passed' : bool(),\
                 'Response': dict(),\
+                'Comment' : str(), \
+                'TestId' : str(), \
                 'ResultCase': dict()}
 
     def init_template(self, TestType):
@@ -147,11 +170,11 @@ class FractResult(FractDset):
             pass
     
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
-        query_json = '''{"TestType":"hdiff","Passed":false,"ResponseA":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResponseB":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":{"Passed":true,"Value":[301,301]},"Content-Length":{"Passed":false,"Value":[123,345]}}}'''
+        query_json = '''{"TestType":"hdiff","Passed":false,"Comment":"This is comment","TestId":"d704230e1206c259ddbb900004c185e46c42a32a","ResponseA":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResponseB":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":{"Passed":true,"Value":[301,301]},"Content-Length":{"Passed":false,"Value":[123,345]}}}'''
         return json.loads( query_json )
 
     def setTestType(self, TestType):
@@ -282,6 +305,7 @@ class Fract(object):
         '''
         res = FractResult()
         res.setTestType(FractResult.HASSERT)
+        res.set_testid(fracttest.query['TestId'])
 
         # throw HTTP request
         actres = self._throw_request(fracttest.query['Request'])
@@ -304,6 +328,7 @@ class Fract(object):
         '''
         res = FractResult()
         res.setTestType(FractResult.HDIFF)
+        res.set_testid(fracttest.query['TestId'])
         res.query['ResultCase'] = dict()
 
         # throw HTTP request

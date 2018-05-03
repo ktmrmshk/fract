@@ -159,7 +159,10 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue( 'Location' in ft.query['TestCase'] )
         self.assertTrue( 'status_code' in ft.query['TestCase'] )
         self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
-    
+        
+        self.assertTrue( len( ft.query['Comment'] ) != 0 )
+        self.assertTrue( len( ft.query['TestId'] ) != 0  )
+
     def test_replaceDP(self):
         fg=FraseGen()
         ret=fg._replaceDP('origin.ktmr.com/jp/css/top-140509.css', 'www.ktmr.com')
@@ -167,8 +170,8 @@ class test_FraseGen(unittest.TestCase):
 
     def test_get_from_akamai_logurl(self):
         fg=FraseGen()
-        fg.get_from_akamai_logurl('testurls500.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
-        self.assertTrue( len(fg.testcases) == 500)
+        fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        self.assertTrue( len(fg.testcases) == 30)
         fg.save('out.txt')
 
 

@@ -110,7 +110,7 @@ class test_Htmlcrwlr(unittest.TestCase):
 
         
     def test_start3(self):
-        hc = Htmlcrwlr('http://www.uniqlo.com/', ['www.uniqlo.com'], 3)
+        hc = Htmlcrwlr('http://www.uniqlo.com/', ['www.uniqlo.com'], 1)
         hc.start()
         logging.warning(hc)
 
@@ -173,6 +173,13 @@ class test_FraseGen(unittest.TestCase):
         fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
         self.assertTrue( len(fg.testcases) == 30)
         fg.save('out.txt')
+
+    def test_gen_from_urls(self):
+        fg=FraseGen()
+        fg.gen_from_urls('urllist4test.txt', 'space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net')
+        self.assertTrue( len(fg.testcases) == 32)
+        fg.save('out.txt')
+
 
 
 if __name__ == '__main__':

@@ -133,7 +133,7 @@ class Htmlcrwlr(object):
         depth=stat['depth']
         # get html
         ret=self.a.get(url)
-        logging.warning('request: {} - {}'.format(url, ret.resh('status_code')))
+        logging.debug('request: {} - {}'.format(url, ret.resh('status_code')))
 
         if ret.resh('status_code') == 200:
 
@@ -176,6 +176,12 @@ class Htmlcrwlr(object):
             self.anchors['parsed'][url] = stat
 
         return 
+
+    def save(self, filename):
+        with open(filename, 'w') as fw:
+            for u in self.urllist.keys():
+                fw.write(u+'\n')
+        logging.debug('saved to {}'.format(filename))
 
 
 class FraseGen(object):
@@ -258,6 +264,19 @@ class FraseGen(object):
                 url = proto + self._replaceDP(line.strip(), dp)
                 tc = self.gen(url, src_ghost, dst_ghost) 
                 logging.debug('testcase => {}'.format(tc))
+                self.testcases.append( tc )
+                cnt+=1
+            else:
+                logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
+
+    def gen_from_urls(self, filename, src_ghost, dst_ghost):
+        cnt=0
+        with open(filename) as f:
+            for line in f:
+                url=line.strip()
+                if url == '':
+                    continue
+                tc = self.gen(url, src_ghost, dst_ghost)
                 self.testcases.append( tc )
                 cnt+=1
             else:

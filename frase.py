@@ -299,17 +299,4 @@ class FraseGen(object):
         pass
 
 
-class FractPret(object):
-    '''
-    pretty print from fract result json
-    '''
-    def __init__(self):
-        pass
-
-    def prettyFile(self, filename):
-        '''
-            
-        '''
-
-
 

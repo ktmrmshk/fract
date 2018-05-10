@@ -5,7 +5,7 @@ from fract import *
 from frase import *
 import argparse
 import logging
-
+from datetime import datetime
 
 
 class fractui(object):
@@ -31,6 +31,20 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
+        ### run - run test case and output results
+        subprs_geturlc=subprs.add_parser('run')
+        subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json'))
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt'))
+        subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json'))
+        subprs_geturlc.set_defaults(func=self.do_run)
+
+    def _tname(self, prefix, ext, postfix='', mid=None):
+        ' if mid is None, returns "prefix2018111210123postfix.ext" '
+        if mid is None:
+            now=datetime.today()
+            mid=now.strftime('%Y%m%d%H%M%S%f')
+        return '{}{}{}.{}'.format(prefix, mid, postfix, ext)
 
     def verbose(self, args):
         if args.verbosity:
@@ -54,10 +68,20 @@ class fractui(object):
         
         logging.info('save to {}'.format(args.output))
 
+    def do_run(self, args):
+        self.verbose(args)
+        logging.debug(args)
+
+        fclient = FractClient(fract_suite_file=args.input)
+        fclient.run_suite()
+        fclient.export_result(args.output)
+        summary = fclient.make_summary()
+        print(summary)
+        with open(args.summary, 'w') as fw:
+            fw.write(summary)
 
 
-
-
+        logging.info('save to {}'.format(args.output))
 
 if __name__ == '__main__':
     ui=fractui()

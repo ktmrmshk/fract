@@ -1,6 +1,5 @@
 import unittest, json, logging
 
-
 from fract import FractTest, FractTestHassert, FractTestHdiff
 class test_FractTest(unittest.TestCase):
     def setUp(self):
@@ -74,6 +73,53 @@ class test_FractTest(unittest.TestCase):
         ft.set_testid()
         self.assertTrue( ft.query['TestId'] != 'hogehoge')
 
+    def test_str_summary_hassert(self):
+        ft = FractTestHassert()
+        ft.init_example()
+        self.assertTrue( type(ft._str_summary() ) == type(str()) )
+        print( ft._str_summary() )
+
+    def test_str_summary_hdiff(self):
+        ft = FractTestHdiff()
+        ft.init_example()
+        self.assertTrue( type(ft._str_summary() ) == type(str()) )
+        print( ft._str_summary() )
+
+
+from fract import FractDsetFactory
+class test_FractDsetFactory(unittest.TestCase):
+    def setUp(self):
+        pass
+    def tearDown(self):
+        pass
+    def test_init1(self):
+        ft = FractTestHassert()
+        ft.init_example()
+        jsontxt = ft.__str__()
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractTestHassert() ))
+
+    def test_init2(self):
+        ft = FractTestHdiff()
+        ft.init_example()
+        jsontxt = ft.__str__()
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractTestHdiff() ))
+
+    def test_init3(self):
+        ft = FractResult()
+        ft.init_example(FractResult.HASSERT)
+        jsontxt = ft.__str__()
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractResult() ))
+
+    def test_init4(self):
+        ft = FractResult()
+        ft.init_example(FractResult.HDIFF)
+        jsontxt = ft.__str__()
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractResult() ))
+
 
 from fract import FractResult
 class test_FracResult(unittest.TestCase):
@@ -113,6 +159,17 @@ class test_FracResult(unittest.TestCase):
         ret = self.fractresult.check_passed()
         self.assertTrue( ret == (True, 2, 2, 0) )
 
+    def test_str_resultcase(self):
+        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","testcase":{"type":"regex","query":"text/html$"}}]}}''')
+        ret=self.fractresult._str_resultcase( True )
+        self.assertTrue( type(ret) == type(str()))
+        logging.warning( ret )
+
+    def test_str_resultcase2(self):
+        self.fractresult.query=json.loads('''{"TestType":"hdiff","Passed":false,"Comment":"This is comment","TestId":"d704230e1206c259ddbb900004c185e46c42a32a","ResponseA":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResponseB":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":{"Passed":true,"Value":[301,301]},"Content-Length":{"Passed":false,"Value":[123,345]}}}''')
+        ret=self.fractresult._str_resultcase( True )
+        self.assertTrue( type(ret) == type(str()))
+        logging.warning( ret )
 
 
 from fract import Actor, ActorResponse
@@ -208,6 +265,10 @@ class test_FractClient(unittest.TestCase):
         fclient = FractClient(self.testsuite)
         self.assertTrue( len(fclient._testsuite) ==2 )
 
+    def test_init2(self):
+        fclient = FractClient(fract_suite_file='testcase4test.json')
+        self.assertTrue( len(fclient._testsuite) == 32 )
+    
     def test_run_suite(self):
         fclient = FractClient(self.testsuite)
         fclient.run_suite()
@@ -220,10 +281,23 @@ class test_FractClient(unittest.TestCase):
         fclient = FractClient(self.testsuite)
         fclient.run_suite( ['d704230e1206c259ddbb900004c185e46c42a32a'])
         self.assertTrue( len(fclient._result_suite) ==1 )
+        self.assertTrue( len(fclient._failed_result_suite) == 0)
         logging.info('test_run_suite(): _result_suite={}'.format(fclient._result_suite[0]))
         
         fclient.export_result()
     
+    def test_make_summary(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite()
+        fclient.make_summary()
+
+    def test_get_testcase(self):
+        fclient = FractClient(self.testsuite)
+        t = fclient._get_testcase('d704230e1206c259ddbb900004c185e46c42a32a')
+        self.assertTrue(t.query['TestId'] == 'd704230e1206c259ddbb900004c185e46c42a32a')
+
+
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

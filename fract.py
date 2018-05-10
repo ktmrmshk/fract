@@ -1,4 +1,4 @@
-import json, logging
+import json, logging, yaml
 import re, requests
 import random, hashlib
 '''
@@ -74,6 +74,34 @@ class FractDset(object):
             self.query['TestId'] = m.hexdigest()
 
 
+class FractDsetFactory(object):
+    '''
+    Factory class to import FractDset family from json format
+    '''
+    @staticmethod
+    def create(jsontxt):
+        query = json.loads(jsontxt)
+        if query['TestType'] == FractDset.HASSERT:
+            if 'Request' in query:
+                obj=FractTestHassert()
+                obj.query=query
+                return obj
+            elif 'ResultCase' in query:
+                obj=FractResult()
+                obj.query=query
+                return obj
+        elif query['TestType'] == FractDset.HDIFF:
+            if 'RequestA' in query:
+                obj=FractTestHdiff()
+                obj.query=query
+                return obj
+            elif 'ResultCase' in query:
+                obj=FractResult()
+                obj.query=query
+                return obj
+        raise Exception('FractDset Type Error')
+        return None
+
 
 
 class FractTest(FractDset):
@@ -88,6 +116,9 @@ class FractTest(FractDset):
      
 
     def valid_query(self, query):
+        pass
+
+    def _str_summary(self):
         pass
 
 class FractTestHassert(FractTest):
@@ -121,7 +152,12 @@ class FractTestHassert(FractTest):
         self.query['Request']['Method']=method
         self.query['Request']['Headers']=headers
 
-
+    def _str_summary(self):
+        line=dict()
+        line['Request'] = self.query['Request']
+        return yaml.dump(line, default_flow_style=False)
+        
+    
 
 class FractTestHdiff(FractTest):
     def __init__(self):
@@ -145,6 +181,12 @@ class FractTestHdiff(FractTest):
         pass
 
 
+    def _str_summary(self):
+        line=dict()
+        line['RequestA'] = self.query['RequestA']
+        line['RequestB'] = self.query['RequestB']
+        return yaml.dump(line, default_flow_style=False)
+        
 
 
 
@@ -216,6 +258,49 @@ class FractResult(FractDset):
 
         self.query['Passed'] = passed
         return (passed, cnt_test, cnt_passed, cnt_failed)
+
+    def _str_resultcase(self, failed_only=False):
+        '''
+        ex)
+        status_code
+          * Passed: False
+          * Assertion: regex: "(200|404)"
+          * Response: 301
+        
+        Resonse Header: Content-Type
+          * Passed: False
+          * Assertion: regex
+
+        '''
+        assert self.query['TestType'] in (FractResult.HASSERT, FractResult.HDIFF)
+        line=dict()
+        if self.query['TestType'] == FractResult.HASSERT:
+            for headername, retlist in self.query['ResultCase'].items():
+                line[headername] = list()
+                for ret in retlist:
+                    if failed_only and ret['Passed']:
+                        continue
+                    case=dict()
+                    case['Passed'] = ret['Passed']
+                    case['TestAssert'] = '{}: "{}"'.format(ret['testcase']['type'], ret['testcase']['query'])
+                    case['Response']= ret['Value']
+                    line[headername].append(case)
+                else:
+                    if not line[headername] :
+                        del line[headername]
+        
+        elif self.query['TestType'] == FractResult.HDIFF:
+            for headername, ret in self.query['ResultCase'].items():
+                line[headername] = dict()
+                if failed_only and ret['Passed']:
+                    del line[headername]
+                    continue
+                line[headername]['Passed'] = ret['Passed']
+                line[headername]['ResponseA'] = ret['Value'][0]
+                line[headername]['ResponseB'] = ret['Value'][1]
+
+        return yaml.dump(line, default_flow_style=False)
+
 
 @fractsingleton
 class Actor(object):
@@ -427,29 +512,50 @@ class FractClient(object):
     '''
     This class for run Fract test suite and other useful tasks
     '''
-    def __init__(self, fract_suite_json=None):
+    def __init__(self, fract_suite_json=None, fract_suite_file=None):
         self._testsuite = list()
+        self._testsuiteId = dict() # dict data to search by TestId
+        _test_list = None
         if fract_suite_json is not None:
             _test_list = json.loads(fract_suite_json)
+        elif fract_suite_file is not None:
+            with open(fract_suite_file) as f:
+                _test_list = json.load(f)
+
+        if _test_list is not None:
             for t in _test_list:
-                f=FractTest()
-                f.import_query( json.dumps(t) )
+                #f=FractTest()
+                #f.import_query( json.dumps(t) )
+                f = FractDsetFactory.create( json.dumps(t) )
                 self._testsuite.append(f)
+                self._testsuiteId[f.query['TestId']] = f
         else:
             self._testsuite = list()
         
         self.fract = Fract()
         self._result_suite = list()
+        self._failed_result_suite=list()
+
+    def _get_testcase(self, TestId):
+        return self._testsuiteId[ TestId ] 
+
 
     def run_suite(self, testids=None):
         for t in self._testsuite:
             if testids is not None and t.query['TestId'] in testids:
-                self._result_suite.append( self.fract.run(t) )
+                ret=self.fract.run(t)
+                self._result_suite.append( ret )
+                if not ret.query['Passed']:
+                    self._failed_result_suite.append( ret )
             elif testids is None:
-                self._result_suite.append( self.fract.run(t) )
+                ret=self.fract.run(t)
+                self._result_suite.append( ret )
+                if not ret.query['Passed']:
+                    self._failed_result_suite.append( ret )
             else:
                 pass
 
+    
 
     def export_result(self, filename='fract_default.txt'):
         ret_dict = list()
@@ -458,6 +564,68 @@ class FractClient(object):
 
         with open(filename, 'w') as f:
             f.write(json.dumps(ret_dict, indent=2))
+
+    def make_summary(self):
+        '''
+        self.summary=dict():
+        {
+        'total':30, 
+        'failed':[ {'testid': abc123456, [ --failed-result-case--, ... ]}, ...]
+        }
+
+        Summary is like this: markdown format
+
+        Summary
+        =====================
+
+        test not passed
+        ---------------------
+
+        ### testid: 3606bd5770167eaca08586a8c77d05e6ed076899
+        
+        X-Cache-Key:
+        - Passed: false
+          Value: S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false
+          testcase: {query: /570032/, type: regex}
+        
+
+        ### testid: d449493f0df74c73a77ae99ec738d1007e57b8b395975da023de2b321890423f
+         ....
+         ....
+
+
+        total
+        --------------------
+        ran 30 tests: 4 failed
+        '''
+        summary=str()
+        summary+='''
+Summary
+=================
+
+Tests not passed
+----------------\n'''
+
+        cnt_testcase=len( self._result_suite )
+        cnt_failed=len( self._failed_result_suite )
+        for ret in self._failed_result_suite:
+            summary+='### TestId: {}\n\n'.format(ret.query['TestId'])
+            t = self._get_testcase( ret.query['TestId'] )
+            print(type(t))
+            summary += t._str_summary()
+            summary+='\n'
+            
+            summary+=ret._str_resultcase(True)
+            summary+='\n\n'
+        summary+='''
+Total
+----------------\n'''
+        summary+='ran {} tests: {} failed'.format(cnt_testcase, cnt_failed)
+        #print(summary)
+        return summary
+
+    def make_difftestcase(self):
+        pass
 
     def print_result(self):
         cnt_test=0
@@ -475,6 +643,9 @@ class FractClient(object):
             print('=> OK')
         else:
             print('=> Not Good')
+
+
+
 
 
 import sys

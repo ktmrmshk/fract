@@ -37,6 +37,7 @@ class fractui(object):
         
         subprs_geturlc=subprs.add_parser('run')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
+        subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
         subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
         subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
         subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
@@ -76,7 +77,7 @@ class fractui(object):
         logging.debug(args)
 
         fclient = FractClient(fract_suite_file=args.input)
-        fclient.run_suite()
+        fclient.run_suite(args.testid)
         fclient.export_result(args.output)
         summary = fclient.make_summary()
         print(summary)
@@ -84,7 +85,6 @@ class fractui(object):
             fw.write(summary)
 
         fclient.export_failed_testsuite(args.diff.replace('.json', '.yaml'), 'yaml')
-
         logging.info('save to {}'.format(args.output))
 
 if __name__ == '__main__':

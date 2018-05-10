@@ -566,7 +566,7 @@ class FractClient(object):
             f.write(json.dumps(ret_dict, indent=2))
 
     def export_failed_testsuite(self, filename, fmt='json'):
-        assert format in ('json', 'yaml')
+        assert fmt in ('json', 'yaml')
         failed_tests=list()
         for failed_ret in self._failed_result_suite:
             t = self._get_testcase( failed_ret.query['TestId'] )
@@ -634,7 +634,12 @@ Tests not passed
         summary+='''
 Total
 ----------------\n'''
-        summary+='ran {} tests: {} failed'.format(cnt_testcase, cnt_failed)
+        summary+='ran {} tests: {} failed\n\n'.format(cnt_testcase, cnt_failed)
+        if cnt_failed == 0:
+            summary+='=> OK\n'
+        else:
+            summary+='=> Not Good\n'
+
         #print(summary)
         return summary
 

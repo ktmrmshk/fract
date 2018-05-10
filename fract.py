@@ -103,6 +103,37 @@ class FractDsetFactory(object):
         return None
 
 
+class FractTestManager(object):
+    def __init__(self):
+        self._testsuite=list()
+    
+    def load_base_testsuite(self, filename):
+        with open(filename) as f:
+            self._testsuite = json.load(f)
+ 
+    def merge_testsuite(self, filename):
+        cnt_merged=0
+        cnt_added=0
+        testsuite=list()
+        with open(filename) as f:
+            testsuite = json.load(f)
+        for t in testsuite:
+            testid = t['TestId']
+            for base_t in self._testsuite:
+                if base_t['TestId'] == testid:
+                    base_t = t
+                    cnt_merged+=1
+                    break
+            else:
+                self._testsuite.append(t)
+                cnt_added+=1
+
+        assert cnt_merged + cnt_added == len(testsuite)
+        return cnt_merged, cnt_added
+
+
+
+
 
 class FractTest(FractDset):
     def __init__(self):
@@ -642,9 +673,6 @@ Total
 
         #print(summary)
         return summary
-
-    def make_difftestcase(self):
-        pass
 
     def print_result(self):
         cnt_test=0

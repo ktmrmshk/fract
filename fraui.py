@@ -43,6 +43,16 @@ class fractui(object):
         subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
         subprs_geturlc.set_defaults(func=self.do_run)
 
+
+        ### tmerge - merge testcase files into one testcase file based on TestId
+        subprs_geturlc=subprs.add_parser('tmerge')
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json files to merge based on TestId. Latter files overwrite former one.', nargs='+', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename of test case json after merging', required=True)
+        subprs_geturlc.set_defaults(func=self.do_tmerge)
+
+
+
+
     def _tname(self, prefix, ext, postfix='', mid=None):
         ' if mid is None, returns "prefix2018111210123postfix.ext" '
         if mid is None:
@@ -86,6 +96,11 @@ class fractui(object):
 
         fclient.export_failed_testsuite(args.diff.replace('.json', '.yaml'), 'yaml')
         logging.info('save to {}'.format(args.output))
+
+    def do_tmerge(self, args):
+        self.verbose(args)
+        logging.debug(args)
+
 
 if __name__ == '__main__':
     ui=fractui()

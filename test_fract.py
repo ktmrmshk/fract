@@ -121,6 +121,23 @@ class test_FractDsetFactory(unittest.TestCase):
         self.assertTrue( type(obj) == type(FractResult() ))
 
 
+from fract import FractTestManager
+class test_FractTestManager(unittest.TestCase):
+    def test_load_base_testsuite(self):
+        ftm = FractTestManager()
+        ftm.load_base_testsuite('testcase4test.json')
+        self.assertTrue( len(ftm._testsuite) == 32)
+        #logging.warning( ftm._testsuite )
+    def test_merge_testsuite(self):
+        ftm = FractTestManager()
+        ftm.load_base_testsuite('testcase4test.json')
+        ret = ftm.merge_testsuite('testcase4test_sub.json')
+        self.assertTrue( ret == (1,1) )
+        self.assertTrue( len(ftm._testsuite) == 33)
+        
+
+
+
 from fract import FractResult
 class test_FracResult(unittest.TestCase):
     def setUp(self):
@@ -302,6 +319,10 @@ class test_FractClient(unittest.TestCase):
         fclient.run_suite( ['3606bd5770167eaca08586a8c77d05e6ed076899'])
         fclient.export_failed_testsuite('diff.json')
 
+
+
+
+    
 
 
 if __name__ == '__main__':

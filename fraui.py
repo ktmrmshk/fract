@@ -32,11 +32,14 @@ class fractui(object):
         
 
         ### run - run test case and output results
+        now=datetime.today()
+        mid=now.strftime('%Y%m%d%H%M%S%f')
+        
         subprs_geturlc=subprs.add_parser('run')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
-        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json'))
-        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt'))
-        subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json'))
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
+        subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
         subprs_geturlc.set_defaults(func=self.do_run)
 
     def _tname(self, prefix, ext, postfix='', mid=None):
@@ -80,6 +83,7 @@ class fractui(object):
         with open(args.summary, 'w') as fw:
             fw.write(summary)
 
+        fclient.export_failed_testsuite(args.diff.replace('.json', '.yaml'), 'yaml')
 
         logging.info('save to {}'.format(args.output))
 

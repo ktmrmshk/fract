@@ -439,7 +439,6 @@ class Fract(object):
 
             res.query['ResultCase'][vh] = {'Passed': valA==valB, 'Value': [valA, valB]}
         
-        logging.debug('ResultCcase: {}'.format(res))
         
         # check if passed at whole testcase
         # should be replaced later with chech_passed() functions
@@ -450,6 +449,7 @@ class Fract(object):
                 break
         res.query['Passed'] = passed
         
+        logging.debug('ResultCcase: {}'.format(res))
         return res
 
 
@@ -545,6 +545,7 @@ class FractClient(object):
             if testids is not None and t.query['TestId'] in testids:
                 ret=self.fract.run(t)
                 self._result_suite.append( ret )
+                logging.debug(ret)
                 if not ret.query['Passed']:
                     self._failed_result_suite.append( ret )
             elif testids is None:
@@ -554,9 +555,8 @@ class FractClient(object):
                     self._failed_result_suite.append( ret )
             else:
                 pass
-
+        logging.debug('# of failed: {}'.format(len(self._failed_result_suite)))
     
-
     def export_result(self, filename='fract_default.txt'):
         ret_dict = list()
         for ret in self._result_suite:
@@ -564,6 +564,20 @@ class FractClient(object):
 
         with open(filename, 'w') as f:
             f.write(json.dumps(ret_dict, indent=2))
+
+    def export_failed_testsuite(self, filename, fmt='json'):
+        assert format in ('json', 'yaml')
+        failed_tests=list()
+        for failed_ret in self._failed_result_suite:
+            t = self._get_testcase( failed_ret.query['TestId'] )
+            failed_tests.append( t.__dict__ )
+        
+        with open(filename, 'w') as f:
+            if fmt == 'json':
+                f.write(json.dumps( failed_tests, indent=2))
+            elif fmt == 'yaml':
+                f.write(yaml.dump( failed_tests, default_flow_style=False))
+
 
     def make_summary(self):
         '''

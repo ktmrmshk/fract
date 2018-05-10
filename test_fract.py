@@ -297,6 +297,11 @@ class test_FractClient(unittest.TestCase):
         self.assertTrue(t.query['TestId'] == 'd704230e1206c259ddbb900004c185e46c42a32a')
 
 
+    def test_export_failed_testsuite(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite( ['3606bd5770167eaca08586a8c77d05e6ed076899'])
+        fclient.export_failed_testsuite('diff.json')
+
 
 
 if __name__ == '__main__':

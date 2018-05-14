@@ -32,6 +32,7 @@ def fractsingleton(cls):
     return getinstance
 
 
+
 class FractDset(object):
     HASSERT='hassert'
     HDIFF='hdiff'
@@ -691,6 +692,23 @@ Total
         else:
             print('=> Not Good')
 
+
+
+class JsonYaml(object):
+    def __init__(self):
+        pass
+    def j2y(self, jsonfile, yamlfile):
+        with open(jsonfile) as fr:
+            obj = json.load(fr)
+            with open(yamlfile, 'w') as fw:
+                fw.write(yaml.dump(obj, default_flow_style=False))
+
+    def y2j(self, yamlfile, jsonfile):
+        with open(yamlfile) as fr:
+            lines=fr.read()
+            obj=yaml.load(lines)
+            with open(jsonfile, 'w') as fw:
+                json.dump(obj, fw)
 
 
 

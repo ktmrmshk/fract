@@ -51,6 +51,19 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_tmerge)
 
 
+        ### j2y - json to yaml converter
+        subprs_geturlc=subprs.add_parser('j2y')
+        subprs_geturlc.add_argument('jsonfile', help='Json filename')
+        subprs_geturlc.add_argument('yamlfile', help='Yaml filename')
+        subprs_geturlc.set_defaults(func=self.do_j2y)
+        
+
+        ### y2j - yaml to json converter
+        subprs_geturlc=subprs.add_parser('y2j')
+        subprs_geturlc.add_argument('yamlfile', help='Yaml filename')
+        subprs_geturlc.add_argument('jsonfile', help='Json filename')
+        subprs_geturlc.set_defaults(func=self.do_y2j)
+
 
 
     def _tname(self, prefix, ext, postfix='', mid=None):
@@ -100,6 +113,22 @@ class fractui(object):
     def do_tmerge(self, args):
         self.verbose(args)
         logging.debug(args)
+
+        
+
+    def do_j2y(self, args):
+        self.verbose(args)
+        logging.debug(args)
+
+        jy=JsonYaml()
+        jy.j2y(args.jsonfile, args.yamlfile)
+
+    def do_y2j(self, args):
+        self.verbose(args)
+        logging.debug(args)
+
+        jy=JsonYaml()
+        jy.y2j(args.yamlfile, args.jsonfile)
 
 
 if __name__ == '__main__':

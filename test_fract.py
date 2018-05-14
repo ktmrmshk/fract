@@ -321,8 +321,17 @@ class test_FractClient(unittest.TestCase):
 
 
 
+from fract import JsonYaml
+class test_FractClient(unittest.TestCase):
+    def setUp(self):
+        self.jy=JsonYaml()
+    def tearDown(self):
+        pass
+    def test_j2y(self):
+        self.jy.j2y('testcase4test.json', 'testcase4test.yaml')
+    def test_y2j(self):
+        self.jy.y2j('testcase4test.yaml', 'testcase4test2.json')
 
-    
 
 
 if __name__ == '__main__':

@@ -113,6 +113,9 @@ class FractTestManager(object):
             self._testsuite = json.load(f)
  
     def merge_testsuite(self, filename):
+        '''
+        returns # of merged and # of newly added
+        '''
         cnt_merged=0
         cnt_added=0
         testsuite=list()
@@ -602,7 +605,7 @@ class FractClient(object):
         failed_tests=list()
         for failed_ret in self._failed_result_suite:
             t = self._get_testcase( failed_ret.query['TestId'] )
-            failed_tests.append( t.__dict__ )
+            failed_tests.append( t.query )
         
         with open(filename, 'w') as f:
             if fmt == 'json':

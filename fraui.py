@@ -113,8 +113,15 @@ class fractui(object):
     def do_tmerge(self, args):
         self.verbose(args)
         logging.debug(args)
-
-        
+        ftm=FractTestManager()
+        ftm.load_base_testsuite(args.testcase[0])
+        cnt_merged=0
+        cnt_added=0
+        for t in args.testcase[1:]:
+            merged, added = ftm.merge_testsuite(t)
+            cnt_merged+=merged
+            cnt_added+=added
+        logging.info('{} merged, {} added\n'.format(cnt_merged, cnt_added))
 
     def do_j2y(self, args):
         self.verbose(args)

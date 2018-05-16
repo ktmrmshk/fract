@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export PYTHONPATH=./src/
+python3 ./src/fraui.py $*
+

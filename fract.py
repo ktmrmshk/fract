@@ -80,8 +80,15 @@ class FractDsetFactory(object):
     Factory class to import FractDset family from json format
     '''
     @staticmethod
-    def create(jsontxt):
-        query = json.loads(jsontxt)
+    def create(dsetjson):
+        query=dict()
+        if type(dsetjson) == type(str()):
+            query = json.loads(dsetjson)
+        elif type(dsetjson) == type(dict()):
+            query=dsetjson
+        else:
+            raise Exception('FractDset arg type error')
+
         if query['TestType'] == FractDset.HASSERT:
             if 'Request' in query:
                 obj=FractTestHassert()
@@ -104,37 +111,50 @@ class FractDsetFactory(object):
         return None
 
 
-class FractTestManager(object):
+
+
+class FractSuiteManager(object):
     def __init__(self):
-        self._testsuite=list()
+        self._suite=list()
     
-    def load_base_testsuite(self, filename):
+    def load_base_suite(self, filename):
         with open(filename) as f:
-            self._testsuite = json.load(f)
+            self._suite = json.load(f)
  
-    def merge_testsuite(self, filename):
+    def merge_suite(self, filename):
         '''
         returns # of merged and # of newly added
         '''
         cnt_merged=0
         cnt_added=0
-        testsuite=list()
+        suite=list()
         with open(filename) as f:
-            testsuite = json.load(f)
-        for t in testsuite:
+            suite = json.load(f)
+        for t in suite:
             testid = t['TestId']
-            for base_t in self._testsuite:
+            for base_t in self._suite:
                 if base_t['TestId'] == testid:
                     base_t = t
                     cnt_merged+=1
                     break
             else:
-                self._testsuite.append(t)
+                self._suite.append(t)
                 cnt_added+=1
 
-        assert cnt_merged + cnt_added == len(testsuite)
+        assert cnt_merged + cnt_added == len(suite)
         return cnt_merged, cnt_added
 
+    def get_suite(self):
+        suite = list()
+        for s in self._suite:
+            frdset = FractDsetFactory.create(s) 
+            suite.append(frdset)
+        return suite
+
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            json.dump(self._suite, f)
+        logging.debug('saved to {}\n'.format(filename))
 
 
 
@@ -547,25 +567,34 @@ class FractClient(object):
     '''
     This class for run Fract test suite and other useful tasks
     '''
-    def __init__(self, fract_suite_json=None, fract_suite_file=None):
+    def __init__(self, fract_suite_json=None, fract_suite_file=None, fract_suite_obj=None):
         self._testsuite = list()
         self._testsuiteId = dict() # dict data to search by TestId
         _test_list = None
-        if fract_suite_json is not None:
-            _test_list = json.loads(fract_suite_json)
-        elif fract_suite_file is not None:
-            with open(fract_suite_file) as f:
-                _test_list = json.load(f)
+        
+        
+        if fract_suite_obj is not None:
+            self._testsuite = fract_suite_obj
+            for t in self._testsuite:
+                self._testsuiteId[ t.query['TestId'] ] = t
+                logging.warning(t.query['TestId'])
 
-        if _test_list is not None:
-            for t in _test_list:
-                #f=FractTest()
-                #f.import_query( json.dumps(t) )
-                f = FractDsetFactory.create( json.dumps(t) )
-                self._testsuite.append(f)
-                self._testsuiteId[f.query['TestId']] = f
         else:
-            self._testsuite = list()
+            if fract_suite_json is not None:
+                _test_list = json.loads(fract_suite_json)
+            elif fract_suite_file is not None:
+                with open(fract_suite_file) as f:
+                    _test_list = json.load(f)
+
+            if _test_list is not None:
+                for t in _test_list:
+                    #f=FractTest()
+                    #f.import_query( json.dumps(t) )
+                    f = FractDsetFactory.create( json.dumps(t) )
+                    self._testsuite.append(f)
+                    self._testsuiteId[f.query['TestId']] = f
+            else:
+                self._testsuite = list()
         
         self.fract = Fract()
         self._result_suite = list()
@@ -573,6 +602,29 @@ class FractClient(object):
 
     def _get_testcase(self, TestId):
         return self._testsuiteId[ TestId ] 
+
+    def load_resultfile(self, resultfile):
+        '''
+        load date from files and set it to following data
+        * self._result_suite
+        * self._failed_result_suite
+        '''
+        with open(resultfile) as f:
+            retlist = json.load(f)
+            for ret in retlist:
+                fret = FractDsetFactory.create( json.dumps(ret) )
+                self._result_suite.append( fret )
+                if not fret.query['Passed']:
+                    self._failed_result_suite.append( fret )
+                    
+
+    def load_result(self, s_result):
+        self._result_suite = s_result
+        for fret in self._result_suite:
+            if not fret.query['Passed']:
+                self._failed_result_suite.append( fret )
+
+
 
 
     def run_suite(self, testids=None):

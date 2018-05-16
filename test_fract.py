@@ -120,23 +120,81 @@ class test_FractDsetFactory(unittest.TestCase):
         obj = FractDsetFactory.create(jsontxt)
         self.assertTrue( type(obj) == type(FractResult() ))
 
+    def test_init11(self):
+        ft = FractTestHassert()
+        ft.init_example()
+        jsontxt = ft.query
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractTestHassert() ))
 
-from fract import FractTestManager
-class test_FractTestManager(unittest.TestCase):
-    def test_load_base_testsuite(self):
-        ftm = FractTestManager()
-        ftm.load_base_testsuite('testcase4test.json')
-        self.assertTrue( len(ftm._testsuite) == 32)
+    def test_init12(self):
+        ft = FractTestHdiff()
+        ft.init_example()
+        jsontxt = ft.query
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractTestHdiff() ))
+
+    def test_init13(self):
+        ft = FractResult()
+        ft.init_example(FractResult.HASSERT)
+        jsontxt = ft.query
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractResult() ))
+
+    def test_init14(self):
+        ft = FractResult()
+        ft.init_example(FractResult.HDIFF)
+        jsontxt = ft.query
+        obj = FractDsetFactory.create(jsontxt)
+        self.assertTrue( type(obj) == type(FractResult() ))
+
+
+
+
+
+from fract import FractSuiteManager
+class test_FractSuiteManager(unittest.TestCase):
+    def test_load_base_suite(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('testcase4test.json')
+        self.assertTrue( len(ftm._suite) == 32)
         #logging.warning( ftm._testsuite )
-    def test_merge_testsuite(self):
-        ftm = FractTestManager()
-        ftm.load_base_testsuite('testcase4test.json')
-        ret = ftm.merge_testsuite('testcase4test_sub.json')
+
+    def test_merge_suite(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('testcase4test.json')
+        ret = ftm.merge_suite('testcase4test_sub.json')
         self.assertTrue( ret == (1,1) )
-        self.assertTrue( len(ftm._testsuite) == 33)
+        self.assertTrue( len(ftm._suite) == 33)
+
+    def test_merge_suite2(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('resutlcase4test.json')
+        ret = ftm.merge_suite('resultcase4test_sub.json')
+        self.assertTrue( ret == (1,1) )
+        self.assertTrue( len(ftm._suite) == 33)
+ 
+
+
+    def test_save(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('testcase4test.json')
+        ftm.save('foobar.json')
+
+    def test_get_suite(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('testcase4test.json')
+        a=ftm.get_suite()
+        logging.warning('type of a is {}'.format(type(a[0])))
+        self.assertTrue( type(a[0]) == type(FractTestHassert() ) )
         
-
-
+    def test_get_suite2(self):
+        ftm = FractSuiteManager()
+        ftm.load_base_suite('resutlcase4test.json')
+        a=ftm.get_suite()
+        logging.warning('type of a is {}'.format(type(a[0])))
+        self.assertTrue( type(a[0]) == type(FractResult() ) )
+        
 
 from fract import FractResult
 class test_FracResult(unittest.TestCase):
@@ -313,16 +371,20 @@ class test_FractClient(unittest.TestCase):
         t = fclient._get_testcase('d704230e1206c259ddbb900004c185e46c42a32a')
         self.assertTrue(t.query['TestId'] == 'd704230e1206c259ddbb900004c185e46c42a32a')
 
-
     def test_export_failed_testsuite(self):
         fclient = FractClient(self.testsuite)
         fclient.run_suite( ['3606bd5770167eaca08586a8c77d05e6ed076899'])
         fclient.export_failed_testsuite('diff.json')
 
+    def test_load_result(self):
+        fclient = FractClient(self.testsuite)
+        fclient.load_result('resutlcase4test.json')
+        self.assertTrue( len(fclient._result_suite) == 32 )
+        self.assertTrue( len(fclient._failed_result_suite) == 23 )
 
 
 from fract import JsonYaml
-class test_FractClient(unittest.TestCase):
+class test_JsonYaml(unittest.TestCase):
     def setUp(self):
         self.jy=JsonYaml()
     def tearDown(self):

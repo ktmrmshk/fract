@@ -51,6 +51,15 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_tmerge)
 
 
+        ### tmerge - merge testcase files into one testcase file based on TestId
+        subprs_geturlc=subprs.add_parser('rmerge')
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json files', nargs='+', required=True)
+        subprs_geturlc.add_argument('-r', '--result', help='result json files', nargs='+', required=True)
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
+        subprs_geturlc.set_defaults(func=self.do_rmerge)
+
+
         ### j2y - json to yaml converter
         subprs_geturlc=subprs.add_parser('j2y')
         subprs_geturlc.add_argument('jsonfile', help='Json filename')
@@ -113,15 +122,44 @@ class fractui(object):
     def do_tmerge(self, args):
         self.verbose(args)
         logging.debug(args)
-        ftm=FractTestManager()
-        ftm.load_base_testsuite(args.testcase[0])
+        ftm=FractSuiteManager()
+        ftm.load_base_suite(args.testcase[0])
         cnt_merged=0
         cnt_added=0
         for t in args.testcase[1:]:
-            merged, added = ftm.merge_testsuite(t)
+            merged, added = ftm.merge_suite(t)
             cnt_merged+=merged
             cnt_added+=added
         logging.info('{} merged, {} added\n'.format(cnt_merged, cnt_added))
+        ftm.save(args.output)
+
+    def do_rmerge(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        ftm=FractSuiteManager()
+        ftm.load_base_suite(args.testcase[0])
+        for t in args.testcase[1:]:
+            ftm.merge_suite(t)
+
+        frm=FractSuiteManager()
+        frm.load_base_suite(args.result[0])
+        for r in args.result[1:]:
+            frm.merge_suite(r)
+
+        testsuite=ftm.get_suite()
+        resultsuite=frm.get_suite()
+
+        fclient=FractClient(fract_suite_obj=testsuite)
+        fclient.load_result(resultsuite)
+
+        summary=fclient.make_summary()
+        print(summary)
+        with open(args.summary, 'w') as fw:
+            fw.write(summary)
+
+        fclient.export_result(args.output)
+
 
     def do_j2y(self, args):
         self.verbose(args)

@@ -1,0 +1,150 @@
+[
+{
+    "TestType": "hassert",
+    "Passed": false,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://space.ktmrmshk.com/",
+      "Date": "Mon, 14 May 2018 09:15:19 GMT",
+      "X-Cache": "TCP_MISS from a72-246-190-209.deploy.akamaitechnologies.com (AkamaiGHost/9.3.0.3-22245996) (-)",
+      "X-Cache-Key": "/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+      "X-True-Cache-Key": "/D/000/space.ktmrmshk.com/space/ cid=___EDC_IS_MOBILE=false",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=, name=AKA_PM_BYPASS_TD; value=true, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/space/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_OUTCOME_URL; value=/space/, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=true, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=space123, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.2.0, name=DO_EDGECONNECT_PUBLISH; value=on, name=EDGECONNECT_API_CONNECTOR; value=default, name=EDGECONNECT_API_CONNECTOR_VERSION; value=1.0, name=EDGECONNECT_API_DATA_ELEMENTS; value=http apm secRateWarnV2, name=EDGECONNECT_API_NAME; value=cloud_monitor, name=EDGECONNECT_API_NAME_VERSION; value=1.0, name=EDGECONNECT_ENDPOINT_HOST; value=cloudmon.ktmrmshk.com, name=EDGECONNECT_ENDPOINT_PATH; value=/cloudmon/data.json, name=EDGECONNECT_ENDPOINT_TYPE; value=custom_origin, name=EDGECONNECT_EVENT_SCOPE; value=all, name=EDGECONNECT_RULE_ID; value=1, name=ENT_EDGECONNECT_API_NAME_VERSION; value=1.0, name=ENT_EDGECONNECT_CACHE_STATUS; value=0, name=ENT_EDGECONNECT_DATA_APM; value=on, name=ENT_EDGECONNECT_DATA_GEO; value=on, name=ENT_EDGECONNECT_DATA_HTTP; value=on, name=ENT_EDGECONNECT_DATA_NETWORK; value=off, name=ENT_EDGECONNECT_DATA_REQHEADER; value=on, name=ENT_EDGECONNECT_DATA_RESPHEADER; value=on, name=ENT_EDGECONNECT_DATA_SEC_APPV2; value=off, name=ENT_EDGECONNECT_DATA_SEC_RATE_DENYV2; value=off, name=ENT_EDGECONNECT_DATA_SEC_RATE_WARNV2; value=on, name=ENT_EDGECONNECT_DATA_WAFV2; value=on, name=ENT_EDGECONNECT_END_CLIENT_REQUEST; value=on, name=ENT_EDGECONNECT_IP_FIRST; value=23, name=ENT_EDGECONNECT_IP_FIRST_HEX; value=17, name=ENT_EDGECONNECT_IP_FOURTH; value=51, name=ENT_EDGECONNECT_IP_FOURTH_HEX; value=33, name=ENT_EDGECONNECT_IP_SECOND; value=39, name=ENT_EDGECONNECT_IP_SECOND_HEX; value=27, name=ENT_EDGECONNECT_IP_THIRD; value=13, name=ENT_EDGECONNECT_IP_THIRD_HEX; value=d, name=ENT_EDGECONNECT_SRV_ERROR; value=0, name=ENT_EDGECONNECT_TIME_HEX; value=5af953a7, name=ENT_EDGECONNECT_UID; value=33d27175af953a76bec62ba, name=ENT_EDGECONNECT_UID_FWD_HEADER; value=33d27175af953a76bec62ba, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=HASHVAL; value=747, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=PARENT_TIER0_MAP; value=ch2.akamaiedge.net, name=PARENT_TIER1_MAP; value=chjp.akamaiedge.net, name=PMUSER_COOKIE; value=none, name=PMUSER_KITA; value=/, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_IMPL_A2_COMMON_PRECONNECT_ENABLED; value=false, name=RUA_IMPL_ENABLED_ON; value=false, name=RUA_OUT_BITFIELD; value=0, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_AK_NETWORK; value=ae, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=space123, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=STRICT_BASELINE_V1ARL_CHECKS; value=<<ENCRYPTED>>, name=TAP_NIM_URL_FOR_REGEX; value=http://space.ktmrmshk.com/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "13100",
+      "Connection": "keep-alive",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "6bec62ba"
+    },
+    "Comment": "",
+    "TestId": "abc123",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+          "testcase": {
+            "type": "regex",
+            "query": "/570031/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 301,
+          "testcase": {
+            "type": "regex",
+            "query": "301"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": 301,
+          "testcase": {
+            "type": "regex",
+            "query": "301"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://space.ktmrmshk.com/",
+          "testcase": {
+            "type": "regex",
+            "query": "https://space.ktmrmshk.com/"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 200,
+      "Content-Type": "text/html",
+      "Last-Modified": "Tue, 25 Apr 2017 08:22:18 GMT",
+      "Accept-Ranges": "bytes",
+      "Content-Encoding": "gzip",
+      "Server": "Apache",
+      "X-EdgeConnect-MidMile-RTT": "0, 1, 0",
+      "X-EdgeConnect-Origin-MEX-Latency": "33, 33, 33",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "7db24d19.449dbcf.2c18ae31.6bec62d1",
+      "X-Akamai-Transformed": "9 1095 0 pmb=mRUM,1",
+      "Date": "Mon, 14 May 2018 09:15:19 GMT",
+      "Content-Length": "1636",
+      "X-Cache": "TCP_MISS from a72-246-190-209.deploy.akamaitechnologies.com (AkamaiGHost/9.3.0.3-22245996) (-)",
+      "X-Cache-Key": "S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+      "X-True-Cache-Key": "/D/000/space.ktmrmshk.com/space/ cid=___EDC_IS_MOBILE=false",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=, name=AKA_PM_BYPASS_TD; value=true, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/space/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_OUTCOME_URL; value=/space/, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=true, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=space123, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.2.0, name=DO_EDGECONNECT_PUBLISH; value=on, name=EDGECONNECT_API_CONNECTOR; value=default, name=EDGECONNECT_API_CONNECTOR_VERSION; value=1.0, name=EDGECONNECT_API_DATA_ELEMENTS; value=http apm secRateWarnV2, name=EDGECONNECT_API_NAME; value=cloud_monitor, name=EDGECONNECT_API_NAME_VERSION; value=1.0, name=EDGECONNECT_ENDPOINT_HOST; value=cloudmon.ktmrmshk.com, name=EDGECONNECT_ENDPOINT_PATH; value=/cloudmon/data.json, name=EDGECONNECT_ENDPOINT_TYPE; value=custom_origin, name=EDGECONNECT_EVENT_SCOPE; value=all, name=EDGECONNECT_RULE_ID; value=1, name=ENT_EDGECONNECT_API_NAME_VERSION; value=1.0, name=ENT_EDGECONNECT_CACHE_STATUS; value=0, name=ENT_EDGECONNECT_DATA_APM; value=on, name=ENT_EDGECONNECT_DATA_GEO; value=on, name=ENT_EDGECONNECT_DATA_HTTP; value=on, name=ENT_EDGECONNECT_DATA_NETWORK; value=off, name=ENT_EDGECONNECT_DATA_REQHEADER; value=on, name=ENT_EDGECONNECT_DATA_RESPHEADER; value=on, name=ENT_EDGECONNECT_DATA_SEC_APPV2; value=off, name=ENT_EDGECONNECT_DATA_SEC_RATE_DENYV2; value=off, name=ENT_EDGECONNECT_DATA_SEC_RATE_WARNV2; value=on, name=ENT_EDGECONNECT_DATA_WAFV2; value=on, name=ENT_EDGECONNECT_END_CLIENT_REQUEST; value=on, name=ENT_EDGECONNECT_IP_FIRST; value=23, name=ENT_EDGECONNECT_IP_FIRST_HEX; value=17, name=ENT_EDGECONNECT_IP_FOURTH; value=51, name=ENT_EDGECONNECT_IP_FOURTH_HEX; value=33, name=ENT_EDGECONNECT_IP_SECOND; value=39, name=ENT_EDGECONNECT_IP_SECOND_HEX; value=27, name=ENT_EDGECONNECT_IP_THIRD; value=13, name=ENT_EDGECONNECT_IP_THIRD_HEX; value=d, name=ENT_EDGECONNECT_MIDMILE_LATENCY; value=60, name=ENT_EDGECONNECT_MIDMILE_RTT; value=0; full_location_id=X-EdgeConnect-MidMile-RTT, name=ENT_EDGECONNECT_NETORIGIN_LATENCY; value=33; full_location_id=X-EdgeConnect-Origin-MEX-Latency, name=ENT_EDGECONNECT_SRV_ERROR; value=0, name=ENT_EDGECONNECT_TIME_HEX; value=5af953a7, name=ENT_EDGECONNECT_UID; value=33d27175af953a76bec62d1, name=ENT_EDGECONNECT_UID_FWD_HEADER; value=33d27175af953a76bec62d1, name=ENT_EDGECONNECT_UID_FWD_HEADER_ADDED; value=on, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=HASHVAL; value=747, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=PARENT_TIER0_MAP; value=ch2.akamaiedge.net, name=PARENT_TIER1_MAP; value=chjp.akamaiedge.net, name=PMUSER_COOKIE; value=none, name=PMUSER_KITA; value=/, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_IMPL_A2_COMMON_PRECONNECT_ENABLED; value=false, name=RUA_IMPL_ENABLED_ON; value=false, name=RUA_IMPL_POLICY_AGENT_ERRORS; value=, name=RUA_IMPL_TAPIOCA_MIN_TTL; value=10s, name=RUA_OUT_BITFIELD; value=0, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_AK_NETWORK; value=ae, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=space123, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=STRICT_BASELINE_V1ARL_CHECKS; value=<<ENCRYPTED>>, name=TAP_NIM_URL_FOR_REGEX; value=https://space.ktmrmshk.com/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "13100",
+      "Connection": "keep-alive",
+      "Vary": "Accept-Encoding",
+      "X-Cache-Remote": "TCP_MISS from a72-246-191-115.deploy.akamaitechnologies.com (AkamaiGHost/9.3.0.3-22245996) (-)"
+    },
+    "Comment": "",
+    "TestId": "51ecc9883f1778827b9df9cfac8736695c96ebc390b9d45dd6dff0e1b408fa0f",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+          "testcase": {
+            "type": "regex",
+            "query": "/570031/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 200,
+          "testcase": {
+            "type": "regex",
+            "query": "200"
+          }
+        }
+      ]
+    }
+  }
+ ]

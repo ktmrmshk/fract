@@ -376,9 +376,9 @@ class test_FractClient(unittest.TestCase):
         fclient.run_suite( ['3606bd5770167eaca08586a8c77d05e6ed076899'])
         fclient.export_failed_testsuite('diff.json')
 
-    def test_load_result(self):
+    def test_load_resultfile(self):
         fclient = FractClient(self.testsuite)
-        fclient.load_result('resutlcase4test.json')
+        fclient.load_resultfile('resutlcase4test.json')
         self.assertTrue( len(fclient._result_suite) == 32 )
         self.assertTrue( len(fclient._failed_result_suite) == 23 )
 

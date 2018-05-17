@@ -173,7 +173,7 @@ class test_FractSuiteManager(unittest.TestCase):
         ret = ftm.merge_suite('resultcase4test_sub.json')
         self.assertTrue( ret == (1,1) )
         self.assertTrue( len(ftm._suite) == 33)
- 
+        ftm.save('final_result.json')
 
 
     def test_save(self):

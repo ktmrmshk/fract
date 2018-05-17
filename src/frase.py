@@ -276,9 +276,12 @@ class FraseGen(object):
                 url=line.strip()
                 if url == '':
                     continue
-                tc = self.gen(url, src_ghost, dst_ghost)
-                self.testcases.append( tc )
-                cnt+=1
+                try:
+                    tc = self.gen(url, src_ghost, dst_ghost)
+                    self.testcases.append( tc )
+                    cnt+=1
+                except Exception as e:
+                    logging.warning(e)
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 

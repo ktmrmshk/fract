@@ -134,7 +134,8 @@ class FractSuiteManager(object):
             testid = t['TestId']
             for base_t in self._suite:
                 if base_t['TestId'] == testid:
-                    base_t = t
+                    #base_t = t
+                    self._suite[ self._suite.index(base_t) ] = t
                     cnt_merged+=1
                     break
             else:
@@ -153,7 +154,7 @@ class FractSuiteManager(object):
 
     def save(self, filename):
         with open(filename, 'w') as f:
-            json.dump(self._suite, f)
+            json.dump(self._suite, f, indent=2)
         logging.debug('saved to {}\n'.format(filename))
 
 

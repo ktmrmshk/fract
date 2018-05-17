@@ -1,5 +1,5 @@
 #!/bin/bash
 
-export PYTHONPATH=./src/
-python3 ./src/fraui.py $*
+export PYTHONPATH=/Users/mkitamur/fractdemo/src/
+python3 /Users/mkitamur/fractdemo/src/fraui.py $*
 

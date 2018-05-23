@@ -1,0 +1,85 @@
+# HEADER_START
+rtwindow,5/22/2018 03:00:00,Data after this date is Estimated or Incomplete
+time_zone,JST
+end_date,20180522
+time_zone_offset,32400
+cpcode,452182
+start_date,20180325
+# HEADER_END
+# COLUMN_DEFINITION_START
+"URL","OK EDGE HITS","TREND*"
+# COLUMN_DEFINITION_END
+
+# ROW_DATA_START
+ru-enews.org.uniqlo.com/ru/enews/css/style.css,44090,-9.5%
+ru-enews.org.uniqlo.com/ru/enews/css/bootstrap.min.css,43988,-9.6%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery.tools.min.js,41674,-9.4%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery-1.9.1.js,40845,-10.2%
+ru-enews.org.uniqlo.com/ru/enews/,40721,-19.1%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery.formstyler.min.js,40304,-10.4%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery.validate.min.js,40094,-10.3%
+ru-enews.org.uniqlo.com/ru/enews/js/bootstrap.min.js,40053,-10.4%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery.checkbox.js,39695,-10.5%
+ru-enews.org.uniqlo.com/ru/enews/js/jquery.radio.js,39691,-10.5%
+ru-enews.org.uniqlo.com/ru/enews/img/logo.gif,30208,-16%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer.gif,30126,-15.9%
+ru-enews.org.uniqlo.com/ru/enews/img/btn_01.png,29479,-16.3%
+ru-enews.org.uniqlo.com/ru/enews/img/inp_01.gif,29222,-16%
+ru-enews.org.uniqlo.com/ru/enews/img/radio.png,29212,-16%
+ru-enews.org.uniqlo.com/ru/enews/img/check.png,28989,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/js/script.js,27265,-16.5%
+ru-enews.org.uniqlo.com/ru/enews/img/btn_01.gif,26086,-16.5%
+ru-enews.org.uniqlo.com/ru/enews/img/btn_01_.gif,25977,-16.5%
+ru-enews.org.uniqlo.com/ru/enews/img/li_05.gif,23806,-15.5%
+ru-enews.org.uniqlo.com/ru/enews/img/favicons.png,18120,-19.3%
+ru-enews.org.uniqlo.com/ru/enews/rnd_frame.php,15319,+0.7%
+ru-enews.org.uniqlo.com/ru/enews/css/styleLoft.css,12372,+5.2%
+ru-enews.org.uniqlo.com/ru/enews/img/check2.png,11752,+5.6%
+ru-enews.org.uniqlo.com/ru/enews/js/sujjestions.js,11699,+6.4%
+ru-enews.org.uniqlo.com/ru/enews/js/frame.js,11433,+4%
+ru-enews.org.uniqlo.com/ru/enews/fonts/DINPro/DINPro.woff,10804,+4.2%
+ru-enews.org.uniqlo.com/ru/enews/img/top_10.gif,8724,-17.2%
+ru-enews.org.uniqlo.com/ru/enews/img/li_01.gif,8722,-17.2%
+ru-enews.org.uniqlo.com/ru/enews/img/top_07.gif,8717,-17.1%
+ru-enews.org.uniqlo.com/ru/enews/img/top_09.gif,8715,-17.3%
+ru-enews.org.uniqlo.com/ru/enews/img/top_06.gif,8714,-17.2%
+ru-enews.org.uniqlo.com/ru/enews/img/top_08.gif,8697,-17.4%
+ru-enews.org.uniqlo.com/ru/enews/img/top_04_.png,5798,-17.9%
+ru-enews.org.uniqlo.com/ru/enews/img/top_02_.png,5798,-17.8%
+ru-enews.org.uniqlo.com/ru/enews/img/top_01_.png,5797,-17.9%
+ru-enews.org.uniqlo.com/ru/enews/img/top_03_.png,5795,-17.9%
+ru-enews.org.uniqlo.com/ru/enews/img/top_05_.png,5793,-17.9%
+ru-enews.org.uniqlo.com/ru/enews/img/btn_02.gif,5740,-17.9%
+ru-enews.org.uniqlo.com/ru/enews/img/bottom_05.gif,3307,-16.6%
+ru-enews.org.uniqlo.com/ru/enews/img/bottom_02.gif,3307,-16.6%
+ru-enews.org.uniqlo.com/ru/enews/img/bottom_03.gif,3303,-16.9%
+ru-enews.org.uniqlo.com/ru/enews/img/bottom_04.gif,3302,-16.8%
+ru-enews.org.uniqlo.com/ru/enews/img/bottom_01.gif,3301,-16.9%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_12.gif,2985,-16.6%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_06.gif,2983,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_03.gif,2981,-16.2%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_16.gif,2978,-16.3%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_14.gif,2978,-16.2%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_05.gif,2978,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_04.gif,2977,-16.3%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_13.gif,2976,-16.2%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_07.gif,2976,-16.7%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_02.gif,2976,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_08.gif,2974,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_11.gif,2973,-16.3%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_09.gif,2972,-16.5%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_17.gif,2971,-16.6%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_10.gif,2971,-16.5%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_15.gif,2970,-16.4%
+ru-enews.org.uniqlo.com/ru/enews/img/txt_footer_01.gif,2966,-16.7%
+ru-enews.org.uniqlo.com/ru/enews/img/bg_01.png,2932,-17.2%
+ru-enews.org.uniqlo.com/ru/enews/img/top_02.gif,2857,-17.2%
+ru-enews.org.uniqlo.com/ru/enews/img/top_05.gif,2856,-16.9%
+ru-enews.org.uniqlo.com/ru/enews/img/top_04.gif,2856,-17%
+ru-enews.org.uniqlo.com/ru/enews/img/top_01.gif,2855,-17.1%
+ru-enews.org.uniqlo.com/ru/enews/img/top_03.gif,2844,-17.4%
+ru-enews.org.uniqlo.com/ru/enews/img/li_03.gif,2844,-16.7%
+ru-enews.org.uniqlo.com/ru/enews/ajax/submit_form.php,2001,-19.9%
+ru-enews.org.uniqlo.com/ru/enews/ajax/emarsys_validate.php,1847,-18.9%
+ru-enews.org.uniqlo.com/ru/enews/fonts/DINPro/DINPro.eot,0,-100%
+# ROW_DATA_END

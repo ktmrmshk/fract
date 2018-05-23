@@ -183,6 +183,53 @@ class Htmlcrwlr(object):
                 fw.write(u+'\n')
         logging.debug('saved to {}'.format(filename))
 
+class FrakmLog(object):
+    '''
+    URL List generatetor from logs akamai provides
+    '''
+    def __init__(self):
+        self._urllist=list()
+
+    def gen(self, hostname, logfiles, proto='https://'):
+        for logfile in logfiles:
+            with open(logfile) as f:
+                is_in_url_part=False
+                for line in f:
+                    if '# ROW_DATA_START' in line:
+                        is_in_url_part = True
+                        continue
+                    elif is_in_url_part:
+                        if '# ROW_DATA_END' in line:
+                            is_in_url_part=False
+                            break
+                        # TOP URL
+                        urlpart = line.split(',')[0]
+                        url = proto + self._replaceDP(urlpart.strip(), hostname)
+                        logging.debug('URL => {}'.format(url))
+                        self._urllist.append(url)
+                    else:
+                        pass
+
+    def _replaceDP(self, logurl, dp):
+        '''
+        in: logurl: from akamai's top url list. e.g. origin.ktmr.com/jp/css/top-140509.css
+        in: dp: digital property or delivery FQDN: like www.ktmr.com
+        out: replaced url: like www.ktmr.com/jp/css/top-140509.css
+        '''
+        
+        sp = logurl.split('/')
+        sp[0] = dp
+        return '/'.join(sp)
+
+
+
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            for u in self._urllist:
+                f.write(u+'\n')
+        logging.debug('saved to {}'.format(filename))
+
+
 
 class FraseGen(object):
     '''

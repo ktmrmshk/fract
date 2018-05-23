@@ -114,8 +114,17 @@ class test_Htmlcrwlr(unittest.TestCase):
         hc.start()
         logging.warning(hc)
 
+from frase import FrakmLog
+class test_FrakmLog(unittest.TestCase):
+    def setUp(self):
+        pass
+    def tearDown(self):
+        pass
+    def test_gen(self):
+        fl=FrakmLog()
+        fl.gen('www.uniqlo.com', ['topurl.csv', 'topurl2.csv'])
+        fl.save('urllist2.txt')
 
-        
 
 from frase import FraseGen
 class test_FraseGen(unittest.TestCase):

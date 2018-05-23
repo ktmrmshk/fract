@@ -180,7 +180,10 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue( len(fg.testcases) == 32)
         fg.save('out.txt')
 
-
+    def test_gen_from_top_urlog(self):
+        fg=FraseGen()
+        fg.gen_from_top_urlog('topurl.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        fg.save('out.json')
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

@@ -302,4 +302,26 @@ class FraseGen(object):
         pass
 
 
+    def gen_from_top_urlog(self, csvfile, dp, src_ghost, dst_ghost, proto='https://'):
+        '''
+        in: csvfile - akamai's log containing top 500 urls
+        '''
+        is_in_url_part=False
+        with open(csvfile) as f:
+            for line in f:
+                if '# ROW_DATA_START' in line:
+                    is_in_url_part = True
+                    continue
+                elif is_in_url_part:
+                    if '# ROW_DATA_END' in line:
+                        is_in_url_part=False
+                        break
+                    # TOP URL
+                    urlpart = line.split(',')[0]
+                    url = proto + self._replaceDP(urlpart.strip(), dp)
+                    tc = self.gen(url, src_ghost, dst_ghost)
+                    logging.debug('testcase => {}'.format(tc))
+                    self.testcases.append( tc )
+                else:
+                    pass
 

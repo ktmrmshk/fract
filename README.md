@@ -46,6 +46,29 @@ Fract helps collect URLs using built-in crawler.
 $ fract geturlc -e https://www.abc123.com/ -d 1 -o urllist.txt -D www.abc123.com
 ```
 
+Show help to get more details:
+
+```
+$ fract geturlc -h
+
+usage: fract geturlc [-h] -e ENTRYPOINT [-d DEPTH] -o OUTPUT -D DOMAIN
+                     [DOMAIN ...]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -e ENTRYPOINT, --entrypoint ENTRYPOINT
+                        entry point url e.g. https://www.akamai.com/
+  -d DEPTH, --depth DEPTH
+                        depth of crawling. default=1
+  -o OUTPUT, --output OUTPUT
+                        output filename
+  -D DOMAIN [DOMAIN ...], --domain DOMAIN [DOMAIN ...]
+                        domain/FQDN to collect. e.g. www.akamai.com
+                        www2.akamai.com ...
+```
+
+
+
 This command generates URL list file with name you specified in command line.
 
 ```
@@ -69,7 +92,7 @@ http://www.abc123.com/jp/css/top-140509.css
 Next step is making testcase from URL list. To this end, you need to know the hostname or IP address of both
 
 * webserver/ghost that you refer as a original/base bahavior - refered as "source ghost"
-* webseever/ghost that you try to test - refered as "destination/taret ghost"
+* webseever/ghost that you try to test - refered as "destination/target ghost"
 
 Usually, production server is used as source ghost and staging server is used as dest ghost.
 At akamaized domain, these hostnames can be found using `dig` command.
@@ -84,7 +107,7 @@ www.abc123.com.edgekey.net.globalredir.akadns.net. 1376 IN CNAME e1234.b.akamaie
 e1234.b.akamaiedge.net. 17  IN  A 23.210.235.187
 ```
 
-In this case, source server is `www.abc123.com.edgekey.net`, while dest server is 'e1234.b.akamaiedge-staging.net'.
+In this case, source server is `www.abc123.com.edgekey.net`, while dest server is `e1234.b.akamaiedge-staging.net`.
 With that, testgeases can be generated as follows.
 
 ```

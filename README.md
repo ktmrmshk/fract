@@ -14,8 +14,25 @@ Installation
 
 ### Docker Image
 
-tbd...
+Faster and handy way to quickly start.
 
+```
+$ docker pull ktmrmshk/fract
+
+$ docker run -it ktmrmshk/fract /bin/bash
+
+root@3f10471d9422:/# fract -h
+usage: fract [-h] [-v] {geturlc,testgen,run,tmerge,rmerge,j2y,y2j} ...
+
+positional arguments:
+  {geturlc,testgen,run,tmerge,rmerge,j2y,y2j}
+                        sub-command help
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbosity       verbos display
+
+```
 
 Workflow Example - Usage
 ------------

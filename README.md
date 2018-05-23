@@ -71,14 +71,14 @@ In this case, source server is `www.abc123.com.edgekey.net`, while dest server i
 With that, testgeases can be generated as follows.
 
 ```
-$ fract -v testgen -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1753.b.akamaiedge-staging.net
+$ fract -v testgen -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net
 
 $ ls
 testcase.json urllist.txt
 
 $ less testcase.json
 
-[{"TestType": "hassert", "Request": {"Ghost": "e1753.b.akamaiedge-staging.net", "Method": "GET", "Url": "https://www.abc123.com/", " Headers": {"Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-
+[{"TestType": "hassert", "Request": {"Ghost": "e1234.b.akamaiedge-staging.net", "Method": "GET", "Url": "https://www.abc123.com/", " Headers": {"Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-
 ...
 ...
 ```
@@ -99,7 +99,7 @@ Tests not passed
 ### TestId: 7602767a85e909990f7c5154f4464c89dfe74ad34f8cfcc55f20efa3b1af9a36
 
 Request:
-  Ghost: e1753.b.akamaiedge-staging.net
+  Ghost: e1234.b.akamaiedge-staging.net
   Headers:
     Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
       akamai-x-get-true-cache-key
@@ -145,7 +145,7 @@ $ vim frdiff20180523141553196655.yaml
 
 - Comment: This test was gened by FraseGen
   Request:
-    Ghost: e1753.b.akamaiedge-staging.net
+    Ghost: e1234.b.akamaiedge-staging.net
     Headers:
       Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
         akamai-x-get-true-cache-key

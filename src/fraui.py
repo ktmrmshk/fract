@@ -12,10 +12,11 @@ class fractui(object):
     def __init__(self):
         self.prs=argparse.ArgumentParser(prog='fract')
         self.prs.add_argument('-v', '--verbosity', help='verbos display', action='store_true')
+        self.prs.set_defaults(func=self.do_usage)
         subprs=self.prs.add_subparsers(help='sub-command help')
         
         ### geturlc - get url by crawler
-        subprs_geturlc=subprs.add_parser('geturlc')
+        subprs_geturlc=subprs.add_parser('geturlc', help='Get URL list using built-in crawler')
         subprs_geturlc.add_argument('-e', '--entrypoint', help='entry point url e.g. https://www.akamai.com/', required=True)
         subprs_geturlc.add_argument('-d', '--depth', help='depth of crawling. default=1', type=int, default=1)
         subprs_geturlc.add_argument('-o', '--output', help='output filename', required=True)
@@ -24,7 +25,7 @@ class fractui(object):
 
 
         ### geturlakm - get url by akamai log
-        subprs_geturlc=subprs.add_parser('geturlakm')
+        subprs_geturlc=subprs.add_parser('geturlakm', help='Get URL list using Akamai Top Url List CSV files')
         subprs_geturlc.add_argument('-i', '--input', help='akamai top url csv file', nargs='+', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='output filename', required=True)
         subprs_geturlc.add_argument('-D', '--domain', help='domain/FQDN/Digial Property. e.g. www.akamai.com', required=True)
@@ -35,7 +36,7 @@ class fractui(object):
 
 
         ### testget - generate test from url list files
-        subprs_geturlc=subprs.add_parser('testgen')
+        subprs_geturlc=subprs.add_parser('testgen', help="Testcase generator based on current server's behaviors")
         subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='output testcase file - json formatted', required=True)
         subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
@@ -47,7 +48,7 @@ class fractui(object):
         now=datetime.today()
         mid=now.strftime('%Y%m%d%H%M%S%f')
         
-        subprs_geturlc=subprs.add_parser('run')
+        subprs_geturlc=subprs.add_parser('run', help='Run testcases')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
         subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
         subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
@@ -57,14 +58,14 @@ class fractui(object):
 
 
         ### tmerge - merge testcase files into one testcase file based on TestId
-        subprs_geturlc=subprs.add_parser('tmerge')
+        subprs_geturlc=subprs.add_parser('tmerge', help='Merge multiple testcases into signle file')
         subprs_geturlc.add_argument('-t', '--testcase', help='testcase json files to merge based on TestId. Latter files overwrite former one.', nargs='+', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='filename of test case json after merging', required=True)
         subprs_geturlc.set_defaults(func=self.do_tmerge)
 
 
         ### tmerge - merge testcase files into one testcase file based on TestId
-        subprs_geturlc=subprs.add_parser('rmerge')
+        subprs_geturlc=subprs.add_parser('rmerge', help='Merge multiple results into signle form')
         subprs_geturlc.add_argument('-t', '--testcase', help='testcase json files', nargs='+', required=True)
         subprs_geturlc.add_argument('-r', '--result', help='result json files', nargs='+', required=True)
         subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
@@ -73,14 +74,14 @@ class fractui(object):
 
 
         ### j2y - json to yaml converter
-        subprs_geturlc=subprs.add_parser('j2y')
+        subprs_geturlc=subprs.add_parser('j2y', help='Json to yaml converter')
         subprs_geturlc.add_argument('jsonfile', help='Json filename')
         subprs_geturlc.add_argument('yamlfile', help='Yaml filename')
         subprs_geturlc.set_defaults(func=self.do_j2y)
         
 
         ### y2j - yaml to json converter
-        subprs_geturlc=subprs.add_parser('y2j')
+        subprs_geturlc=subprs.add_parser('y2j', help='Yaml to json converter')
         subprs_geturlc.add_argument('yamlfile', help='Yaml filename')
         subprs_geturlc.add_argument('jsonfile', help='Json filename')
         subprs_geturlc.set_defaults(func=self.do_y2j)
@@ -97,6 +98,13 @@ class fractui(object):
     def verbose(self, args):
         if args.verbosity:
             logging.basicConfig(level=logging.DEBUG)
+
+    def do_usage(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        self.prs.print_help()
+
+
 
     def do_geturls(self, args):
         self.verbose(args)
@@ -197,10 +205,12 @@ class fractui(object):
 
 
 if __name__ == '__main__':
-    ui=fractui()
-    args = ui.prs.parse_args()
-    args.func(args)
-
+    try:
+        ui=fractui()
+        args = ui.prs.parse_args()
+        args.func(args)
+    except Exception as e:
+        logging.error(e)
 
 
 

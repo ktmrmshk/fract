@@ -560,6 +560,8 @@ class Fract(object):
                 return True
             else:
                 return False
+        elif mode == 'exact':
+            return query == text
         else:
             pass # should raise exception!
 

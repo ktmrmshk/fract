@@ -1,4 +1,4 @@
-import unittest, json, logging
+import unittest, json, logging, re
 
 from fract import FractTest, FractTestHassert, FractTestHdiff
 class test_FractTest(unittest.TestCase):
@@ -297,6 +297,10 @@ class test_Fract(unittest.TestCase):
         self.assertFalse( self.fr._passed('endswith', '.com', 'https://www.jins.co.jp') )
         self.assertTrue( self.fr._passed('contain', 'jins', 'http://www.jins.com') )
         self.assertFalse( self.fr._passed('contain', 'jeans', 'https://www.jins.co.jp') )
+        
+        self.assertTrue( self.fr._passed('regex', re.escape('http://abc.com/index.html?xyz=123&Name=FOOBAR'), 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
+        self.assertTrue( self.fr._passed('exact', 'http://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
+        self.assertFalse( self.fr._passed('exact', 'https://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
 
     def test_check_headercase(self):
         ret = self.fr._check_headercase('status_code', [{"type":"regex","query":"301"}], {'status_code': 301})

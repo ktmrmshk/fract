@@ -525,7 +525,7 @@ class Fract(object):
         # parse each testcase
         for t in testlist:
             logging.debug('  --> test={}'.format(t))
-            assert t['type'] == 'regex'
+            #assert t['type'] == 'regex'
 
             if has_this_header:
                 hdr_resultcase.append(\

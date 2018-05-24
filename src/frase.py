@@ -284,8 +284,8 @@ class FraseGen(object):
         ft.set_comment('This test was gened by FraseGen')
         ft.set_testid()
         if 'Location' in cstat:
-            ft.add('Location', cstat['Location'])
-            ft.add('status_code', str(cstat['status_code']) )
+            ft.add('Location', cstat['Location'], 'exact')
+            #ft.add('status_code', str(cstat['status_code']) )
         return ft
 
     def _replaceDP(self, logurl, dp):

@@ -39,6 +39,8 @@ Workflow Example - Usage
 
 ### 1. Collect URL list
 
+#### A. Using crawler
+
 Testcase is generated based on specific URL, so that you need to collect URLs and put it together single text file.
 Fract helps collect URLs using built-in crawler.
 
@@ -85,6 +87,19 @@ http://www.abc123.com/jp/css/top-140509.css
 ...
 ...
 ```
+
+#### B. Using Akamai top url csv files
+
+If akamai top url csv files are available, testcase can be made from that.
+
+```
+$ fract geturlakm -i top_u_r_l_hits_1.csv top_u_r_l_hits_2.csv -D www.abc123.com -p https -o urllist.txt
+```
+
+Akamai's log doesn't contains protocol info and FQDN, so that you must specify these params.
+
+
+
 
 
 ### 2. Make testcases from URL list

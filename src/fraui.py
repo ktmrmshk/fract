@@ -22,6 +22,18 @@ class fractui(object):
         subprs_geturlc.add_argument('-D', '--domain', help='domain/FQDN to collect. e.g. www.akamai.com www2.akamai.com ...', nargs='+', required=True)
         subprs_geturlc.set_defaults(func=self.do_geturls)
 
+
+        ### geturlakm - get url by akamai log
+        subprs_geturlc=subprs.add_parser('geturlakm')
+        subprs_geturlc.add_argument('-i', '--input', help='akamai top url csv file', nargs='+', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='output filename', required=True)
+        subprs_geturlc.add_argument('-D', '--domain', help='domain/FQDN/Digial Property. e.g. www.akamai.com', required=True)
+        subprs_geturlc.add_argument('-p', '--protocol', help='protocol: http or https', default='https')
+        subprs_geturlc.set_defaults(func=self.do_geturlakm)
+
+
+
+
         ### testget - generate test from url list files
         subprs_geturlc=subprs.add_parser('testgen')
         subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
@@ -93,6 +105,14 @@ class fractui(object):
         hc=Htmlcrwlr(args.entrypoint, args.domain, args.depth)
         hc.start()
         hc.save(args.output)
+
+    def do_geturlakm(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fl=FrakmLog()
+        fl.gen(args.domain, args.input, '{}://'.format(args.protocol))
+        fl.save(args.output)
 
     def do_testgen(self, args):
         self.verbose(args)

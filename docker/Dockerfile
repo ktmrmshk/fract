@@ -1,6 +1,6 @@
 FROM python:3.6
 
-RUN apt-get update && apt-get -y install vim
+RUN apt-get update && apt-get -y install vim dnsutils
 RUN pip install requests
 RUN pip install grip
 RUN pip install PyYAML

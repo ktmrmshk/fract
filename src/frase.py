@@ -265,7 +265,7 @@ class FraseGen(object):
         cpcode = sp[3]
         return (cpcode, ttl)
 
-    def gen(self, url, src_ghost, dst_ghost):
+    def gen(self, url, src_ghost, dst_ghost, headers={}):
         '''
         in: url and ghost
         out: hassert test case
@@ -273,9 +273,10 @@ class FraseGen(object):
 
         ft = fract.FractTestHassert()
         ft.init_template()
-        ft.setRequest(url, dst_ghost, {'Pragma':fract.AKAMAI_PRAGMA})
+        headers.update({'Pragma':fract.AKAMAI_PRAGMA})
+        ft.setRequest(url, dst_ghost, headers)
 
-        cstat = self._current_stat(url, src_ghost)
+        cstat = self._current_stat(url, src_ghost, headers)
         cpcode, ttl = self._parse_xcachekey(cstat['X-Cache-Key'])
         ft.add('X-Cache-Key', '/{}/'.format(cpcode))
         ft.add('X-Cache-Key', '/{}/'.format(ttl))
@@ -316,7 +317,7 @@ class FraseGen(object):
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 
-    def gen_from_urls(self, filename, src_ghost, dst_ghost):
+    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}):
         cnt=0
         with open(filename) as f:
             for line in f:
@@ -324,7 +325,7 @@ class FraseGen(object):
                 if url == '':
                     continue
                 try:
-                    tc = self.gen(url, src_ghost, dst_ghost)
+                    tc = self.gen(url, src_ghost, dst_ghost, headers)
                     self.testcases.append( tc )
                     cnt+=1
                 except Exception as e:

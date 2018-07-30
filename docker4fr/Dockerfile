@@ -6,7 +6,8 @@ RUN pip install grip
 RUN pip install PyYAML
 RUN pip install urllib3
 
-RUN git clone -b release https://github.com/ktmrmshk/fract.git
+RUN git clone https://github.com/ktmrmshk/fract.git
+RUN rm -rf /fract/docker/ /fract/docker4fr/ /fract/README.md /fract/test/ /fract/.git
 ENV PYTHONPATH /fract/src/
 ENV PATH="/fract/:${PATH}"
 

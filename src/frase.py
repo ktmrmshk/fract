@@ -274,6 +274,7 @@ class FraseGen(object):
         ft = fract.FractTestHassert()
         ft.init_template()
         headers.update({'Pragma':fract.AKAMAI_PRAGMA})
+        headers.update({'X-Akamai-Cloudlet-Cost': 'true'})
         ft.setRequest(url, dst_ghost, headers)
 
         cstat = self._current_stat(url, src_ghost, headers)

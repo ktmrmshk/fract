@@ -148,7 +148,6 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue(ret['X-Check-Cacheable'] == 'YES')
         self.assertTrue( '544456' in ret['X-Cache-Key'])
  
-
     def test_current_stat_redirect(self):
         fg=FraseGen()
         ret = fg._current_stat('http://space.ktmrmshk.com', 'space.ktmrmshk.com')
@@ -200,7 +199,20 @@ class test_FraseGen(unittest.TestCase):
         
         self.assertTrue( len( ft.query['Comment'] ) != 0 )
         self.assertTrue( len( ft.query['TestId'] ) != 0  )
+ 
 
+    # Edge redirector cost check support
+    def test_gen_20180815_ercost(self):
+        fg=FraseGen()
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Request']['Method'] == 'GET' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
+        self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
+        self.assertTrue( ft.query['Request']['Headers']['User-Agent'] == 'iPhone' )
+        
+        self.assertTrue( ft.query['Request']['Headers']['X-Akamai-Cloudlet-Cost'] == 'true' )
 
 
     def test_replaceDP(self):

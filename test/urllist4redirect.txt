@@ -1,0 +1,13 @@
+https://fract.akamaized.net/
+http://fract.akamaized.net/single-video.html
+https://fract.akamaized.net/images/icons/icon-search.svg
+https://fract.akamaized.net/images/wheel-2000.jpg
+https://fract.akamaized.net/js/modernizr.js
+https://fract.akamaized.net/pm_redirect/abc123
+https://fract.akamaized.net/difftest/abc123.html
+https://fract.akamaized.net/difftest_cpcode/abc123.html
+https://fract.akamaized.net/pm_redirect/foobar/hoge/
+https://fract.akamaized.net/pm_redirect/xyz123?id=123&cond=hogehoge&name=123
+https://fract.akamaized.net/pm_redirect/
+https://fract.akamaized.net/redirect_test/
+https://fract.akamaized.net/foobar/

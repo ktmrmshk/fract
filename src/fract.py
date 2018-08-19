@@ -627,7 +627,7 @@ class FractClient(object):
             if not fret.query['Passed']:
                 self._failed_result_suite.append( fret )
 
-
+    
 
 
     def run_suite(self, testids=None):
@@ -750,7 +750,78 @@ Total
         else:
             print('=> Not Good')
 
+    def export_redirect_summary(self, filename):
+        self.redirect_summary=list()
+        for fret in self._result_suite:
+            if fret.query['Response']['status_code'] in (301, 302, 303, 307):
+                single_summary = self._make_spec_summary(fret)
+                self.redirect_summary.append(single_summary)
 
+        with open(filename, 'w') as f:
+            json.dump(self.redirect_summary, f, indent=2)
+
+        logging.debug('redirect summary: {}'.format(self.redirect_summary))
+        logging.debug('saved to {}'.format(filename))
+
+    def export_ercost_high(self, filename, ercost_threshold):
+        self.ercost_high_summary=list()
+        for fret in self._result_suite:
+            ercost = int( fret.query['Response'].get('X-Akamai-Tapioca-Cost-ER', '0'))
+            if ercost > ercost_threshold:
+                single_summary = self._make_spec_summary(fret)
+                self.ercost_high_summary.append( single_summary )
+
+        with open(filename, 'w') as f:
+            json.dump(self.ercost_high_summary, f, indent=2)
+
+        logging.debug('redirect summary: {}'.format(self.ercost_high_summary))
+        logging.debug('saved to {}'.format(filename))
+
+
+    def _make_spec_summary(self, fret):
+        '''
+        export spec summary:
+        * request
+          - url, ghost, custom header
+        * passed
+        * testid
+        * response
+          - status_code, location, ercost
+        '''
+        request=dict()
+        response=dict()
+        # request
+        t = self._get_testcase( fret.query['TestId'] )
+        request['Url']=t.query['Request']['Url']
+        request['Method']=t.query['Request']['Method']
+        request['Ghost']=t.query['Request']['Ghost']
+        hdrs=dict()
+        for k,v in t.query['Request']['Headers'].items():
+            if k not in ('Pragma', 'X-Akamai-Cloudlet-Cost'):
+                hdrs[k]=v
+        else:
+            request['Headers']=hdrs
+
+        # passed
+        passed=fret.query['Passed']
+
+        # testid 
+        testid=fret.query['TestId']
+
+        # response
+        response['status_code']=fret.query['Response']['status_code']
+        response['Server']=fret.query['Response'].setdefault('Server', '')
+        response['Location']=fret.query['Response'].setdefault('Location', '')
+        response['X-Akamai-Tapioca-Cost-ER']=fret.query['Response'].setdefault('X-Akamai-Tapioca-Cost-ER', '0')
+
+        # append
+        return {'Request': request, 'TestPassed': passed, 'Response': response, 'TestId': testid}
+        
+
+
+
+
+    
 
 class JsonYaml(object):
     def __init__(self):

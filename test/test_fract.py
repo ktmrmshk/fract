@@ -386,6 +386,36 @@ class test_FractClient(unittest.TestCase):
         self.assertTrue( len(fclient._result_suite) == 32 )
         self.assertTrue( len(fclient._failed_result_suite) == 23 )
 
+    # redirect summary support
+    def test_export_redirect_summary(self):
+        REDIRECT_SUMMARY='redirect_summary.json'
+        fclient = FractClient(fract_suite_file='testcase4redirect.json') # includes 7 redirect
+        fclient.load_resultfile('result4redirect.json')
+        fclient.export_redirect_summary(REDIRECT_SUMMARY)
+        
+        self.assertTrue( len(fclient.redirect_summary) == 7)
+        self.assertTrue( fclient.redirect_summary[0]['Response']['status_code'] == 301 )
+        self.assertTrue( fclient.redirect_summary[0]['Response']['Server'] == 'AkamaiGHost' )
+        self.assertTrue( fclient.redirect_summary[1]['TestId'] == 'ec5890b017383f077f788478aa41911748e0a5a15b7230a1555b14648950da83' )
+        self.assertTrue( 'User-Agent' in fclient.redirect_summary[1]['Request']['Headers'] )
+    
+    def test_make_spec_summary(self):
+        fclient = FractClient(fract_suite_file='testcase4redirect.json') # includes 7 redirect
+        fclient.load_resultfile('result4redirect.json')
+        fret=fclient._result_suite[0]
+        single_summary = fclient._make_spec_summary(fret)
+
+        self.assertTrue( single_summary['Response']['status_code'] == 200 )
+        self.assertTrue( single_summary['Response']['Location'] == '' )
+
+    def test_export_ercost_high(self):
+        ERCOST_SUMMARY='ercost_high_summary.json'
+        fclient = FractClient(fract_suite_file='testcase4redirect.json') # includes 7 redirect
+        fclient.load_resultfile('result4redirect.json')
+        fclient.export_ercost_high(ERCOST_SUMMARY, 10000000)
+        
+        self.assertTrue( len(fclient.ercost_high_summary) == 3)
+
 
 from fract import JsonYaml
 class test_JsonYaml(unittest.TestCase):

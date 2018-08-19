@@ -88,6 +88,23 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_y2j)
 
 
+        ### redirsum - redirect summary 
+        subprs_geturlc=subprs.add_parser('redirsum', help='Export redirect request/response summary in JSON form')
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
+        subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
+        subprs_geturlc.set_defaults(func=self.export_redirect_summary)
+        
+
+        ### ercost - ercost-check summary
+        subprs_geturlc=subprs.add_parser('ercost', help='Export Eege-Redirector-Cost summary in JSON form')
+        subprs_geturlc.add_argument('-c', '--cost', help='cost threashold to Eege-Redirector-Cost',  type=int, required=True)
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
+        subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
+        subprs_geturlc.set_defaults(func=self.export_ercost_summary)
+        
+
 
     def _tname(self, prefix, ext, postfix='', mid=None):
         ' if mid is None, returns "prefix2018111210123postfix.ext" '
@@ -205,6 +222,21 @@ class fractui(object):
         jy=JsonYaml()
         jy.y2j(args.yamlfile, args.jsonfile)
 
+    def export_redirect_summary(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fclient = FractClient(fract_suite_file=args.testcase)
+        fclient.load_resultfile(args.result)
+        fclient.export_redirect_summary(args.output)
+
+    def export_ercost_summary(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fclient = FractClient(fract_suite_file=args.testcase)
+        fclient.load_resultfile(args.result)
+        fclient.export_ercost_high(args.output, args.cost)
 
 if __name__ == '__main__':
     try:

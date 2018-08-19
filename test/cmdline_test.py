@@ -32,51 +32,81 @@ class testFractCommnand(unittest.TestCase):
 
 # edge redirector cost check support
 class testERCost(unittest.TestCase):
+    def setUp(self):
+        self.URLLIST='urllist.txt.test'
+        self.TESTCASE='testcase.json.test'
+        self.RESULT='result.json.test'
+        self.SUMMARY='summary.txt.test'
+        self.TDIFF='testdiff.yaml.test'
+        self.REDIRECT_SUMMARY='redirect_summary.json.test'
+
+        cmd='rm *.test'
+        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+
+    def tearDown(self):
+        #  remove files
+        cmd='rm *.test'
+        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+
+    def do_cmd(self, cmd):
+        '''
+        cmd: command line string i.e. 'fract run -h'
+        '''
+        cmd_list = shlex.split(cmd)
+        return subprocess.run(cmd_list, stdout=subprocess.PIPE)
+
     def test_ERCostHeader(self):
         '''
         Scenario
         1. make urllist
         2. gen testcase
         3. check ER cost
-        4. rm files
         '''
-        URLLIST='urllist.txt.test'
-        TESTCASE='testcase.json.test'
-        RESULT='result.json.test'
-        SUMMARY='summary.txt.test'
-        TDIFF='testdiff.yaml.test'
-        
-        cmd='rm *.test'
-        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
-        
         # 1. make urllist
-        with open(URLLIST, 'w') as f:
+        with open(self.URLLIST, 'w') as f:
             f.write('https://fract.akamaized.net/')
-        self.assertTrue( os.path.isfile(URLLIST))
+        self.assertTrue( os.path.isfile(self.URLLIST))
 
         # 2. gen testcase
-        cmdraw='python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized.net'.format(fraui_path, URLLIST, TESTCASE)
-        cmd=shlex.split(cmdraw)
-        subprocess.run(cmd, stdout=subprocess.PIPE)
-        self.assertTrue( os.path.isfile(TESTCASE))
-        with open( TESTCASE ) as f:
+        self.do_cmd( 'python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        self.assertTrue( os.path.isfile(self.TESTCASE))
+        with open( self.TESTCASE ) as f:
             testcase=json.load(f)
             self.assertTrue( testcase[0]['Request']['Headers']['X-Akamai-Cloudlet-Cost'] == 'true')
 
         # 3. run and check ER cost
-        cmdraw='python3 {} run -i {} -o {} -s {} -d {}'.format(fraui_path, TESTCASE, RESULT, SUMMARY, TDIFF)
-        cmd=shlex.split(cmdraw)
-        subprocess.run(cmd, stdout=subprocess.PIPE)
-        self.assertTrue( os.path.isfile(RESULT))
-        self.assertTrue( os.path.isfile(SUMMARY))
-        self.assertTrue( os.path.isfile(TDIFF))
-        with open( RESULT ) as f:
+        self.do_cmd('python3 {} run -i {} -o {} -s {} -d {}'.format(fraui_path, self.TESTCASE, self.RESULT, self.SUMMARY, self.TDIFF))
+        self.assertTrue( os.path.isfile(self.RESULT))
+        self.assertTrue( os.path.isfile(self.SUMMARY))
+        self.assertTrue( os.path.isfile(self.TDIFF))
+        with open( self.RESULT ) as f:
             result = json.load(f)
             self.assertTrue('X-Akamai-Tapioca-Cost-ER' in result[0]['Response'])
 
-        # 4. remove files
-        cmd='rm *.test'
-        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+    def test_RedirectSummary(self):
+        '''
+        Scenario:
+        1. gen testcase from existing urllist file "urllist4redirect.txt"
+        2. run
+        3. export redirect summary
+        '''
+        # 1. gen testcase
+        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, 'urllist4redirect.txt', self.TESTCASE) )
+        self.assertTrue( os.path.isfile(self.TESTCASE))
+        
+        # 2. run
+        self.do_cmd('python3 {} run -i {} -o {} -s {} -d {}'.format(fraui_path, self.TESTCASE, self.RESULT, self.SUMMARY, self.TDIFF))
+        
+        # 3. export redirect summary
+        self.do_cmd('python3 {} redirsum -t {} -r {} -o {}'.format(fraui_path, self.TESTCASE, self.RESULT, self.REDIRECT_SUMMARY))
+        
+        self.assertTrue( os.path.isfile(self.REDIRECT_SUMMARY) )
+        
+        with open( self.REDIRECT_SUMMARY ) as f:
+            redirect_summary = json.load(f)
+            self.assertTrue( redirect_summary[0]['Response']['status_code'] in (301, 302, 303, 307) )
+            self.assertTrue( 'X-Akamai-Tapioca-Cost-ER' in redirect_summary[0]['Response'] )
+
 
 
 

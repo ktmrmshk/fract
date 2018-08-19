@@ -7,7 +7,8 @@ A web tool for CDN regression test
 Overview
 -------------
 
-tbd...
+A web tool for CDN regression test
+
 
 Installation
 ------------
@@ -22,17 +23,36 @@ $ docker pull ktmrmshk/fract
 $ docker run -it ktmrmshk/fract /bin/bash
 
 root@3f10471d9422:/# fract -h
-usage: fract [-h] [-v] {geturlc,testgen,run,tmerge,rmerge,j2y,y2j} ...
+usage: fract [-h] [-v]
+             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost}
+             ...
 
 positional arguments:
-  {geturlc,testgen,run,tmerge,rmerge,j2y,y2j}
+  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost}
                         sub-command help
+    geturlc             Get URL list using built-in crawler
+    geturlakm           Get URL list using Akamai Top Url List CSV files
+    testgen             Testcase generator based on current server's behaviors
+    run                 Run testcases
+    tmerge              Merge multiple testcases into signle file
+    rmerge              Merge multiple results into signle form
+    j2y                 Json to yaml converter
+    y2j                 Yaml to json converter
+    redirsum            Export redirect request/response summary in JSON form
+    ercost              Export Eege-Redirector-Cost summary in JSON form
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbosity       verbos display
-
 ```
+
+Changelog
+------------
+	
+* 2018/07/31 - custom request header support
+* 2018/08/15 - redirect summary, Edge-Redirector-Cost check	
+
+
 
 Workflow Example - Usage
 ------------
@@ -127,6 +147,14 @@ With that, testgeases can be generated as follows.
 
 ```
 $ fract -v testgen -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net
+```
+
+
+If you like to modify or append custom request header like User-Agent and Referer, use `-H` option with json-formatted custom headers and values.
+
+
+```
+$ fract -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}' -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net 
 
 $ ls
 testcase.json urllist.txt
@@ -302,7 +330,7 @@ urllist.txt
 
 
 
-### 7. merge testcases
+### 7. Merge testcases
 
 Finally, merge testcases into signle file for next round.
 
@@ -325,7 +353,129 @@ urllist.txt
 ```
 
 
-### 8. Next round
+### 8. Export redirect summary
+
+Summary on redirect request/response can be parsed from test result.
+
+```
+$ fract redirsum -t final_testcase.json -r final_result.json -o redirect_summary.json
+
+$ ls -l
+final_result.json
+final_summary.txt
+final_testcase.json
+frdiff20180523141553196655.json
+frdiff20180523141553196655.yaml
+frdiff20180523142335107496.yaml
+fret20180523141553196655.json
+fret20180523142335107496.json
+frsummary20180523141553196655.txt
+frsummary20180523142335107496.txt
+redirect_summary.json                 <== Added !
+testcase.json
+urllist.txt
+
+$ cat redirect_summary.json 
+[
+  {
+    "Request": {
+      "Url": "http://fract.akamaized.net/single-video.html",
+      "Method": "GET",
+      "Ghost": "fract.akamaized-staging.net",
+      "Headers": {}
+    },
+    "TestPassed": true,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "X-Akamai-Tapioca-Cost-ER": "10031926"
+    },
+    "TestId": "631799cd2875b35de51ac45d0a4c8627c06d16cbf1f511dcaadd725d9f0d182b"
+  },
+  {
+    "Request": {
+      "Url": "https://fract.akamaized.net/pm_redirect/abc123",
+      "Method": "GET",
+      "Ghost": "fract.akamaized-staging.net",
+      "Headers": {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
+      }
+    },
+    "TestPassed": true,
+    "Response": {
+      "status_code": 302,
+      "Server": "AkamaiGHost",
+...
+...
+``` 
+
+### 9. Edge-Redirector-Cost check
+
+Similarly, Edge-Redirector-Cost can be checked from test result. To list up requests of Edge-Redirector-Cost over 1000000, type as follows:
+
+```
+$ fract ercost -c 1000000 -t final_testcase.json -r final_result.json -o ercost_summary.json.test
+
+$ ls -l 
+final_result.json
+final_summary.txt
+final_testcase.json
+frdiff20180523141553196655.json
+frdiff20180523141553196655.yaml
+frdiff20180523142335107496.yaml
+fret20180523141553196655.json
+fret20180523142335107496.json
+frsummary20180523141553196655.txt
+frsummary20180523142335107496.txt
+redirect_summary.json
+ercost_summary.json.test                 <== Added !
+testcase.json
+urllist.txt
+
+
+
+$ cat ercost_summary.json.test
+[
+  {
+    "Request": {
+      "Url": "https://fract.akamaized.net/",
+      "Method": "GET",
+      "Ghost": "fract.akamaized-staging.net",
+      "Headers": {}
+    },
+    "TestPassed": true,
+    "Response": {
+      "status_code": 200,
+      "Server": "Apache",
+      "Location": "",
+      "X-Akamai-Tapioca-Cost-ER": "10041225"
+    },
+    "TestId": "5e01096573d3757e1a669e4cbf3207f7ebc1e11df3ebf0c0226429c35dbf4668"
+  },
+  {
+    "Request": {
+      "Url": "http://fract.akamaized.net/single-video.html",
+      "Method": "GET",
+      "Ghost": "fract.akamaized-staging.net",
+      "Headers": {}
+    },
+    "TestPassed": true,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "X-Akamai-Tapioca-Cost-ER": "10031926"
+    },
+    "TestId": "631799cd2875b35de51ac45d0a4c8627c06d16cbf1f511dcaadd725d9f0d182b"
+  },
+...
+...
+
+```
+
+
+### 10. Next round
 
 Go to #1, #2 or #3.
 

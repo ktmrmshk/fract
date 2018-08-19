@@ -39,6 +39,7 @@ class testERCost(unittest.TestCase):
         self.SUMMARY='summary.txt.test'
         self.TDIFF='testdiff.yaml.test'
         self.REDIRECT_SUMMARY='redirect_summary.json.test'
+        self.ERCOST_SUMMARY='ercost_summary.json.test'
 
         cmd='rm *.test'
         subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
@@ -52,6 +53,7 @@ class testERCost(unittest.TestCase):
         '''
         cmd: command line string i.e. 'fract run -h'
         '''
+        logging.debug('cmd => {}'.format(cmd))
         cmd_list = shlex.split(cmd)
         return subprocess.run(cmd_list, stdout=subprocess.PIPE)
 
@@ -83,7 +85,7 @@ class testERCost(unittest.TestCase):
             result = json.load(f)
             self.assertTrue('X-Akamai-Tapioca-Cost-ER' in result[0]['Response'])
 
-    def test_RedirectSummary(self):
+    def test_redirsum(self):
         '''
         Scenario:
         1. gen testcase from existing urllist file "urllist4redirect.txt"
@@ -107,6 +109,16 @@ class testERCost(unittest.TestCase):
             self.assertTrue( redirect_summary[0]['Response']['status_code'] in (301, 302, 303, 307) )
             self.assertTrue( 'X-Akamai-Tapioca-Cost-ER' in redirect_summary[0]['Response'] )
 
+    def test_ercost(self):
+        '''
+        Scenario:
+        1. export ercost summary from exisiting result
+        '''
+        self.do_cmd( 'python3 {} ercost -c 10 -t {} -r {} -o {}'.format(fraui_path, 'testcase4redirect.json', 'result4redirect.json', self.ERCOST_SUMMARY) )
+
+        with open(self.ERCOST_SUMMARY) as f:
+            ercost_summary = json.load(f)
+            self.assertTrue( len(ercost_summary) == 13)
 
 
 

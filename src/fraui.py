@@ -102,7 +102,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
         subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
-        subprs_geturlc.set_defaults(func=self.export_redirect_summary)
+        subprs_geturlc.set_defaults(func=self.export_ercost_summary)
         
 
 
@@ -230,6 +230,13 @@ class fractui(object):
         fclient.load_resultfile(args.result)
         fclient.export_redirect_summary(args.output)
 
+    def export_ercost_summary(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fclient = FractClient(fract_suite_file=args.testcase)
+        fclient.load_resultfile(args.result)
+        fclient.export_ercost_high(args.output, args.cost)
 
 if __name__ == '__main__':
     try:

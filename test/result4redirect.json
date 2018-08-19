@@ -1,0 +1,971 @@
+[
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 200,
+      "Content-Type": "text/html",
+      "Last-Modified": "Thu, 21 Jun 2018 06:28:01 GMT",
+      "Accept-Ranges": "bytes",
+      "Content-Encoding": "gzip",
+      "Server": "Apache",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "f5c794.1d1297",
+      "X-Akamai-Transformed": "9 5007 0 pmb=mRUM,1",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "Content-Length": "5564",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "peer /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,41225",
+      "X-Akamai-Tapioca-Cost-ER": "41225",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "Vary": "Accept-Encoding",
+      "X-Cache-Remote": "TCP_MISS from a23-50-49-13.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Akamai-Staging": "EdgeSuite"
+    },
+    "Comment": "",
+    "TestId": "5e01096573d3757e1a669e4cbf3207f7ebc1e11df3ebf0c0226429c35dbf4668",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 200,
+          "testcase": {
+            "type": "regex",
+            "query": "200"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-20.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "mem-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,31926",
+      "X-Akamai-Tapioca-Cost-ER": "31926",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/single-video.html",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/single-video.html, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=http://fract.akamaized.net/single-video.html, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "3f146b"
+    },
+    "Comment": "",
+    "TestId": "631799cd2875b35de51ac45d0a4c8627c06d16cbf1f511dcaadd725d9f0d182b",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 301,
+          "testcase": {
+            "type": "regex",
+            "query": "301"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/single-video.html",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/single-video.html"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 200,
+      "Content-Type": "image/svg+xml",
+      "Content-Length": "478",
+      "Last-Modified": "Thu, 21 Jun 2018 06:28:06 GMT",
+      "Accept-Ranges": "bytes",
+      "Content-Encoding": "gzip",
+      "Server": "Apache",
+      "X-Akamai-Staging": "EdgeSuite, EdgeSuite",
+      "Cache-Control": "max-age=552507",
+      "Expires": "Sat, 25 Aug 2018 11:32:39 GMT",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_HIT from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,48938",
+      "X-Akamai-Tapioca-Cost-ER": "48938",
+      "X-True-Cache-Key": "/L/fract.akamaized.net/col/images/icons/icon-search.svg",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=true, name=AKA_PM_FWD_URL; value=/col/images/icons/icon-search.svg, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCHABLE; value=on, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/images/icons/icon-search.svg, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "Vary": "Accept-Encoding",
+      "X-Check-Cacheable": "YES",
+      "X-Akamai-Request-ID": "1d129d"
+    },
+    "Comment": "",
+    "TestId": "693da852cd7c94dccc2f218936a2954517e299516172d5b882a8416454673131",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
+          "testcase": {
+            "type": "regex",
+            "query": "/7d/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "YES",
+          "testcase": {
+            "type": "regex",
+            "query": "YES"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 200,
+          "testcase": {
+            "type": "regex",
+            "query": "200"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 200,
+      "Last-Modified": "Sat, 18 Aug 2018 11:34:04 UTC",
+      "Server": "Akamai Image Manager",
+      "X-Akamai-SSL-Client-Sid": "cBgqZkERO2xtgXXVNstXMw==",
+      "Content-Length": "155702",
+      "Content-Type": "image/jpeg",
+      "X-Akamai-Staging": "EdgeSuite, EdgeSuite",
+      "Cache-Control": "private, no-transform, max-age=2539810",
+      "Expires": "Mon, 17 Sep 2018 11:34:22 GMT",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_HIT from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,53384",
+      "X-Akamai-Tapioca-Cost-ER": "53384",
+      "X-True-Cache-Key": "/L/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_BYPASS_CONDITIONAL_ORIGIN; value=true, name=AKA_PM_BYPASS_FEO; value=true, name=AKA_PM_BYPASS_MODIFY_PATH; value=true, name=AKA_PM_BYPASS_SITESHIELD; value=true, name=AKA_PM_BYPASS_SUREROUTE; value=true, name=AKA_PM_BYPASS_TD; value=true, name=AKA_PM_CACHEABLE_OBJECT; value=true, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCHABLE; value=on, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ALLOW_FOSSL_FF_IM; value=yes, name=ALLOW_MIDGRESS_TO_FF; value=yes, name=ALLOW_MISSL_FF_IM; value=yes, name=ANS_PEARL_VERSION; value=0.6.0, name=BOOL; value=true, name=CAE2G_DATA; value=salt=2103799050371399698 parse=1 adapted=1, name=DLR_DOMAIN; value=dlr2.staging.imaging.akamai.com, name=DO_FAILOVER; value=0, name=DO_REALTIME; value=0, name=DO_STORAGE; value=1, name=DO_TRANSFORMER; value=0, name=EDC_BROWSER, name=EDC_BROWSER_VERSION, name=EDC_DENSITY_CLASS, name=EDC_DEVICE_OS_VERSION, name=EDC_IS_MOBILE; value=false; full_location_id=is_mobile, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=G2CAE_CURRENT_KEY_NAME; value=v1, name=G2CAE_DATA; value=parse=1 g_s_ip=23.50.62.23 g_ip=23.50.62.27 r_c_ip= c_ip=103.5.142.114 time=1534644252331 req_id=1d12a0 salt=1674831189285535773 nonce=v1 cpcode=729521 product=IM, name=IC_FORWARD_PATH; value=/image-server/image/images/wheel-2000.jpg?interpolation=auto&downsize=5000:*&output-quality=85&animations=passthrough&return-smallest=true&lunatoken=&bypassSkipDlr=true&url=https%3a%2f%2ffract.akamaized.net%2fimages%2fwheel-2000.jpg&ignore-after&, name=IC_QUERY; value=interpolation=auto&downsize=5000:*&output-quality=85&animations=passthrough&return-smallest=true, name=IM_AK_CURRENT_AGE; value=52190, name=IM_AK_INTERNAL_TTL; value=2592000, name=IM_CH_INDEX; value=785, name=IM_CID_FROM_VARIABLES; value=, name=IM_CUSTOM_GD_1; value=im-staging-sro1006.akasrg.akamai.com, name=IM_CUSTOM_PARENT; value=a100.ch.akamai-staging.net, name=IM_DEMO; value=off, name=IM_DERIVATIVE; value=true, name=IM_EXTRACTED_COOKIE, name=IM_FORMAT; value=generic, name=IM_GD_CLUSTER_SIZE; value=11, name=IM_GD_CLUSTER_START; value=1000, name=IM_GEO_HEADER, name=IM_IGNORE_QS_PARAMS; value=, name=IM_IMPL_USE_RIT_VIDEO_ORIGIN; value=false, name=IM_IS_STAGING; value=true, name=IM_ORIGINAL_BYTES; value=155702; full_location_id=X-IM-Original-Size, name=IM_ORIGINAL_WIDTH; value=2000; full_location_id=X-IM-Original-Width, name=IM_PICKED_QUALITY; value=85; full_location_id=X-IM-Encoding-Quality, name=IM_PIEZ; value=off, name=IM_PIXEL_DENSITY; value=1, name=IM_POLICY_FOUND; value=true, name=IM_POLICY_NAME; value=.auto, name=IM_QS_ALLOW_DUPLICATE_PARAMS; value=false, name=IM_QUERY_FORMAT; value=, name=IM_QUERY_NO_AKI; value=, name=IM_QUERY_NO_AKI_CACHE_KEY; value=, name=IM_REGIONSET_ALLOW_IMS_INM_REQUEST; value=false, name=IM_SERIAL; value=124, name=IM_SHARD; value=1006, name=IM_SKIP_IC_INTERNAL; value=true, name=IM_WIDTH; value=5000, name=N_POLICY_PERCENT; value=100, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=PEARL_MODE; value=REGULAR, name=PEARL_STATE; value=STORAGE, name=QUERY_STRING_COUNT; value=0, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RTT_FORWARD_PATH; value=/images/wheel-2000.jpg?policyName=.auto&policyJson=H4sIAAAAAAAAAC1Oyw6CMBD8FbNXi2nBRNOriVe9Gw%2fFLqRaaNMHSAj%2f7hLZw%2bxMdmcyMxgNEg4qJwcMTLxZjeHurHlNIBtlIzIYMETjepCCgVYJLwEJV1%2fJxbngp0KUOy5kdZS82nMaisoRA33EKSbsSNdk%2bnhn%2bhRBzgsDl5PPiTgoa92I%2bupCp9brA0asPXla0xC%2bPbblP3SltHzfbuIb4ElZg9Hotr7LD1C5G5XUAAAA&width=5000&lunatoken=&bypassSkipDlr=true&url=https%3a%2f%2ffract.akamaized.net%2fimages%2fwheel-2000.jpg&ignore-after&, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=SHA_HEX; value=138, name=SHA_HEX_NEW; value=123, name=SHA_SUM; value=08A107B5F4B89786318E9F0D2AB6D79DB71BB5CA42B3585D83BD4B432A4EEFF8, name=TAP_BEST_WIDTH; value=5000, name=TAP_IC_COMMAND; value=NO_COMMAND, name=TAP_IC_COMMAND2; value=output-quality=85, name=TAP_IC_INTERPOLATION; value=auto, name=TAP_IM_ALTERNATE_GEO; value=JAP, name=TAP_IM_FINAL_WIDTH; value=5000, name=TAP_IM_PERCENT; value=100, name=TAP_IM_POLICY_JSON; value=H4sIAAAAAAAAAC1Oyw6CMBD8FbNXi2nBRNOriVe9Gw/FLqRaaNMHSAj/7hLZw+xMdmcyMxgNEg4qJwcMTLxZjeHurHlNIBtlIzIYMETjepCCgVYJLwEJV1/Jxbngp0KUOy5kdZS82nMaisoRA33EKSbsSNdk+nhn+hRBzgsDl5PPiTgoa92I+upCp9brA0asPXla0xC+PbblP3SltHzfbuIb4ElZg9Hotr7LD1C5G5XUAAAA, name=TAP_IM_POLICY_NAME; value=.auto, name=TAP_IM_POLICY_ROLL_DURATION; value=1, name=TAP_IM_POLICY_ROLL_START; value=1531359244, name=TAP_IM_POLICY_TYPE; value=1, name=TAP_IM_POLICY_VARIABLES; value=, name=TAP_IM_POLICY_VERSION; value=1, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/images/wheel-2000.jpg, name=TAP_SC_DOMAIN_TEMPLATE; value=im-staging-sro[serial].akasrg.akamai.com, name=TAP_SC_SERIAL_SIZE; value=11, name=TAP_SC_SERIAL_START; value=1000, name=TAP_VERSION; value=2, name=TCP_OPT_APPLIED; value=medium, name=TIER_NUM; value=0, name=USE_RIT; value=true",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Check-Cacheable": "YES",
+      "X-Akamai-Request-ID": "1d12a0"
+    },
+    "Comment": "",
+    "TestId": "cd847a80a0fa9893a0b8acb2b9059910ffbdc2100f08abc992ee374570791647",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
+          "testcase": {
+            "type": "regex",
+            "query": "/729521/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
+          "testcase": {
+            "type": "regex",
+            "query": "/30d/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "YES",
+          "testcase": {
+            "type": "regex",
+            "query": "YES"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 200,
+          "testcase": {
+            "type": "regex",
+            "query": "200"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 200,
+      "Content-Type": "application/javascript",
+      "Content-Length": "3349",
+      "Last-Modified": "Thu, 21 Jun 2018 06:28:10 GMT",
+      "Accept-Ranges": "bytes",
+      "Content-Encoding": "gzip",
+      "Server": "Apache",
+      "X-Akamai-Staging": "EdgeSuite, EdgeSuite",
+      "Cache-Control": "max-age=80250",
+      "Expires": "Mon, 20 Aug 2018 00:21:42 GMT",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MEM_HIT from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,56734",
+      "X-Akamai-Tapioca-Cost-ER": "56734",
+      "X-True-Cache-Key": "/L/fract.akamaized.net/col/js/modernizr.js",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=true, name=AKA_PM_FWD_URL; value=/col/js/modernizr.js, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCHABLE; value=on, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/js/modernizr.js, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "Vary": "Accept-Encoding",
+      "X-Check-Cacheable": "YES",
+      "X-Akamai-Request-ID": "1d12a1"
+    },
+    "Comment": "",
+    "TestId": "4bb78c190274b00559d6b88820564167b03a64a50917c0384e7369a9fd3a2c70",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
+          "testcase": {
+            "type": "regex",
+            "query": "/1d/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "YES",
+          "testcase": {
+            "type": "regex",
+            "query": "YES"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 200,
+          "testcase": {
+            "type": "regex",
+            "query": "200"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 302,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,37454",
+      "X-Akamai-Tapioca-Cost-ER": "37454",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/pm_redirect/abc123",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/pm_redirect/abc123, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/pm_redirect/abc123, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a2"
+    },
+    "Comment": "",
+    "TestId": "ec5890b017383f077f788478aa41911748e0a5a15b7230a1555b14648950da83",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 302,
+          "testcase": {
+            "type": "regex",
+            "query": "302"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/single-video.html",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/single-video.html"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/style-guide.html",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,30494",
+      "X-Akamai-Tapioca-Cost-ER": "30494",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/difftest/abc123.html",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/difftest/abc123.html, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/difftest/abc123.html, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a3"
+    },
+    "Comment": "",
+    "TestId": "cc17353b5e2d9862f756ed216789b18c5ab20c5d4b5b6ea888ed24ff899e9950",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/570031/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 301,
+          "testcase": {
+            "type": "regex",
+            "query": "301"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/style-guide.html",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/style-guide.html"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 404,
+      "Content-Type": "text/html",
+      "Content-Length": "9",
+      "Last-Modified": "Mon, 15 Jun 2015 04:26:27 GMT",
+      "Accept-Ranges": "bytes",
+      "Server": "Apache",
+      "X-Akamai-Request-ID": "f5c799.1d12a4",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,43833",
+      "X-Akamai-Tapioca-Cost-ER": "43833",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/difftest_cpcode/abc123.html",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/difftest_cpcode/abc123.html, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/difftest_cpcode/abc123.html, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Cache-Remote": "TCP_MISS from a23-50-49-13.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "YES"
+    },
+    "Comment": "",
+    "TestId": "0ae7c05b03d4bb8b5a03acba9861b5c2840db264202a6dfb8ca36fa7316f24b7",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "YES",
+          "testcase": {
+            "type": "regex",
+            "query": "YES"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 404,
+          "testcase": {
+            "type": "regex",
+            "query": "404"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 302,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,42425",
+      "X-Akamai-Tapioca-Cost-ER": "42425",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/pm_redirect/foobar/hoge/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/pm_redirect/foobar/hoge/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a5"
+    },
+    "Comment": "",
+    "TestId": "6d75ccafef6a4b2f4f069020bc8d69eadc9b8aaffeb3697f5c9f9c746390b2e1",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 302,
+          "testcase": {
+            "type": "regex",
+            "query": "302"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/single-video.html",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/single-video.html"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 302,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/single-video.html?id=123&cond=hogehoge&name=123",
+      "Date": "Sun, 19 Aug 2018 02:04:12 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,28438",
+      "X-Akamai-Tapioca-Cost-ER": "28438",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/pm_redirect/xyz123?id=123&cond=hogehoge&name=123, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a7"
+    },
+    "Comment": "",
+    "TestId": "a4ce49e9d4ed1643e260d0c45f50ee3b29d0b4131c1b4c1a4e8b208acd0d4045",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 302,
+          "testcase": {
+            "type": "regex",
+            "query": "302"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/single-video.html?id=123&cond=hogehoge&name=123",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/single-video.html?id=123&cond=hogehoge&name=123"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 302,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/single-video.html",
+      "Date": "Sun, 19 Aug 2018 02:04:13 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,40614",
+      "X-Akamai-Tapioca-Cost-ER": "40614",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/pm_redirect/",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/pm_redirect/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/pm_redirect/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a8"
+    },
+    "Comment": "",
+    "TestId": "0b1ea87c19c10c79132f9c0da924454c956f67d6e52d5e78d965c0e81ee27e8c",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 302,
+          "testcase": {
+            "type": "regex",
+            "query": "302"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/single-video.html",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/single-video.html"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 301,
+      "Server": "AkamaiGHost",
+      "Content-Length": "0",
+      "Location": "https://fract.akamaized.net/",
+      "Date": "Sun, 19 Aug 2018 02:04:13 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,1,/0/0/0/a0 /0/0/0/a1 /0/0/0/a2,NIM_ER_RULE_NAME=7726798c0aac8a03 NIM_ER_USE_IN_QS=1 NIM_ER_USE_IN_HS=1 NIM_ER_SCHEME= NIM_ER_LOCATION=/ NIM_ER_RESP_CODE=301,101649",
+      "X-Akamai-Tapioca-Cost-ER": "101649",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/redirect_test/",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/redirect_test/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/redirect_test/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "NO",
+      "X-Akamai-Request-ID": "1d12a9"
+    },
+    "Comment": "",
+    "TestId": "21efddeeef8af1be6d2fe81968f0127c7883ed3aec5bd6549fb912e9a7fea278",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "NO",
+          "testcase": {
+            "type": "regex",
+            "query": "NO"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 301,
+          "testcase": {
+            "type": "regex",
+            "query": "301"
+          }
+        }
+      ],
+      "Location": [
+        {
+          "Passed": true,
+          "Value": "https://fract.akamaized.net/",
+          "testcase": {
+            "type": "exact",
+            "query": "https://fract.akamaized.net/"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "TestType": "hassert",
+    "Passed": true,
+    "Response": {
+      "status_code": 404,
+      "Content-Type": "text/html",
+      "Content-Length": "9",
+      "Last-Modified": "Mon, 15 Jun 2015 04:26:27 GMT",
+      "Accept-Ranges": "bytes",
+      "Server": "Apache",
+      "X-Akamai-Request-ID": "f5c7a2.1d12aa",
+      "Date": "Sun, 19 Aug 2018 02:04:13 GMT",
+      "X-Cache": "TCP_MISS from a23-50-62-23.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Cache-Key": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
+      "X-Cache-Key-Extended-Internal-Use-Only": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
+      "X-Akamai-Tapioca-Version-ER": "2.1920276",
+      "X-Akamai-Tapioca-Agent-ER": "obj-cache /=/16382/228951/5m/cloudlets.download.akamai.com/242360/nimbus/ER/staging/473100/2/FRACT_TESTER-v2",
+      "X-Akamai-Tapioca-Pearl-ER": "EDGEREDIRECTOR,0,,,40003",
+      "X-Akamai-Tapioca-Cost-ER": "40003",
+      "X-True-Cache-Key": "/D/000/fract.akamaized.net/col/foobar/",
+      "X-Akamai-Session-Info": "name=AKA_PM_AUTO_PRECONNECT_TEMPLATE_PARAMETER; value=true, name=AKA_PM_AUTO_PUSH_TEMPLATE_PARAMETER; value=true, name=AKA_PM_BASEDIR; value=/col, name=AKA_PM_CACHEABLE_OBJECT; value=false, name=AKA_PM_FWD_URL; value=/col/foobar/, name=AKA_PM_NETSTORAGE_ROOT; value=, name=AKA_PM_PREFETCH_ON; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_ENABLED; value=true, name=AKA_PM_RESOURCE_OPTIMIZER_TEMPLATE_PARAMETER; value=false, name=AKA_PM_RUM_ENABLED; value=on, name=AKA_PM_RUM_GROUPNAME; value=Default, name=AKA_PM_RUM_RATE; value=100, name=AKA_PM_SR_ENABLED; value=true, name=AKA_PM_SR_NODE_ID; value=0, name=AKA_PM_SR_OBJ_URL; value=http://lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/akam/sureroute-test-object.html, name=AKA_PM_TD_ENABLED; value=true, name=AKA_PM_TD_MAP_PREFIX; value=ch, name=ANS_PEARL_VERSION; value=0.6.0, name=FASTTCP_RENO_FALLBACK_DISABLE_OPTOUT; value=on, name=OVERRIDE_HTTPS_IE_CACHE_BUST; value=all, name=RANDOM_SAMPLE; value=true, name=RO_ENABLED; value=false, name=RO_IMPL_ROLLOUT_BYPASS_MODIFY_PATH; value=false, name=RO_IMPL_ROLLOUT_CLOUDLETS; value=false, name=RO_IMPL_ROLLOUT_CUSTOMER_TTL; value=false, name=RO_IMPL_ROLLOUT_CUSTOM_NOT_FOUND_474; value=false, name=RO_IMPL_ROLLOUT_EDGE_CACHE_TAG; value=false, name=RO_IMPL_ROLLOUT_REDIRECT_CHASE_OFF; value=false, name=RO_VERSION; value=1.2, name=RUA_OUT_IS_APPLIED; value=false, name=RUM_CLIENT_TO_MAPPING_PCT; value=10, name=RUM_IMPL_PM_GROUPID; value=, name=RUM_IMPL_PM_GROUPNAME; value=Default, name=RUM_IMPL_PM_PRODUCT; value=, name=RUM_IS_IPV6; value=false, name=RUM_XHR_TEST; value=false, name=TAP_NIM_URL_FOR_REGEX; value=https://fract.akamaized.net/foobar/, name=TCP_OPT_APPLIED; value=medium",
+      "X-Serial": "850",
+      "Connection": "keep-alive",
+      "X-Cache-Remote": "TCP_MISS from a23-50-49-13.deploy.akamaitechnologies.com (AkamaiGHost/9.4.2-23137533) (-)",
+      "X-Akamai-Staging": "EdgeSuite",
+      "X-Check-Cacheable": "YES"
+    },
+    "Comment": "",
+    "TestId": "61fcf1566cf496373b68b71c5b2d8ae631e2d13eb079ffd970412c946b01f3a8",
+    "ResultCase": {
+      "X-Cache-Key": [
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/728260/"
+          }
+        },
+        {
+          "Passed": true,
+          "Value": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
+          "testcase": {
+            "type": "regex",
+            "query": "/000/"
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "Passed": true,
+          "Value": "YES",
+          "testcase": {
+            "type": "regex",
+            "query": "YES"
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "Passed": true,
+          "Value": 404,
+          "testcase": {
+            "type": "regex",
+            "query": "404"
+          }
+        }
+      ]
+    }
+  }
+]

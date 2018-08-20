@@ -120,6 +120,18 @@ class testERCost(unittest.TestCase):
             ercost_summary = json.load(f)
             self.assertTrue( len(ercost_summary) == 13)
 
+    def test_ercost2(self):
+        '''
+        Scenario:
+        1. export ercost summary from exisiting result with default cost = 100000000
+        '''
+        self.do_cmd( 'python3 {} ercost -t {} -r {} -o {}'.format(fraui_path, 'testcase4redirect.json', 'result4redirect.json', self.ERCOST_SUMMARY) )
+
+        with open(self.ERCOST_SUMMARY) as f:
+            ercost_summary = json.load(f)
+            self.assertTrue( len(ercost_summary) == 3)
+
+
 
 
 if __name__ == '__main__':

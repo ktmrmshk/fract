@@ -98,7 +98,8 @@ class fractui(object):
 
         ### ercost - ercost-check summary
         subprs_geturlc=subprs.add_parser('ercost', help='Export Eege-Redirector-Cost summary in JSON form')
-        subprs_geturlc.add_argument('-c', '--cost', help='cost threashold to Eege-Redirector-Cost',  type=int, required=True)
+        default_cost=10000000
+        subprs_geturlc.add_argument('-c', '--cost', help='cost threashold to Eege-Redirector-Cost (default {})'.format(default_cost),  type=int, default=default_cost)
         subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
         subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)

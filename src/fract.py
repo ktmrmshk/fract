@@ -268,7 +268,7 @@ class FractResult(FractDset):
             pass
     
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$"}}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
@@ -338,7 +338,7 @@ class FractResult(FractDset):
                         continue
                     case=dict()
                     case['Passed'] = ret['Passed']
-                    case['TestAssert'] = '{}: "{}"'.format(ret['testcase']['type'], ret['testcase']['query'])
+                    case['TestAssert'] = '{}: "{}"'.format(ret['TestCase']['type'], ret['TestCase']['query'])
                     case['Response']= ret['Value']
                     line[headername].append(case)
                 else:
@@ -512,7 +512,7 @@ class Fract(object):
     def _check_headercase(self, header_name, testlist, response_header):
         '''
         return: list of test result per header:
-            ex) [{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}]
+            ex) [{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}]
         '''
         hdr_resultcase = list()
         has_this_header = False
@@ -531,13 +531,13 @@ class Fract(object):
                 hdr_resultcase.append(\
                         {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]) ),\
                         'Value': response_header[ header_name ],\
-                        'testcase': t })
+                        'TestCase': t })
             else: # header not in response
                 logging.debug('  -> test failed: testcase={}'.format(t['query']) )
                 hdr_resultcase.append(\
                         {'Passed': False,\
                         'Value':'This Header is not in Response',\
-                        'testcase': t })
+                        'TestCase': t })
             
         #res.query['ResultCase'][header_name] = hdr_resultcase            
         return hdr_resultcase

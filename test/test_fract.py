@@ -306,7 +306,7 @@ class test_Fract(unittest.TestCase):
         ret = self.fr._check_headercase('status_code', [{"type":"regex","query":"301"}], {'status_code': 301})
         self.assertTrue( ret[0]['Passed'] == True )
         self.assertTrue( ret[0]['Value'] == 301 )
-        self.assertTrue( ret[0]['testcase']['type'] == 'regex' )
+        self.assertTrue( ret[0]['TestCase']['type'] == 'regex' )
 
 
     def test_run_hdiff(self):

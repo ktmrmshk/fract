@@ -131,6 +131,65 @@ class testERCost(unittest.TestCase):
             ercost_summary = json.load(f)
             self.assertTrue( len(ercost_summary) == 3)
 
+    # 2018/08/21 ignore_case_support
+    def test_IgnoreCase_not_ignored(self):
+        '''
+        Scenario
+        1. make urllist
+        2. gen testcase
+        3. check ignorecase
+        '''
+        # 1. make urllist
+        with open(self.URLLIST, 'w') as f:
+            f.write('https://fract.akamaized.net/ignore_case/foobar.html')
+        self.assertTrue( os.path.isfile(self.URLLIST))
+
+        # 2. gen testcase
+        self.do_cmd( 'python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        self.assertTrue( os.path.isfile(self.TESTCASE))
+        with open( self.TESTCASE ) as f:
+            testcase=json.load(f)
+            self.assertTrue( testcase[0]['TestCase']['X-Cache-Key'][0]['option']['ignore_case'] == False)
+
+        # 3. run and check ER cost
+        self.do_cmd('python3 {} run -i {} -o {} -s {} -d {}'.format(fraui_path, self.TESTCASE, self.RESULT, self.SUMMARY, self.TDIFF))
+        self.assertTrue( os.path.isfile(self.RESULT))
+        self.assertTrue( os.path.isfile(self.SUMMARY))
+        self.assertTrue( os.path.isfile(self.TDIFF))
+        with open( self.RESULT ) as f:
+            result = json.load(f)
+            self.assertTrue(result[0]['Passed'] == False)
+
+    def test_IgnoreCase_ignored(self):
+        '''
+        Scenario
+        1. make urllist
+        2. gen testcase
+        3. check ignore case
+        '''
+        # 1. make urllist
+        with open(self.URLLIST, 'w') as f:
+            f.write('https://fract.akamaized.net/ignore_case/foobar.html')
+        self.assertTrue( os.path.isfile(self.URLLIST))
+
+        # 2. gen testcase
+        self.do_cmd( 'python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net -I'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        self.assertTrue( os.path.isfile(self.TESTCASE))
+        with open( self.TESTCASE ) as f:
+            testcase=json.load(f)
+            self.assertTrue( testcase[0]['TestCase']['X-Cache-Key'][0]['option']['ignore_case'] == True)
+
+        # 3. run and check ER cost
+        self.do_cmd('python3 {} run -i {} -o {} -s {} -d {}'.format(fraui_path, self.TESTCASE, self.RESULT, self.SUMMARY, self.TDIFF))
+        self.assertTrue( os.path.isfile(self.RESULT))
+        self.assertTrue( os.path.isfile(self.SUMMARY))
+        self.assertTrue( os.path.isfile(self.TDIFF))
+        with open( self.RESULT ) as f:
+            result = json.load(f)
+            self.assertTrue(result[0]['Passed'] == True)
+
+
+
 
 
 

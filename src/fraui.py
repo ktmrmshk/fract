@@ -42,6 +42,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
         subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', required=True)
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
+        subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
@@ -145,9 +146,10 @@ class fractui(object):
         self.verbose(args)
         logging.debug(args)
         headers=json.loads(args.headers)
+        ignore_case=args.ignore_case
 
         fg=FraseGen()
-        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers)
+        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case})
         fg.save(args.output)
         
         logging.info('save to {}'.format(args.output))

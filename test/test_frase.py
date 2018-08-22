@@ -233,6 +233,28 @@ class test_FraseGen(unittest.TestCase):
         
         self.assertTrue( ft.query['Request']['Headers']['X-Akamai-Cloudlet-Cost'] == 'true' )
 
+    # 2018/08/21 ignore case support
+    def test_gen_ignore_case(self):
+        fg=FraseGen()
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'ignore_case':True})
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Request']['Method'] == 'GET' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
+        self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
+        self.assertTrue( ft.query['Request']['Headers']['User-Agent'] == 'iPhone' )
+        self.assertTrue( ft.query['Request']['Headers']['Debug-abc'] == 'foobar' )
+
+        self.assertTrue( 'X-Cache-Key' in ft.query['TestCase'] )
+        self.assertTrue( 'Location' in ft.query['TestCase'] )
+        self.assertTrue( ft.query['TestCase']['Location'][0]['option']['ignore_case'] == True)
+        self.assertTrue( 'status_code' in ft.query['TestCase'] )
+        self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+        
+        self.assertTrue( len( ft.query['Comment'] ) != 0 )
+        self.assertTrue( len( ft.query['TestId'] ) != 0  )
+ 
+
 
     def test_replaceDP(self):
         fg=FraseGen()
@@ -262,6 +284,16 @@ class test_FraseGen(unittest.TestCase):
             json_lines=json.loads(lines)
             self.assertTrue( json_lines[0]['Request']['Headers']['User-Agent']=='iPhone')
             self.assertTrue( json_lines[22]['Request']['Headers']['Debug-abc']=='foobar')
+    # 2018/08/21 ignore case support
+    def test_gen_from_urls_ignore_case(self):
+        fg=FraseGen()
+        fg.gen_from_urls('urllist4test.txt', 'space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', option={'ignore_case':True})
+        self.assertTrue( len(fg.testcases) == 32)
+        fg.save('out.txt')
+        with open('out.txt') as f:
+            ft=json.load(f)
+            self.assertTrue( ft[0]['TestCase']['Location'][0]['option']['ignore_case'] == True)
+
 
     def test_gen_from_top_urlog(self):
         fg=FraseGen()

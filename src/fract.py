@@ -191,16 +191,19 @@ class FractTestHassert(FractTest):
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
         pass
 
-    def add(self, header, value, valtype='regex'):
+    def add(self, header, value, valtype='regex', option={}):
         if header not in self.query['TestCase']:
             self.query['TestCase'][header] = list()
-        self.query['TestCase'][header].append({'type':valtype, 'query':value})
+        if option:
+            self.query['TestCase'][header].append({'type':valtype, 'query':value, 'option':option})
+        else:
+            self.query['TestCase'][header].append({'type':valtype, 'query':value})
     
     def setRequest(self, url, ghost, headers={}, method='GET'):
         self.query['Request']['Url']=url
@@ -268,7 +271,7 @@ class FractResult(FractDset):
             pass
     
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$"}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
@@ -338,7 +341,7 @@ class FractResult(FractDset):
                         continue
                     case=dict()
                     case['Passed'] = ret['Passed']
-                    case['TestAssert'] = '{}: "{}"'.format(ret['TestCase']['type'], ret['TestCase']['query'])
+                    case['TestAssert'] = '{}: "{}" - {}'.format(ret['TestCase']['type'], ret['TestCase']['query'], ret['TestCase'].get('option', {}))
                     case['Response']= ret['Value']
                     line[headername].append(case)
                 else:
@@ -528,8 +531,11 @@ class Fract(object):
             #assert t['type'] == 'regex'
 
             if has_this_header:
+                ignore_case = False
+                if 'option' in t:
+                    ignore_case = t['option'].get('ignore_case', False)
                 hdr_resultcase.append(\
-                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]) ),\
+                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
                         'Value': response_header[ header_name ],\
                         'TestCase': t })
             else: # header not in response
@@ -542,25 +548,41 @@ class Fract(object):
         #res.query['ResultCase'][header_name] = hdr_resultcase            
         return hdr_resultcase
     
-    def _passed(self, mode, query, text):
+    def _passed(self, mode, query, text, ignore_case=False):
         'return (bool) passed'
 
         if mode == 'regex':
-            match = re.search( query, text)
+            match = None
+            if ignore_case:
+                match = re.search( query, text, re.IGNORECASE)
+            else:
+                match = re.search( query, text)
             if match is not None:
                 return True
             else:
                 return False
         elif mode == 'startswith':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return text.startswith(query)
         elif mode == 'endswith':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return text.endswith(query)
         elif mode == 'contain':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             if text.find(query) != -1:
                 return True
             else:
                 return False
         elif mode == 'exact':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return query == text
         else:
             pass # should raise exception!

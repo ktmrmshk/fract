@@ -50,6 +50,14 @@ class test_FractTest(unittest.TestCase):
         logging.warning(json.dumps(ft.query))
         self.assertTrue( ft.query['TestCase'] == {"status_code": [{"type": "regex", "query":"(301|302)" }, {"type": "regex", "query":"301"}]})
     
+    # 2018/08/21 ignore_case support
+    def test_add2_option(self):
+        ft = FractTestHassert()
+        ft.init_template()
+        ft.add('X-Cache-Key', '/FooBar/', 'contain', {'ignore_case': True})
+        logging.warning(json.dumps(ft.query))
+        self.assertTrue( ft.query['TestCase'] == {"X-Cache-Key": [{"type": "contain", "query":"/FooBar/", "option" :{"ignore_case": True} }]})
+    
     def test_setRequest1(self):
         ft = FractTestHassert()
         ft.init_template()
@@ -225,18 +233,31 @@ class test_FracResult(unittest.TestCase):
         self.assertTrue( self.fractresult.query['Response']['Vary'] == 'User-Agent' )
 
     def test_check_passed1(self):
-        self.fractresult.query=json.loads( '''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}} ''' )
+        self.fractresult.query=json.loads( '''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$"}}]}} ''' )
         ret = self.fractresult.check_passed()
         self.assertTrue( ret == (False, 3, 1, 2) )
 
     def test_check_passed2(self):
-        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","testcase":{"type":"regex","query":"text/html$"}}]}}''')
+        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","TestCase":{"type":"regex","query":"text/html$"}}]}}''')
         ret = self.fractresult.check_passed()
         self.assertTrue( ret == (True, 2, 2, 0) )
 
     def test_str_resultcase(self):
-        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","testcase":{"type":"regex","query":"text/html$"}}]}}''')
+        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","TestCase":{"type":"regex","query":"text/html$"}}]}}''')
         ret=self.fractresult._str_resultcase( True )
+        self.assertTrue( type(ret) == type(str()))
+        logging.warning( ret )
+
+    # 2018/08/21 ignore_case support
+    def test_str_resultcase_option(self):
+        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","TestCase":{"type":"regex","query":"text/html$"}}]}}''')
+        ret=self.fractresult._str_resultcase(  )
+        self.assertTrue( type(ret) == type(str()))
+        logging.warning( ret )
+
+    def test_str_resultcase_option2(self):
+        self.fractresult.query=json.loads('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":true,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":true,"Value":"text/html","TestCase":{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}}]}}''')
+        ret=self.fractresult._str_resultcase(  )
         self.assertTrue( type(ret) == type(str()))
         logging.warning( ret )
 
@@ -302,11 +323,43 @@ class test_Fract(unittest.TestCase):
         self.assertTrue( self.fr._passed('exact', 'http://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
         self.assertFalse( self.fr._passed('exact', 'https://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
 
+    # 2018/08/21 ignore_case support
+    def test_passed_ignore_case(self):
+        self.assertTrue( self.fr._passed('regex', '(200|404)', '404', True) )
+        self.assertTrue( self.fr._passed('regex', '(200|404)', '404', False) )
+        self.assertFalse( self.fr._passed('regex', '(200|404)', '403', False) )
+        self.assertTrue( self.fr._passed('startswith', 'http://', 'hTTp://www.jins.com', True) )
+        self.assertFalse( self.fr._passed('startswith', 'http://', 'https://www.jins.com', True) )
+        self.assertTrue( self.fr._passed('endswith', '.com', 'http://www.jins.COM', True) )
+        self.assertFalse( self.fr._passed('endswith', '.com', 'https://www.jins.co.jp', True) )
+        self.assertTrue( self.fr._passed('contain', 'jins', 'http://www.JIns.com', True) )
+        self.assertFalse( self.fr._passed('contain', 'jins', 'http://www.JIns.com') )
+        self.assertFalse( self.fr._passed('contain', 'jins', 'http://www.JIns.com', False) )
+        self.assertFalse( self.fr._passed('contain', 'jeans', 'https://www.jins.co.jp') )
+        
+        self.assertTrue( self.fr._passed('regex', re.escape('http://abc.com/index.html?xyz=123&Name=FOOBAR'), 'http://abc.com/index.html?xyz=123&Name=foobar', True) )
+        self.assertTrue( self.fr._passed('exact', 'http://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=foobar', True) )
+        self.assertFalse( self.fr._passed('exact', 'https://abc.com/index.html?xyz=123&Name=FOOBAR', 'http://abc.com/index.html?xyz=123&Name=FOOBAR') )
+
+
     def test_check_headercase(self):
         ret = self.fr._check_headercase('status_code', [{"type":"regex","query":"301"}], {'status_code': 301})
         self.assertTrue( ret[0]['Passed'] == True )
         self.assertTrue( ret[0]['Value'] == 301 )
-        self.assertTrue( ret[0]['testcase']['type'] == 'regex' )
+        self.assertTrue( ret[0]['TestCase']['type'] == 'regex' )
+
+
+    # 2018/08/21 ignore_case support
+    def test_check_headercase2(self):
+        ret = self.fr._check_headercase('X-Cache-Key', [{"type":"regex","query":"/HOGE/foo/bar"}], {'X-Cache-Key': 'D/S/123/hoge/foo/bar/dot.jpg'})
+        self.assertTrue( ret[0]['Passed'] == False )
+        self.assertTrue( ret[0]['Value'] == 'D/S/123/hoge/foo/bar/dot.jpg' )
+        self.assertTrue( ret[0]['TestCase']['type'] == 'regex' )
+
+    def test_check_headercase3(self):
+        ret = self.fr._check_headercase('X-Cache-Key', [{"type":"regex","query":"/HOGE/foo/bar","option":{"ignore_case":True}}], {'X-Cache-Key': 'D/S/123/hoge/foo/bar/dot.jpg'})
+        self.assertTrue( ret[0]['Passed'] == True )
+
 
 
     def test_run_hdiff(self):
@@ -333,6 +386,110 @@ class test_Fract(unittest.TestCase):
         logging.warning('fractresult= {}'.format(ret))
         self.assertTrue( ret.query['TestType'] == 'hdiff')
 
+    # 2018/08/21 ignore_case support
+    def test_run_ignore_case_failed(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"TEXT/html$"}],"Location":[{"type":"regex","query":"https://WWW.akamai.COM","option":{"ignore_case":false}}]}}''')
+        ret = self.fr.run(testcase)
+        self.assertTrue( ret.query['TestType'] == 'hassert')
+        self.assertTrue( ret.query['Passed'] == False )
+        self.assertTrue( ret.query['ResultCase']['Content-Type'][0]['Passed'] == False )
+        self.assertTrue( ret.query['ResultCase']['Location'][0]['Passed'] == False )
+        self.assertTrue( ret.query['ResultCase']['Location'][0]['TestCase']['option']['ignore_case'] == False )
+        logging.warning('FractResult: {}'.format(ret))
+ 
+    def test_run_ignore_case_passed(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404|302|301)"}],"Connection":[{"type":"regex","query":"KeeP","option":{"ignore_case":true}}],"Location":[{"type":"contain","query":"https://WWW.akamai.COM","option":{"ignore_case":true}}]}}''')
+        ret = self.fr.run(testcase)
+        logging.warning('FractResult: {}'.format(ret))
+        self.assertTrue( ret.query['TestType'] == 'hassert')
+        self.assertTrue( ret.query['Passed'] == True )
+        self.assertTrue( ret.query['ResultCase']['Connection'][0]['Passed'] == True )
+        self.assertTrue( ret.query['ResultCase']['Location'][0]['Passed'] == True )
+        self.assertTrue( ret.query['ResultCase']['Location'][0]['TestCase']['option']['ignore_case'] == True )
+ 
+    def test_run2(self):
+        testcase = FractTest()
+        testcase.import_query('''{"TestType":"hdiff","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control", "status_code", "Content-Length"]} ''')
+        fr =Fract()
+        ret = fr.run(testcase)
+        logging.warning('fractresult= {}'.format(ret))
+        self.assertTrue( ret.query['TestType'] == 'hdiff')
+
+    # 2018/08/21 ignore_case support
+    
+
+from fract import FractClient
+class test_FractClient(unittest.TestCase):
+    def setUp(self):
+        logging.basicConfig(level=logging.DEBUG)
+        self.testsuite = '''[{"TestType":"hassert","Comment":"This is comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}},{"TestType":"hdiff","Comment":"This is comment","TestId":"d704230e1206c259ddbb900004c185e46c42a32a","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}]'''
+
+    def test_init(self):
+        fclient = FractClient(self.testsuite)
+        self.assertTrue( len(fclient._testsuite) ==2 )
+
+    def test_init2(self):
+        fclient = FractClient(fract_suite_file='testcase4test.json')
+        self.assertTrue( len(fclient._testsuite) == 32 )
+    
+    def test_run_suite(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite()
+        self.assertTrue( len(fclient._result_suite) ==2 )
+        logging.info('test_run_suite(): _result_suite={}'.format(fclient._result_suite[0]))
+        
+        fclient.export_result()
+    
+    def test_run_suite2(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite( ['d704230e1206c259ddbb900004c185e46c42a32a'])
+        self.assertTrue( len(fclient._result_suite) ==1 )
+        self.assertTrue( len(fclient._failed_result_suite) == 0)
+        logging.info('test_run_suite(): _result_suite={}'.format(fclient._result_suite[0]))
+        
+        fclient.export_result()
+    
+    def test_make_summary(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite()
+        fclient.make_summary()
+
+    def test_get_testcase(self):
+        fclient = FractClient(self.testsuite)
+        t = fclient._get_testcase('d704230e1206c259ddbb900004c185e46c42a32a')
+        self.assertTrue(t.query['TestId'] == 'd704230e1206c259ddbb900004c185e46c42a32a')
+
+    def test_export_failed_testsuite(self):
+        fclient = FractClient(self.testsuite)
+        fclient.run_suite( ['3606bd5770167eaca08586a8c77d05e6ed076899'])
+        fclient.export_failed_testsuite('diff.json')
+
+    def test_load_resultfile(self):
+        fclient = FractClient(self.testsuite)
+        fclient.load_resultfile('resutlcase4test.json')
+        self.assertTrue( len(fclient._result_suite) == 32 )
+        self.assertTrue( len(fclient._failed_result_suite) == 23 )
+
+    # redirect summary support
+    def test_export_redirect_summary(self):
+        REDIRECT_SUMMARY='redirect_summary.json'
+        fclient = FractClient(fract_suite_file='testcase4redirect.json') # includes 7 redirect
+        fclient.load_resultfile('result4redirect.json')
+        fclient.export_redirect_summary(REDIRECT_SUMMARY)
+        
+        self.assertTrue( len(fclient.redirect_summary) == 7)
+        self.assertTrue( fclient.redirect_summary[0]['Response']['status_code'] == 301 )
+        self.assertTrue( fclient.redirect_summary[0]['Response']['Server'] == 'AkamaiGHost' )
+        self.assertTrue( fclient.redirect_summary[1]['TestId'] == 'ec5890b017383f077f788478aa41911748e0a5a15b7230a1555b14648950da83' )
+        self.assertTrue( 'User-Agent' in fclient.redirect_summary[1]['Request']['Headers'] )
+    
+    def test_make_spec_summary(self):
+        fclient = FractClient(fract_suite_file='testcase4redirect.json') # includes 7 redirect
+        fclient.load_resultfile('result4redirect.json')
+        fret=fclient._result_suite[0]
+    
 
 from fract import FractClient
 class test_FractClient(unittest.TestCase):

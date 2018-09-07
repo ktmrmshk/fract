@@ -191,16 +191,19 @@ class FractTestHassert(FractTest):
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$"}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
         pass
 
-    def add(self, header, value, valtype='regex'):
+    def add(self, header, value, valtype='regex', option={}):
         if header not in self.query['TestCase']:
             self.query['TestCase'][header] = list()
-        self.query['TestCase'][header].append({'type':valtype, 'query':value})
+        if option:
+            self.query['TestCase'][header].append({'type':valtype, 'query':value, 'option':option})
+        else:
+            self.query['TestCase'][header].append({'type':valtype, 'query':value})
     
     def setRequest(self, url, ghost, headers={}, method='GET'):
         self.query['Request']['Url']=url
@@ -268,7 +271,7 @@ class FractResult(FractDset):
             pass
     
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","testcase":{"type":"regex","query":"text/html$"}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
@@ -338,7 +341,7 @@ class FractResult(FractDset):
                         continue
                     case=dict()
                     case['Passed'] = ret['Passed']
-                    case['TestAssert'] = '{}: "{}"'.format(ret['testcase']['type'], ret['testcase']['query'])
+                    case['TestAssert'] = '{}: "{}" - {}'.format(ret['TestCase']['type'], ret['TestCase']['query'], ret['TestCase'].get('option', {}))
                     case['Response']= ret['Value']
                     line[headername].append(case)
                 else:
@@ -512,7 +515,7 @@ class Fract(object):
     def _check_headercase(self, header_name, testlist, response_header):
         '''
         return: list of test result per header:
-            ex) [{"Passed":false,"Value":301,"testcase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"testcase":{"type":"regex","query":"301"}}]
+            ex) [{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}]
         '''
         hdr_resultcase = list()
         has_this_header = False
@@ -528,39 +531,58 @@ class Fract(object):
             #assert t['type'] == 'regex'
 
             if has_this_header:
+                ignore_case = False
+                if 'option' in t:
+                    ignore_case = t['option'].get('ignore_case', False)
                 hdr_resultcase.append(\
-                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]) ),\
+                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
                         'Value': response_header[ header_name ],\
-                        'testcase': t })
+                        'TestCase': t })
             else: # header not in response
                 logging.debug('  -> test failed: testcase={}'.format(t['query']) )
                 hdr_resultcase.append(\
                         {'Passed': False,\
                         'Value':'This Header is not in Response',\
-                        'testcase': t })
+                        'TestCase': t })
             
         #res.query['ResultCase'][header_name] = hdr_resultcase            
         return hdr_resultcase
     
-    def _passed(self, mode, query, text):
+    def _passed(self, mode, query, text, ignore_case=False):
         'return (bool) passed'
 
         if mode == 'regex':
-            match = re.search( query, text)
+            match = None
+            if ignore_case:
+                match = re.search( query, text, re.IGNORECASE)
+            else:
+                match = re.search( query, text)
             if match is not None:
                 return True
             else:
                 return False
         elif mode == 'startswith':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return text.startswith(query)
         elif mode == 'endswith':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return text.endswith(query)
         elif mode == 'contain':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             if text.find(query) != -1:
                 return True
             else:
                 return False
         elif mode == 'exact':
+            if ignore_case:
+                text=text.lower()
+                query=query.lower()
             return query == text
         else:
             pass # should raise exception!
@@ -627,7 +649,7 @@ class FractClient(object):
             if not fret.query['Passed']:
                 self._failed_result_suite.append( fret )
 
-
+    
 
 
     def run_suite(self, testids=None):
@@ -750,7 +772,78 @@ Total
         else:
             print('=> Not Good')
 
+    def export_redirect_summary(self, filename):
+        self.redirect_summary=list()
+        for fret in self._result_suite:
+            if fret.query['Response']['status_code'] in (301, 302, 303, 307):
+                single_summary = self._make_spec_summary(fret)
+                self.redirect_summary.append(single_summary)
 
+        with open(filename, 'w') as f:
+            json.dump(self.redirect_summary, f, indent=2)
+
+        logging.debug('redirect summary: {}'.format(self.redirect_summary))
+        logging.debug('saved to {}'.format(filename))
+
+    def export_ercost_high(self, filename, ercost_threshold):
+        self.ercost_high_summary=list()
+        for fret in self._result_suite:
+            ercost = int( fret.query['Response'].get('X-Akamai-Tapioca-Cost-ER', '0'))
+            if ercost > ercost_threshold:
+                single_summary = self._make_spec_summary(fret)
+                self.ercost_high_summary.append( single_summary )
+
+        with open(filename, 'w') as f:
+            json.dump(self.ercost_high_summary, f, indent=2)
+
+        logging.debug('redirect summary: {}'.format(self.ercost_high_summary))
+        logging.debug('saved to {}'.format(filename))
+
+
+    def _make_spec_summary(self, fret):
+        '''
+        export spec summary:
+        * request
+          - url, ghost, custom header
+        * passed
+        * testid
+        * response
+          - status_code, location, ercost
+        '''
+        request=dict()
+        response=dict()
+        # request
+        t = self._get_testcase( fret.query['TestId'] )
+        request['Url']=t.query['Request']['Url']
+        request['Method']=t.query['Request']['Method']
+        request['Ghost']=t.query['Request']['Ghost']
+        hdrs=dict()
+        for k,v in t.query['Request']['Headers'].items():
+            if k not in ('Pragma', 'X-Akamai-Cloudlet-Cost'):
+                hdrs[k]=v
+        else:
+            request['Headers']=hdrs
+
+        # passed
+        passed=fret.query['Passed']
+
+        # testid 
+        testid=fret.query['TestId']
+
+        # response
+        response['status_code']=fret.query['Response']['status_code']
+        response['Server']=fret.query['Response'].setdefault('Server', '')
+        response['Location']=fret.query['Response'].setdefault('Location', '')
+        response['X-Akamai-Tapioca-Cost-ER']=fret.query['Response'].setdefault('X-Akamai-Tapioca-Cost-ER', '0')
+
+        # append
+        return {'Request': request, 'TestPassed': passed, 'Response': response, 'TestId': testid}
+        
+
+
+
+
+    
 
 class JsonYaml(object):
     def __init__(self):

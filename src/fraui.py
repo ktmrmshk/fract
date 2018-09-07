@@ -35,12 +35,14 @@ class fractui(object):
 
 
 
-        ### testget - generate test from url list files
+        ### testgen - generate test from url list files
         subprs_geturlc=subprs.add_parser('testgen', help="Testcase generator based on current server's behaviors")
         subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='output testcase file - json formatted', required=True)
         subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
         subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', required=True)
+        subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
+        subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
@@ -87,6 +89,24 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_y2j)
 
 
+        ### redirsum - redirect summary 
+        subprs_geturlc=subprs.add_parser('redirsum', help='Export redirect request/response summary in JSON form')
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
+        subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
+        subprs_geturlc.set_defaults(func=self.export_redirect_summary)
+        
+
+        ### ercost - ercost-check summary
+        subprs_geturlc=subprs.add_parser('ercost', help='Export Eege-Redirector-Cost summary in JSON form')
+        default_cost=10000000
+        subprs_geturlc.add_argument('-c', '--cost', help='cost threashold to Eege-Redirector-Cost (default {})'.format(default_cost),  type=int, default=default_cost)
+        subprs_geturlc.add_argument('-t', '--testcase', help='testcase json file - input', required=True)
+        subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
+        subprs_geturlc.set_defaults(func=self.export_ercost_summary)
+        
+
 
     def _tname(self, prefix, ext, postfix='', mid=None):
         ' if mid is None, returns "prefix2018111210123postfix.ext" '
@@ -125,9 +145,11 @@ class fractui(object):
     def do_testgen(self, args):
         self.verbose(args)
         logging.debug(args)
-        
+        headers=json.loads(args.headers)
+        ignore_case=args.ignore_case
+
         fg=FraseGen()
-        fg.gen_from_urls(args.input, args.srcghost, args.dstghost)
+        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case})
         fg.save(args.output)
         
         logging.info('save to {}'.format(args.output))
@@ -203,6 +225,21 @@ class fractui(object):
         jy=JsonYaml()
         jy.y2j(args.yamlfile, args.jsonfile)
 
+    def export_redirect_summary(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fclient = FractClient(fract_suite_file=args.testcase)
+        fclient.load_resultfile(args.result)
+        fclient.export_redirect_summary(args.output)
+
+    def export_ercost_summary(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        fclient = FractClient(fract_suite_file=args.testcase)
+        fclient.load_resultfile(args.result)
+        fclient.export_ercost_high(args.output, args.cost)
 
 if __name__ == '__main__':
     try:

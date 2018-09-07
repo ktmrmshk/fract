@@ -139,7 +139,15 @@ class test_FraseGen(unittest.TestCase):
         logging.debug('fg.ret={}'.format(ret))
         self.assertTrue(ret['X-Check-Cacheable'] == 'YES')
         self.assertTrue( '544456' in ret['X-Cache-Key'])
-    
+ 
+    # custom header support # should be tested through specific ghost conf
+    def test_current_stat2(self): 
+        fg=FraseGen()
+        ret = fg._current_stat('https://amd-ktmrhls41.akamaized.net/hls/live/568564/direct/index.m3u8', 'testnhk-mk.akamaized-staging.net', {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        logging.debug('fg.ret={}'.format(ret))
+        self.assertTrue(ret['X-Check-Cacheable'] == 'YES')
+        self.assertTrue( '544456' in ret['X-Cache-Key'])
+ 
     def test_current_stat_redirect(self):
         fg=FraseGen()
         ret = fg._current_stat('http://space.ktmrmshk.com', 'space.ktmrmshk.com')
@@ -152,10 +160,29 @@ class test_FraseGen(unittest.TestCase):
 
     def test_parse_xcachekey(self):
         fg=FraseGen()
-        cpcode, ttl = fg._parse_xcachekey('L1/L/13100/570226/1d/space.ktmrmshk.com/images/project-image1.jpg cid=___IM_FILE_NAME=.auto.1.2000.chrome&IM_API_TOKEN=space_ktmrmshk_com-10458653&IM_COMB_ON=true')
+        cpcode, ttl, ck_host, subdir = fg._parse_xcachekey('L1/L/13100/570226/1d/space.ktmrmshk.com/images/project-image1.jpg cid=___IM_FILE_NAME=.auto.1.2000.chrome&IM_API_TOKEN=space_ktmrmshk_com-10458653&IM_COMB_ON=true')
         self.assertTrue(cpcode == '570226')
         self.assertTrue(ttl == '1d')
-    
+        self.assertTrue(ck_host == 'space.ktmrmshk.com')
+        self.assertTrue(subdir == 'images')
+ 
+    def test_parse_xcachekey_subdir_support(self):
+        fg=FraseGen()
+        cpcode, ttl, ck_host, subdir = fg._parse_xcachekey('S/D/13100/570031/000/space.ktmrmshk.com/?akamai-transform=9 cid=___IM_FILE_NAME=.auto')
+        self.assertTrue(cpcode == '570031')
+        self.assertTrue(ttl == '000')
+        self.assertTrue(ck_host == 'space.ktmrmshk.com')
+        self.assertTrue(subdir == None)
+ 
+    def test_parse_xcachekey_subdir_support2(self):
+        fg=FraseGen()
+        cpcode, ttl, ck_host, subdir = fg._parse_xcachekey('S/D/13100/570031/000/space.ktmrmshk.com/ cid=___IM_FILE_NAME=.auto')
+        self.assertTrue(cpcode == '570031')
+        self.assertTrue(ttl == '000')
+        self.assertTrue(ck_host == 'space.ktmrmshk.com')
+        self.assertTrue(subdir == None)
+ 
+
     def test_gen(self):
         fg=FraseGen()
         ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net')
@@ -171,6 +198,63 @@ class test_FraseGen(unittest.TestCase):
         
         self.assertTrue( len( ft.query['Comment'] ) != 0 )
         self.assertTrue( len( ft.query['TestId'] ) != 0  )
+
+    # custom_header_support
+    def test_gen_20180801(self):
+        fg=FraseGen()
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Request']['Method'] == 'GET' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
+        self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
+        self.assertTrue( ft.query['Request']['Headers']['User-Agent'] == 'iPhone' )
+        self.assertTrue( ft.query['Request']['Headers']['Debug-abc'] == 'foobar' )
+
+        self.assertTrue( 'X-Cache-Key' in ft.query['TestCase'] )
+        self.assertTrue( 'Location' in ft.query['TestCase'] )
+        self.assertTrue( 'status_code' in ft.query['TestCase'] )
+        self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+        
+        self.assertTrue( len( ft.query['Comment'] ) != 0 )
+        self.assertTrue( len( ft.query['TestId'] ) != 0  )
+ 
+
+    # Edge redirector cost check support
+    def test_gen_20180815_ercost(self):
+        fg=FraseGen()
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Request']['Method'] == 'GET' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
+        self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
+        self.assertTrue( ft.query['Request']['Headers']['User-Agent'] == 'iPhone' )
+        
+        self.assertTrue( ft.query['Request']['Headers']['X-Akamai-Cloudlet-Cost'] == 'true' )
+
+    # 2018/08/21 ignore case support
+    def test_gen_ignore_case(self):
+        fg=FraseGen()
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'ignore_case':True})
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Request']['Method'] == 'GET' )
+        self.assertTrue( ft.query['Request']['Ghost'] == 'space.ktmrmshk.com.edgekey-staging.net' )
+        self.assertTrue( ft.query['Request']['Url'] == 'http://space.ktmrmshk.com/' )
+        self.assertTrue( ft.query['Request']['Headers']['User-Agent'] == 'iPhone' )
+        self.assertTrue( ft.query['Request']['Headers']['Debug-abc'] == 'foobar' )
+
+        self.assertTrue( 'X-Cache-Key' in ft.query['TestCase'] )
+        self.assertTrue( 'Location' in ft.query['TestCase'] )
+        self.assertTrue( ft.query['TestCase']['Location'][0]['option']['ignore_case'] == True)
+        self.assertTrue( 'status_code' in ft.query['TestCase'] )
+        self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+        
+        self.assertTrue( len( ft.query['Comment'] ) != 0 )
+        self.assertTrue( len( ft.query['TestId'] ) != 0  )
+ 
+
 
     def test_replaceDP(self):
         fg=FraseGen()
@@ -188,6 +272,28 @@ class test_FraseGen(unittest.TestCase):
         fg.gen_from_urls('urllist4test.txt', 'space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net')
         self.assertTrue( len(fg.testcases) == 32)
         fg.save('out.txt')
+
+    # custom header support
+    def test_gen_from_urls_20180801(self):
+        fg=FraseGen()
+        fg.gen_from_urls('urllist4test.txt', 'space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        self.assertTrue( len(fg.testcases) == 32)
+        fg.save('out.txt')
+        with open('out.txt') as f:
+            lines=f.read()
+            json_lines=json.loads(lines)
+            self.assertTrue( json_lines[0]['Request']['Headers']['User-Agent']=='iPhone')
+            self.assertTrue( json_lines[22]['Request']['Headers']['Debug-abc']=='foobar')
+    # 2018/08/21 ignore case support
+    def test_gen_from_urls_ignore_case(self):
+        fg=FraseGen()
+        fg.gen_from_urls('urllist4test.txt', 'space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', option={'ignore_case':True})
+        self.assertTrue( len(fg.testcases) == 32)
+        fg.save('out.txt')
+        with open('out.txt') as f:
+            ft=json.load(f)
+            self.assertTrue( ft[0]['TestCase']['Location'][0]['option']['ignore_case'] == True)
+
 
     def test_gen_from_top_urlog(self):
         fg=FraseGen()

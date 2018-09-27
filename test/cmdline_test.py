@@ -1,14 +1,14 @@
-import unittest, logging, argparse, os, datetime, subprocess, shlex, json
+import unittest, logging, argparse, os, datetime, subprocess, shlex, json, glob
 from pathlib import Path
+from datetime import datetime
 
 basePath = os.path.abspath(os.path.dirname(__file__))
-envpathout = './cmdline_test_output'
-envpathin = './cmdline_test_input'
+
 
 totalLogs = ''
-fraui_path = os.path.join(Path(basePath).parent, './src/fraui.py')
-topurllistPath = os.path.join(envpathin, 'fract.akamaized.net_urls.csv')
-urllistPath = os.path.join(envpathout, 'urllist.txt')
+fraui_path = '"' + os.path.join(Path(basePath).parent, 'src/fraui.py') + '"'
+envpathout = os.path.join(basePath, 'cmdline_test_output')
+envpathin = os.path.join(basePath,'cmdline_test_input')
 
 if not os.path.isdir(envpathout):
     os.mkdir(envpathout)
@@ -19,45 +19,154 @@ class testFractCommnand(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.fraui_path = fraui_path
-        self.command = ''
+        self.COMMAND = ''
+        self.HOMEPAGE_URL = 'https://fract.akamaized.net/'
+        self.CSS_URL = 'https://fract.akamaized.net/css/main.css'
+        self.TESTHOST = 'fract.akamaized.net'
+        self.TESTHOST_STAGING = 'fract.akamaized-staging.net'
+        self.URLLIST = '"' + os.path.join(envpathout, 'urllist.txt') + '"'
+        self.TOPURLLIST = '"' + os.path.join(envpathin, 'fract.akamaized.net_urls.csv') + '"'
+        self.TESTCASE = '"' + os.path.join(envpathout, 'testcase.json') + '"'
+        self.URLLIST_FORINPUT = '"' + os.path.join(envpathin, 'urllist_for_input.txt') + '"'
 
     @classmethod
     def tearDownClass(self):
         pass
 
+    @classmethod
     def setUp(self):
-        if (os.path.isfile(urllistPath)):
-            os.remove(urllistPath)
+        logging.debug('remove output files')
+        if (os.path.isfile(self.URLLIST)):
+            os.remove(self.URLLIST)
+        if (os.path.isfile(self.TESTCASE)):
+            os.remove(self.TESTCASE)
+        for i in self.getTestResultsFiles(self):
+            os.remove(i)
+
+    def do_cmd(self, cmd):
+        '''
+        cmd: command line string i.e. 'fract run -h'
+        '''
+        logging.debug('cmd => {}'.format(cmd))
+        cmd_list = shlex.split(cmd)
+        return subprocess.run(cmd_list, stdout=subprocess.PIPE)
+    
+    def getTestResultsFiles(self):
+        '''
+        get files: frdiff*.yaml fret*.json frsummary*.txt
+        '''
+        logging.info('getting frdiff*.yaml fret*.json frsummary*.txt')
+        listyaml = glob.glob(os.path.join(basePath, r'frdiff*.yaml'))
+        listjson = glob.glob(os.path.join(basePath, r'fret*.json'))
+        listtxt = glob.glob(os.path.join(basePath, r'frsummary*.txt'))
+        listResult = listyaml + listjson + listtxt
+        return listResult
 
     def test_HelpInformation(self):
+        '''
+        Scenario
+        1. run commmand the same as fract -h
+        2. check help informtaion output
+        '''
         logging.info('Testing: Help Information Output')
-        self.command = ['python3', fraui_path]
-        result = subprocess.run(self.command, stdout=subprocess.PIPE)
+        self.COMMAND = 'python3 {}'.format(fraui_path)
+        result = self.do_cmd(self.COMMAND)
         stdout_org = result.stdout.decode('utf-8')
         self.assertIn('usage: fract [-h] [-v]', stdout_org)
 
     def test_GetURLc(self):
+        '''
+        Scenario
+        1. run commmand the same as fract geturlc -e https://fract.akamaized.net -d 1 -o urllist.txt -D fract.akamaized.net
+        2. check if https://fract.akamaized.net/css/main.css in urllist.txt
+        '''
         logging.info('Testing: URL generation')
-        self.command = ['python3', fraui_path, 'geturlc', '-e', 'https://fract.akamaized.net/', '-d', '1', '-o', urllistPath, '-D', 'fract.akamaized.net']
-        subprocess.run(self.command, stdout=subprocess.PIPE)
-        self.assertTrue(os.path.isfile(urllistPath))
-        if os.path.isfile(urllistPath):
-            with open(urllistPath, mode='r') as rf:
+        self.COMMAND = 'python3 {} geturlc -e {} -d 1 -o {} -D {}'.format(fraui_path, self.HOMEPAGE_URL, self.URLLIST, self.TESTHOST)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.URLLIST.strip('"')))
+        if os.path.isfile(self.URLLIST):
+            with open(self.URLLIST, mode='r') as rf:
                 contents = rf.read()
-                self.assertTrue(contents.index('https://fract.akamaized.net/css/main.css') > 0)
+                self.assertTrue(contents.index(self.CSS_URL) > 0)
 
     def test_GetURLcFromCSV(self):
+        '''
+        Scenario
+        1. run commmand the same as fract geturlakm -i fract.akamaized.net_urls.csv -D 'fract.akamaized.net' -p https -o urllist.txt
+        2. check if https://fract.akamaized.net/css/main.css in urllist.txt
+        '''
         logging.info('Testing: URL generation by Akamai top url')
-        self.command = ['python3', fraui_path, 'geturlakm', '-i', topurllistPath, '-D', 'fract.akamaized.net', '-p', 'https', '-o', urllistPath]
-        subprocess.run(self.command, stdout=subprocess.PIPE)
-        self.assertTrue(os.path.isfile(urllistPath))
-        if os.path.isfile(urllistPath):
-            with open(urllistPath, mode='r') as rf:
+        self.COMMAND = 'python3 {} geturlakm -i {} -D {} -p https -o {}'.format(fraui_path, self.TOPURLLIST, self.TESTHOST, self.URLLIST)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.URLLIST.strip('"')))
+        if os.path.isfile(self.URLLIST):
+            with open(self.URLLIST, mode='r') as rf:
                 contents = rf.read()
-                self.assertTrue(contents.index('https://fract.akamaized.net/css/main.css') > 0)
+                self.assertTrue(contents.index(self.CSS_URL) > 0)
 
     def test_Maketestcases(self):
-        pass
+        '''
+        Scenario
+        1. run commmand the same as $ fract -v testgen -i urllist_for_input.txt -o testcase.json -s fract.akamaized.net -d fract.akamaized-staging.net
+        2. check if test case for https://fract.akamaized.net/css/main.css exists.
+        '''
+        logging.info('Testing: Making test cases by urllist.txt')
+        self.COMMAND = 'python3 {} -v testgen -i {} -o {} -s {} -d {}'.format(fraui_path, self.URLLIST_FORINPUT, self.TESTCASE, self.TESTHOST, self.TESTHOST_STAGING)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.TESTCASE.strip('"')))
+        if os.path.isfile(self.TESTCASE):
+            with open(self.TESTCASE, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('{"TestType": "hassert", "Request": {"Ghost": "fract.akamaized-staging.net", "Method": "GET", "Url": "https://fract.akamaized.net/css/main.css", "Headers": {"Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key"}}, "TestCase": {"X-Cache-Key": [{"type": "regex", "query": "/728260/"}, {"type": "regex", "query": "/1d/"}], "X-Check-Cacheable": [{"type": "regex", "query": "YES"}], "status_code": [{"type": "regex", "query": "200"}]}, "Comment": "This test was gened by FraseGen"') > 0)
+
+    def test_MaketestcasesWithAddtionalHeader(self):
+        '''
+        Scenario
+        1. run commmand the same as $ fract -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}'  -i urllist_for_input.txt -o testcase.json -s fract.akamaized.net -d fract.akamaized-staging.net
+        2. check if test case for https://fract.akamaized.net/css/main.css exists.
+        '''
+        logging.info('Testing: Making test cases by urllist.txt')
+        self.COMMAND = 'python3 {} -v testgen -H {} -i {} -o {} -s {} -d {}'.format(fraui_path, '\'{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}\'', self.URLLIST_FORINPUT, self.TESTCASE, self.TESTHOST, self.TESTHOST_STAGING)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.TESTCASE.strip('"')))
+        if os.path.isfile(self.TESTCASE):
+            with open(self.TESTCASE, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('"Headers": {"User-Agent": "iPhone", "Referer": "http://www.abc.com/", "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key", "X-Akamai-Cloudlet-Cost": "true"}}') > 0)
+
+    def test_RunTestcases(self):
+        '''
+        Scenario
+        1. run commmand the same as $ fract -v run -i testcase.json
+        2. check if frdiff*.yaml fret*.json frsummary*.txt three files exist.
+        '''
+        logging.info('Testing: Run testcases')
+        self.COMMAND = 'python3 {} -v run -i {}'.format(fraui_path, self.TESTCASE)
+        now = datetime.today()
+        midstart = int(now.strftime('%Y%m%d%H%M%S%f'))
+        resultinfo = self.do_cmd(self.COMMAND)
+        now = datetime.today()
+        midafter = int(now.strftime('%Y%m%d%H%M%S%f'))
+        listResult = self.getTestResultsFiles()
+        for i in listResult:
+            tmpFilename = os.path.basename(i).split('.')[0]
+            logging.debug('Filename except extension: ' + tmpFilename)
+            if 'frdiff' in tmpFilename:
+                tmpID = int(tmpFilename[6:])
+                self.assertTrue(tmpID < midafter)
+                self.assertTrue(tmpID > midstart)
+            if 'fret' in tmpFilename:
+                tmpID = int(tmpFilename[4:])
+                self.assertTrue(tmpID < midafter)
+                self.assertTrue(tmpID > midstart)
+            if 'frsummary' in tmpFilename:
+                tmpID = int(tmpFilename[9:])
+                self.assertTrue(tmpID < midafter)
+                self.assertTrue(tmpID > midstart)
+                with open(i, mode='r') as rf:
+                    contents = rf.read()
+                    self.assertTrue(contents.index('Summary') > 0)
+
 
 # edge redirector cost check support
 class testERCost(unittest.TestCase):

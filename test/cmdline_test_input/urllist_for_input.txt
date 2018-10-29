@@ -1,1 +1,2 @@
 https://fract.akamaized.net/css/main.css
+https://fract.akamaized.net/difftest/

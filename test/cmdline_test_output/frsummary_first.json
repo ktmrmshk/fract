@@ -1,0 +1,36 @@
+
+Summary
+=================
+
+Tests not passed
+----------------
+### TestId: 37dc04c99b022dc4d049a7f3711c4d4640c055473b5e46fe7624a5f787687598
+
+Request:
+  Ghost: fract.akamaized-staging.net
+  Headers:
+    Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
+      akamai-x-get-true-cache-key
+    Referer: http://www.abc.com/
+    User-Agent: iPhone
+    X-Akamai-Cloudlet-Cost: 'true'
+  Method: GET
+  Url: https://fract.akamaized.net/difftest/
+
+Location:
+- Passed: false
+  Response: https://space.ktmrmshk.com/
+  TestAssert: 'exact: "https://fract.akamaized.net/style-guide.html" - {''ignore_case'':
+    False}'
+status_code:
+- Passed: false
+  Response: 302
+  TestAssert: 'regex: "301" - {''ignore_case'': False}'
+
+
+
+Total
+----------------
+ran 2 tests: 1 failed
+
+=> Not Good

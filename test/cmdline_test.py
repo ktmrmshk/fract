@@ -28,20 +28,37 @@ class testFractCommnand(unittest.TestCase):
         self.TOPURLLIST = '"' + os.path.join(envpathin, 'fract.akamaized.net_urls.csv') + '"'
         self.TESTCASE = '"' + os.path.join(envpathout, 'testcase.json') + '"'
         self.URLLIST_FORINPUT = '"' + os.path.join(envpathin, 'urllist_for_input.txt') + '"'
+        self.DIFFYAML = '"' + os.path.join(envpathin, 'frdiff_test.yaml') + '"'
+        self.DIFFJSON = '"' + os.path.join(envpathout, 'frdiff_test.json') + '"'
+        self.FINAL_SUMMARY = '"' + os.path.join(envpathout, 'final_summary.txt') + '"'
+        self.FINAL_RESULT = '"' + os.path.join(envpathout, 'final_result.json') + '"'
+        self.FINAL_TESTCASE = '"' + os.path.join(envpathout, 'final_testcase.json') + '"'
+        self.RUN_TEST_FIRST_OUTPUT = '"' + os.path.join(envpathout, 'fret_first.json') + '"'
+        self.RUN_TEST_FIRST_DIFF = '"' + os.path.join(envpathout, 'frdiff_first.yaml') + '"'
+        self.RUN_TEST_FIRST_SUMMARY = '"' + os.path.join(envpathout, 'frsummary_first.json') + '"'
+        self.RUN_TEST_SECOND_OUTPUT = '"' + os.path.join(envpathout, 'fret_second.json') + '"'
+        self.RUN_TEST_SECOND_DIFF = '"' + os.path.join(envpathout, 'frdiff_second.yaml') + '"'
+        self.RUN_TEST_SECOND_SUMMARY = '"' + os.path.join(envpathout, 'frsummary_second.json') + '"'
 
-    @classmethod
-    def tearDownClass(self):
-        pass
-
-    @classmethod
-    def setUp(self):
         logging.debug('remove output files')
         if (os.path.isfile(self.URLLIST)):
             os.remove(self.URLLIST)
         if (os.path.isfile(self.TESTCASE)):
             os.remove(self.TESTCASE)
-        for i in self.getTestResultsFiles(self):
+        if (os.path.isfile(self.DIFFJSON)):
+            os.remove(self.DIFFJSON)
+        if (os.path.isfile(self.FINAL_SUMMARY)):
+            os.remove(self.FINAL_SUMMARY)
+        if (os.path.isfile(self.FINAL_RESULT)):
+            os.remove(self.FINAL_RESULT)
+        for i in self.getTestResultsFiles(self, basePath):
             os.remove(i)
+        for i in self.getTestResultsFiles(self, envpathout):
+            os.remove(i)
+
+    @classmethod
+    def tearDownClass(self):
+        pass
 
     def do_cmd(self, cmd):
         '''
@@ -51,14 +68,14 @@ class testFractCommnand(unittest.TestCase):
         cmd_list = shlex.split(cmd)
         return subprocess.run(cmd_list, stdout=subprocess.PIPE)
     
-    def getTestResultsFiles(self):
+    def getTestResultsFiles(self, tmpPath):
         '''
         get files: frdiff*.yaml fret*.json frsummary*.txt
         '''
         logging.info('getting frdiff*.yaml fret*.json frsummary*.txt')
-        listyaml = glob.glob(os.path.join(basePath, r'frdiff*.yaml'))
-        listjson = glob.glob(os.path.join(basePath, r'fret*.json'))
-        listtxt = glob.glob(os.path.join(basePath, r'frsummary*.txt'))
+        listyaml = glob.glob(os.path.join(tmpPath, r'frdiff*.yaml'))
+        listjson = glob.glob(os.path.join(tmpPath, r'fret*.json'))
+        listtxt = glob.glob(os.path.join(tmpPath, r'frsummary*.txt'))
         listResult = listyaml + listjson + listtxt
         return listResult
 
@@ -144,10 +161,10 @@ class testFractCommnand(unittest.TestCase):
         self.COMMAND = 'python3 {} -v run -i {}'.format(fraui_path, self.TESTCASE)
         now = datetime.today()
         midstart = int(now.strftime('%Y%m%d%H%M%S%f'))
-        resultinfo = self.do_cmd(self.COMMAND)
+        self.do_cmd(self.COMMAND)
         now = datetime.today()
         midafter = int(now.strftime('%Y%m%d%H%M%S%f'))
-        listResult = self.getTestResultsFiles()
+        listResult = self.getTestResultsFiles(basePath)
         for i in listResult:
             tmpFilename = os.path.basename(i).split('.')[0]
             logging.debug('Filename except extension: ' + tmpFilename)
@@ -166,6 +183,44 @@ class testFractCommnand(unittest.TestCase):
                 with open(i, mode='r') as rf:
                     contents = rf.read()
                     self.assertTrue(contents.index('Summary') > 0)
+
+    def test_Y2J(self):
+        '''
+        Scenario
+        1. run commmand the same as $ fract y2j frdiff_test.yaml frdiff_test.josn
+        '''
+        logging.info('Testing: Y2J')
+        self.COMMAND = 'python {} y2j {} {}'.format(fraui_path, self.DIFFYAML, self.DIFFJSON)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.DIFFJSON.strip('"')))
+        if os.path.isfile(self.DIFFJSON):
+            with open(self.DIFFJSON, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('"query": "302"') > 0)
+
+    def test_MergeResults(self):
+        '''
+        Scenario
+        1. run command the same as $ fract rmerge -t testcase.json frdiff*.json -r fret* -s final_summary.txt -o final_result.json
+        '''
+        logging.info('Testing: Merge Results')
+        #first step : testcase.json
+        self.COMMAND = 'python3 {} -v run -i {} -o {} -s {} -d {}'.format(fraui_path, self.TESTCASE, self.RUN_TEST_FIRST_OUTPUT, self.RUN_TEST_FIRST_SUMMARY, self.RUN_TEST_FIRST_DIFF)
+        self.do_cmd(self.COMMAND)
+        #second step : frdiff_test.json
+        self.COMMAND = 'python3 {} -v run -i {} -o {} -s {} -d {}'.format(fraui_path, self.DIFFJSON, self.RUN_TEST_SECOND_OUTPUT, self.RUN_TEST_SECOND_SUMMARY, self.RUN_TEST_SECOND_DIFF)
+        self.do_cmd(self.COMMAND)
+        #merge
+        self.COMMAND = 'python3 {} rmerge -t {} {} -r {} {} -s {} -o {}'.format(fraui_path, self.TESTCASE, self.DIFFJSON, self.RUN_TEST_FIRST_OUTPUT, self.RUN_TEST_SECOND_OUTPUT, self.FINAL_SUMMARY, self.FINAL_RESULT)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.FINAL_SUMMARY.strip('"')))
+        self.assertTrue(os.path.isfile(self.FINAL_RESULT.strip('"')))
+
+    def test_MergeTestCases(self):
+        '''
+        Scenario
+        1. run command the same as $ fract tmerge -t testcase.json frdiff*.json -o final_testcase.json
+        '''
 
 
 # edge redirector cost check support

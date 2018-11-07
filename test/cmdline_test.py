@@ -39,6 +39,9 @@ class testFractCommnand(unittest.TestCase):
         self.RUN_TEST_SECOND_OUTPUT = '"' + os.path.join(envpathout, 'fret_second.json') + '"'
         self.RUN_TEST_SECOND_DIFF = '"' + os.path.join(envpathout, 'frdiff_second.yaml') + '"'
         self.RUN_TEST_SECOND_SUMMARY = '"' + os.path.join(envpathout, 'frsummary_second.json') + '"'
+        self.MERGE_TESTCASE_1 = '"' + os.path.join(envpathin, 'testcase_formerge1.json') + '"'
+        self.MERGE_TESTCASE_2 = '"' + os.path.join(envpathin, 'testcase_formerge2.json') + '"'
+        self.MERGE_TESTCASE_FINAL = '"' + os.path.join(envpathout, 'final_testcase.json') + '"'
 
         logging.debug('remove output files')
         if (os.path.isfile(self.URLLIST)):
@@ -55,6 +58,8 @@ class testFractCommnand(unittest.TestCase):
             os.remove(i)
         for i in self.getTestResultsFiles(self, envpathout):
             os.remove(i)
+        if (os.path.isfile(self.MERGE_TESTCASE_FINAL)):
+            os.remove(self.MERGE_TESTCASE_FINAL)
 
     @classmethod
     def tearDownClass(self):
@@ -221,6 +226,15 @@ class testFractCommnand(unittest.TestCase):
         Scenario
         1. run command the same as $ fract tmerge -t testcase.json frdiff*.json -o final_testcase.json
         '''
+        logging.info('Testing: Merge Testcases')
+        #merge
+        self.COMMAND = 'python3 {} tmerge -t {} {} -o {}'.format(fraui_path, self.MERGE_TESTCASE_1, self.MERGE_TESTCASE_2, self.FINAL_TESTCASE)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.FINAL_TESTCASE.strip('"')))
+        if os.path.isfile(self.FINAL_TESTCASE):
+            with open(self.FINAL_TESTCASE, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('http://space.ktmrmshk.com/') > 0)
 
 
 # edge redirector cost check support

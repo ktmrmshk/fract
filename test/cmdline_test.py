@@ -42,6 +42,9 @@ class testFractCommnand(unittest.TestCase):
         self.MERGE_TESTCASE_1 = '"' + os.path.join(envpathin, 'testcase_formerge1.json') + '"'
         self.MERGE_TESTCASE_2 = '"' + os.path.join(envpathin, 'testcase_formerge2.json') + '"'
         self.MERGE_TESTCASE_FINAL = '"' + os.path.join(envpathout, 'final_testcase.json') + '"'
+        self.TESTCASE_REDIRECTION = '"' + os.path.join(envpathin, 'testcase_redirection.json') + '"'
+        self.REDIRECTION_RESULT = '"' + os.path.join(envpathin, 'redirection_result.json') + '"'
+        self.REDIRECTION_SUMMARY = '"' + os.path.join(envpathout, 'redirection_summary.json') + '"'
 
         logging.debug('remove output files')
         if (os.path.isfile(self.URLLIST)):
@@ -60,6 +63,10 @@ class testFractCommnand(unittest.TestCase):
             os.remove(i)
         if (os.path.isfile(self.MERGE_TESTCASE_FINAL)):
             os.remove(self.MERGE_TESTCASE_FINAL)
+        if (os.path.isfile(self.REDIRECTION_RESULT)):
+            os.remove(self.REDIRECTION_RESULT)
+        if (os.path.isfile(self.REDIRECTION_SUMMARY)):
+            os.remove(self.REDIRECTION_SUMMARY)
 
     @classmethod
     def tearDownClass(self):
@@ -144,7 +151,7 @@ class testFractCommnand(unittest.TestCase):
     def test_MaketestcasesWithAddtionalHeader(self):
         '''
         Scenario
-        1. run commmand the same as $ fract -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}'  -i urllist_for_input.txt -o testcase.json -s fract.akamaized.net -d fract.akamaized-staging.net
+        1. run commmand the same as $ fract -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}' -i urllist_for_input.txt -o testcase.json -s fract.akamaized.net -d fract.akamaized-staging.net
         2. check if test case for https://fract.akamaized.net/css/main.css exists.
         '''
         logging.info('Testing: Making test cases by urllist.txt')
@@ -224,7 +231,7 @@ class testFractCommnand(unittest.TestCase):
     def test_MergeTestCases(self):
         '''
         Scenario
-        1. run command the same as $ fract tmerge -t testcase.json frdiff*.json -o final_testcase.json
+        1. run command the same as $ fract tmerge -t testcase_formerge1.json testcase_formerge2.json -o final_testcase.json
         '''
         logging.info('Testing: Merge Testcases')
         #merge
@@ -235,6 +242,25 @@ class testFractCommnand(unittest.TestCase):
             with open(self.FINAL_TESTCASE, mode='r') as rf:
                 contents = rf.read()
                 self.assertTrue(contents.index('http://space.ktmrmshk.com/') > 0)
+
+    def test_ExportRedirectSummary(self):
+        '''
+        Scenario
+        1. run command the same as $ fract redirsum -t testcase_redirect.json -r result_redirect.json -o summary_redirect.json
+        '''
+        logging.info('Testing: Export Redirect Summary')
+        #make result_redirect.json
+        self.COMMAND = 'python3 {} -v run -i {} -o {}'.format(fraui_path, self.TESTCASE_REDIRECTION, self.REDIRECTION_RESULT)
+        self.do_cmd(self.COMMAND)
+        #redirsum
+        self.COMMAND = 'python3 {} redirsum -t {} -r {} -o {}'.format(fraui_path, self.TESTCASE_REDIRECTION, self.REDIRECTION_RESULT, self.REDIRECTION_SUMMARY)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.REDIRECTION_RESULT.strip('"')))
+        self.assertTrue(os.path.isfile(self.REDIRECTION_SUMMARY.strip('"')))
+        #if os.path.isfile(self.REDIRECTION_SUMMARY):
+        #    with open(self.REDIRECTION_SUMMARY, mode='r') as rf:
+        #        contents = rf.read()
+        #        self.assertTrue(contents.index('http://space.ktmrmshk.com/') > 0)
 
 
 # edge redirector cost check support
@@ -349,7 +375,7 @@ class testERCost(unittest.TestCase):
         # 1. make urllist
         with open(self.URLLIST, 'w') as f:
             f.write('https://fract.akamaized.net/ignore_case/foobar.html')
-        self.assertTrue( os.path.isfile(self.URLLIST))
+        self.assertTrue(os.path.isfile(self.URLLIST))
 
         # 2. gen testcase
         self.do_cmd( 'python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, self.URLLIST, self.TESTCASE))
@@ -394,11 +420,6 @@ class testERCost(unittest.TestCase):
         with open( self.RESULT ) as f:
             result = json.load(f)
             self.assertTrue(result[0]['Passed'] == True)
-
-
-
-
-
 
 if __name__ == '__main__':
     print('Version 0.1')

@@ -177,24 +177,32 @@ class testFractCommnand(unittest.TestCase):
         now = datetime.today()
         midafter = int(now.strftime('%Y%m%d%H%M%S%f'))
         listResult = self.getTestResultsFiles(basePath)
+        filecount = 0
         for i in listResult:
             tmpFilename = os.path.basename(i).split('.')[0]
             logging.debug('Filename except extension: ' + tmpFilename)
             if 'frdiff' in tmpFilename:
                 tmpID = int(tmpFilename[6:])
-                self.assertTrue(tmpID < midafter)
-                self.assertTrue(tmpID > midstart)
+                if tmpID < midafter and tmpID > midstart:
+                    filecount += 1
+                    with open(i, mode='r') as rf:
+                        contents = rf.read()
+                        self.assertTrue(contents.index('Ghost: fract.akamaized-staging.net') > 0)
             if 'fret' in tmpFilename:
                 tmpID = int(tmpFilename[4:])
-                self.assertTrue(tmpID < midafter)
-                self.assertTrue(tmpID > midstart)
+                if tmpID < midafter and tmpID > midstart:
+                    filecount += 1
+                    with open(i, mode='r') as rf:
+                        contents = rf.read()
+                        self.assertTrue(contents.index('X-Akamai-Session-Info') > 0)
             if 'frsummary' in tmpFilename:
                 tmpID = int(tmpFilename[9:])
-                self.assertTrue(tmpID < midafter)
-                self.assertTrue(tmpID > midstart)
-                with open(i, mode='r') as rf:
-                    contents = rf.read()
-                    self.assertTrue(contents.index('Summary') > 0)
+                if tmpID < midafter and tmpID > midstart:
+                    filecount += 1
+                    with open(i, mode='r') as rf:
+                        contents = rf.read()
+                        self.assertTrue(contents.index('Summary') > 0)
+        self.assertTrue(filecount == 3)
 
     def test_Y2J(self):
         '''
@@ -202,7 +210,7 @@ class testFractCommnand(unittest.TestCase):
         1. run commmand the same as $ fract y2j frdiff_test.yaml frdiff_test.josn
         '''
         logging.info('Testing: Y2J')
-        self.COMMAND = 'python {} y2j {} {}'.format(fraui_path, self.DIFFYAML, self.DIFFJSON)
+        self.COMMAND = 'python3 {} y2j {} {}'.format(fraui_path, self.DIFFYAML, self.DIFFJSON)
         self.do_cmd(self.COMMAND)
         self.assertTrue(os.path.isfile(self.DIFFJSON.strip('"')))
         if os.path.isfile(self.DIFFJSON):

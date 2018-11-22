@@ -36,7 +36,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -44,7 +44,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -54,7 +54,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -64,7 +64,7 @@
         {
           "Passed": true,
           "Value": 200,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "200"
           }
@@ -103,7 +103,7 @@
         {
           "Passed": true,
           "Value": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -111,7 +111,7 @@
         {
           "Passed": true,
           "Value": "/D/850/728260/000/fract.akamaized.net/col/single-video.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -121,7 +121,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -131,7 +131,7 @@
         {
           "Passed": true,
           "Value": 301,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "301"
           }
@@ -141,7 +141,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/single-video.html",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/single-video.html"
           }
@@ -186,7 +186,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -194,7 +194,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/728260/7d/fract.akamaized.net/col/images/icons/icon-search.svg",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/7d/"
           }
@@ -204,7 +204,7 @@
         {
           "Passed": true,
           "Value": "YES",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "YES"
           }
@@ -214,7 +214,7 @@
         {
           "Passed": true,
           "Value": 200,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "200"
           }
@@ -257,7 +257,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/729521/"
           }
@@ -265,7 +265,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/729521/30d/fract.akamaized.net/images/wheel-2000.jpg cid=___IM_FILE_NAME=.auto.1.5000.generic&IM_API_TOKEN=fract_akamaized_net-10576646&IM_COMB_ON=true",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/30d/"
           }
@@ -275,7 +275,7 @@
         {
           "Passed": true,
           "Value": "YES",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "YES"
           }
@@ -285,7 +285,7 @@
         {
           "Passed": true,
           "Value": 200,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "200"
           }
@@ -330,7 +330,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -338,7 +338,7 @@
         {
           "Passed": true,
           "Value": "S/L/850/728260/1d/fract.akamaized.net/col/js/modernizr.js",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/1d/"
           }
@@ -348,7 +348,7 @@
         {
           "Passed": true,
           "Value": "YES",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "YES"
           }
@@ -358,7 +358,7 @@
         {
           "Passed": true,
           "Value": 200,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "200"
           }
@@ -397,7 +397,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -405,7 +405,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/abc123?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -415,7 +415,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -425,7 +425,7 @@
         {
           "Passed": true,
           "Value": 302,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "302"
           }
@@ -435,7 +435,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/single-video.html",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/single-video.html"
           }
@@ -474,7 +474,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/570031/"
           }
@@ -482,7 +482,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/570031/000/fract.akamaized.net/col/difftest/abc123.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -492,7 +492,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -502,7 +502,7 @@
         {
           "Passed": true,
           "Value": 301,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "301"
           }
@@ -512,7 +512,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/style-guide.html",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/style-guide.html"
           }
@@ -554,7 +554,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -562,7 +562,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/difftest_cpcode/abc123.html?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -572,7 +572,7 @@
         {
           "Passed": true,
           "Value": "YES",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "YES"
           }
@@ -582,7 +582,7 @@
         {
           "Passed": true,
           "Value": 404,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "404"
           }
@@ -621,7 +621,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -629,7 +629,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/foobar/hoge/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -639,7 +639,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -649,7 +649,7 @@
         {
           "Passed": true,
           "Value": 302,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "302"
           }
@@ -659,7 +659,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/single-video.html",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/single-video.html"
           }
@@ -698,7 +698,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -706,7 +706,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/xyz123?id=123&cond=hogehoge&name=123&akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -716,7 +716,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -726,7 +726,7 @@
         {
           "Passed": true,
           "Value": 302,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "302"
           }
@@ -736,7 +736,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/single-video.html?id=123&cond=hogehoge&name=123",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/single-video.html?id=123&cond=hogehoge&name=123"
           }
@@ -775,7 +775,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -783,7 +783,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/pm_redirect/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -793,7 +793,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -803,7 +803,7 @@
         {
           "Passed": true,
           "Value": 302,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "302"
           }
@@ -813,7 +813,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/single-video.html",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/single-video.html"
           }
@@ -852,7 +852,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -860,7 +860,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/redirect_test/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -870,7 +870,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -880,7 +880,7 @@
         {
           "Passed": true,
           "Value": 301,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "301"
           }
@@ -890,7 +890,7 @@
         {
           "Passed": true,
           "Value": "https://fract.akamaized.net/",
-          "testcase": {
+          "TestCase": {
             "type": "exact",
             "query": "https://fract.akamaized.net/"
           }
@@ -932,7 +932,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/728260/"
           }
@@ -940,7 +940,7 @@
         {
           "Passed": true,
           "Value": "S/D/850/728260/000/fract.akamaized.net/col/foobar/?akamai-transform=9",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -950,7 +950,7 @@
         {
           "Passed": true,
           "Value": "YES",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "YES"
           }
@@ -960,7 +960,7 @@
         {
           "Passed": true,
           "Value": 404,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "404"
           }

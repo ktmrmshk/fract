@@ -270,7 +270,7 @@ class FraseGen(object):
                 subdir=sp[6]
         return (cpcode, ttl, ck_host, subdir)
 
-    def gen(self, url, src_ghost, dst_ghost, headers={}):
+    def gen(self, url, src_ghost, dst_ghost, headers={}, option={}):
         '''
         in: url and ghost
         out: hassert test case
@@ -284,19 +284,20 @@ class FraseGen(object):
 
         cstat = self._current_stat(url, src_ghost, headers)
         cpcode, ttl, ck_host, subdir = self._parse_xcachekey(cstat['X-Cache-Key'])
-        ft.add('X-Cache-Key', '/{}/'.format(cpcode))
-        ft.add('X-Cache-Key', '/{}/'.format(ttl))
-        if subdir:
-            ft.add('X-Cache-Key', '/{}/{}'.format(ck_host, subdir), 'contain')
-        else:
-            ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain')
         
-        ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'])
-        ft.add('status_code', str(cstat['status_code']) )
+        ft.add('X-Cache-Key', '/{}/'.format(cpcode), option=option)
+        ft.add('X-Cache-Key', '/{}/'.format(ttl), option=option)
+        if subdir:
+            ft.add('X-Cache-Key', '/{}/{}'.format(ck_host, subdir), 'contain', option=option)
+        else:
+            ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain', option=option)
+        
+        ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
+        ft.add('status_code', str(cstat['status_code']), option=option)
         ft.set_comment('This test was gened by FraseGen')
         ft.set_testid()
         if 'Location' in cstat:
-            ft.add('Location', cstat['Location'], 'exact')
+            ft.add('Location', cstat['Location'], 'exact', option=option)
             #ft.add('status_code', str(cstat['status_code']) )
         return ft
 
@@ -328,7 +329,7 @@ class FraseGen(object):
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 
-    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}):
+    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}):
         cnt=0
         with open(filename) as f:
             for line in f:
@@ -336,7 +337,7 @@ class FraseGen(object):
                 if url == '':
                     continue
                 try:
-                    tc = self.gen(url, src_ghost, dst_ghost, headers)
+                    tc = self.gen(url, src_ghost, dst_ghost, headers, option)
                     self.testcases.append( tc )
                     cnt+=1
                 except Exception as e:

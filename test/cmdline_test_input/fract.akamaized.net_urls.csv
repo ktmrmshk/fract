@@ -1,0 +1,44 @@
+# HEADER_START
+time_zone,JST
+end_date,20180814
+time_zone_offset,32400
+cpcode,728260,729520,729521
+start_date,20180813
+# HEADER_END
+# COLUMN_DEFINITION_START
+"URL","OK EDGE HITS","TREND*"
+# COLUMN_DEFINITION_END
+
+# ROW_DATA_START
+fract.akamaized.net/images/thumbs/small/beetle-150.jpg,977,N/A
+fract.akamaized.net/css/vendor.css,977,N/A
+fract.akamaized.net/images/thumbs/small/tulips-150.jpg,971,N/A
+fract.akamaized.net/images/avatars/user-03.jpg,969,N/A
+fract.akamaized.net/images/thumbs/masonry/shutterbug-400.jpg,968,N/A
+fract.akamaized.net/images/thumbs/masonry/beetle-400.jpg,967,N/A
+fract.akamaized.net/js/main.js,966,N/A
+fract.akamaized.net/js/jquery-3.2.1.min.js,964,N/A
+fract.akamaized.net/images/thumbs/small/wheel-150.jpg,964,N/A
+fract.akamaized.net/images/thumbs/masonry/sydney-400.jpg,962,N/A
+fract.akamaized.net/images/thumbs/masonry/gallery/gallery-1-400.jpg,961,N/A
+fract.akamaized.net/css/main.css,959,N/A
+fract.akamaized.net/js/modernizr.js,957,N/A
+fract.akamaized.net/images/thumbs/small/shutterbug-150.jpg,957,N/A
+fract.akamaized.net/images/thumbs/masonry/jump-400.jpg,956,N/A
+fract.akamaized.net/images/thumbs/masonry/guitarman-400.jpg,954,N/A
+fract.akamaized.net/images/thumbs/masonry/gallery/gallery-2-400.jpg,954,N/A
+fract.akamaized.net/images/thumbs/masonry/cookies-400.jpg,954,N/A
+fract.akamaized.net/favicon.ico,954,N/A
+fract.akamaized.net/js/plugins.js,953,N/A
+fract.akamaized.net/images/thumbs/small/cookies-150.jpg,952,N/A
+fract.akamaized.net/images/thumbs/masonry/tulips-400.jpg,952,N/A
+fract.akamaized.net/images/thumbs/masonry/gallery/gallery-3-400.jpg,952,N/A
+fract.akamaized.net/images/thumbs/masonry/wheel-400.jpg,948,N/A
+fract.akamaized.net/images/thumbs/masonry/lamp-400.jpg,948,N/A
+fract.akamaized.net/images/thumbs/masonry/fuji-400.jpg,945,N/A
+fract.akamaized.net/images/logo.svg,944,N/A
+fract.akamaized.net/css/base.css,940,N/A
+fract.akamaized.net/,940,N/A
+fract.akamaized.net/images/thumbs/small/salad-150.jpg,937,N/A
+fract.akamaized.net/js/pace.min.js,935,N/A
+# ROW_DATA_END

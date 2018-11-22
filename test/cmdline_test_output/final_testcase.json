@@ -1,0 +1,155 @@
+[
+  {
+    "TestType": "hassert",
+    "Request": {
+      "Ghost": "fract.akamaized-staging.net",
+      "Method": "GET",
+      "Url": "https://fract.akamaized.net/css/main.css",
+      "Headers": {
+        "User-Agent": "iPhone",
+        "Referer": "http://www.abc.com/",
+        "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key",
+        "X-Akamai-Cloudlet-Cost": "true"
+      }
+    },
+    "TestCase": {
+      "X-Cache-Key": [
+        {
+          "type": "regex",
+          "query": "/728260/",
+          "option": {
+            "ignore_case": false
+          }
+        },
+        {
+          "type": "regex",
+          "query": "/1d/",
+          "option": {
+            "ignore_case": false
+          }
+        },
+        {
+          "type": "contain",
+          "query": "/fract.akamaized.net/col",
+          "option": {
+            "ignore_case": false
+          }
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "type": "regex",
+          "query": "YES",
+          "option": {
+            "ignore_case": false
+          }
+        }
+      ],
+      "status_code": [
+        {
+          "type": "regex",
+          "query": "200",
+          "option": {
+            "ignore_case": false
+          }
+        }
+      ]
+    },
+    "Comment": "This test was gened by FraseGen",
+    "TestId": "307d6d7da6f0c5ca0faa4a0f64d466ed87d1e4169f7929fe7f58ca4bacd2ba36"
+  },
+  {
+    "TestType": "hassert",
+    "Request": {
+      "Ghost": "space.ktmrmshk.com.edgekey-staging.net",
+      "Method": "GET",
+      "Url": "http://space.ktmrmshk.com/",
+      "Headers": {
+        "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key"
+      }
+    },
+    "TestCase": {
+      "X-Cache-Key": [
+        {
+          "type": "regex",
+          "query": "/570031/"
+        },
+        {
+          "type": "regex",
+          "query": "/000/"
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "type": "regex",
+          "query": "NO"
+        }
+      ],
+      "status_code": [
+        {
+          "type": "regex",
+          "query": "301"
+        },
+        {
+          "type": "regex",
+          "query": "301"
+        }
+      ],
+      "Location": [
+        {
+          "type": "regex",
+          "query": "https://space.ktmrmshk.com/"
+        }
+      ]
+    },
+    "Comment": "XXXXXXXXXXXXXXxxxXXXXXXXXX",
+    "TestId": "f6b5d710c3db0492d6e0c74bc04d6151977732fe4e89379f885e55adb35b04f4"
+  },
+  {
+    "TestType": "hassert",
+    "Request": {
+      "Ghost": "space.ktmrmshk.com.edgekey-staging.net",
+      "Method": "GET",
+      "Url": "http://space.ktmrmshk.com/",
+      "Headers": {
+        "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key"
+      }
+    },
+    "TestCase": {
+      "X-Cache-Key": [
+        {
+          "type": "regex",
+          "query": "/570031/"
+        },
+        {
+          "type": "regex",
+          "query": "/000/"
+        }
+      ],
+      "X-Check-Cacheable": [
+        {
+          "type": "regex",
+          "query": "NO"
+        }
+      ],
+      "status_code": [
+        {
+          "type": "regex",
+          "query": "301"
+        },
+        {
+          "type": "regex",
+          "query": "301"
+        }
+      ],
+      "Location": [
+        {
+          "type": "regex",
+          "query": "https://space.ktmrmshk.com/"
+        }
+      ]
+    },
+    "Comment": "12345678901234567890",
+    "TestId": "12345678901234567890"
+  }
+]

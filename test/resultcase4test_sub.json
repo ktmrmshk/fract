@@ -24,7 +24,7 @@
         {
           "Passed": true,
           "Value": "/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/570031/"
           }
@@ -32,7 +32,7 @@
         {
           "Passed": true,
           "Value": "/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -42,7 +42,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -52,7 +52,7 @@
         {
           "Passed": true,
           "Value": 301,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "301"
           }
@@ -60,7 +60,7 @@
         {
           "Passed": true,
           "Value": 301,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "301"
           }
@@ -70,7 +70,7 @@
         {
           "Passed": true,
           "Value": "https://space.ktmrmshk.com/",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "https://space.ktmrmshk.com/"
           }
@@ -111,7 +111,7 @@
         {
           "Passed": true,
           "Value": "S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/570031/"
           }
@@ -119,7 +119,7 @@
         {
           "Passed": true,
           "Value": "S/D/13100/570031/000/space.ktmrmshk.com/space/?akamai-transform=9 cid=___EDC_IS_MOBILE=false",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "/000/"
           }
@@ -129,7 +129,7 @@
         {
           "Passed": true,
           "Value": "NO",
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "NO"
           }
@@ -139,7 +139,7 @@
         {
           "Passed": true,
           "Value": 200,
-          "testcase": {
+          "TestCase": {
             "type": "regex",
             "query": "200"
           }

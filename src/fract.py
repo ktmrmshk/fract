@@ -410,7 +410,10 @@ class ActorResponse(object):
     def resh(self, headername):
         if headername == 'status_code':
             return self.r.status_code
-        return self.r.headers[ headername ]
+        #2018/11/29 Rum-off Start
+        # return self.r.headers[ headername ]
+        return self.r.headers.get(headername, '')
+        #2018/11/29 Rum-off End
     def status_code(self):
         return self.r.status_code
 

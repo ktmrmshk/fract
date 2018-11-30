@@ -300,6 +300,24 @@ class test_FraseGen(unittest.TestCase):
         fg.gen_from_top_urlog('topurl.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
         fg.save('out.json')
 
+    # 2018/11/29 test rum-off with custom header Start
+    def test_current_rum_off(self):
+        logging.info('Start Testing rum off')
+        fg=FraseGen()
+        ft = fg.gen('https://fract.akamaized.net/mk20xyz/FooBar/example.html', 'fract.akamaized.net', 'fract.akamaized.net', {'Cookie': 'test=123;Test=1234567890'})
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['Request']['Headers']['Cookie'] == 'akamai-rum=off;test=123;Test=1234567890' )
+        ft = fg.gen('https://fract.akamaized.net/mk20xyz/FooBar/example.html', 'fract.akamaized.net', 'fract.akamaized.net')
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['Request']['Headers']['Cookie'] == 'akamai-rum=off' )
+        ret = fg._current_stat('https://fract.akamaized.net/mk20xyz/FooBar/example.html', 'fract.akamaized.net', {'Cookie': 'akamai-rum=off;test=123;Test=1234567890'})
+        logging.debug('Rum-Off Debug={}'.format(ret))
+        self.assertTrue('name=RANDOM_SAMPLE; value=false' in ret['X-Akamai-Session-Info'])
+        self.assertTrue(ret['X-Akamai-Transformed'] is '')
+        self.assertTrue('"Cookie": "akamai-rum=off;test=123;Test=1234567890"' in ret['Request-Headers'])
+        logging.info('rum off testing end')
+    # 2018/11/29 test rum-off with custom header End
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     unittest.main()

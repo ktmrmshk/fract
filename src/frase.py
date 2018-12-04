@@ -252,6 +252,11 @@ class FraseGen(object):
         ret['status_code']=r.resh('status_code')
         if r.resh('status_code') in (301, 302, 303, 307): # if redirect response
             ret['Location']=r.resh('Location')
+        #2018/11/29 Rum-off Start
+        ret['Request-Headers'] = r.resh('Request-Headers')
+        ret['X-Akamai-Session-Info'] = r.resh('X-Akamai-Session-Info')
+        ret['X-Akamai-Transformed'] = r.resh('X-Akamai-Transformed')
+        #2018/11/29 Rum-off End
         
         return ret
 
@@ -280,8 +285,16 @@ class FraseGen(object):
         ft.init_template()
         headers.update({'Pragma':fract.AKAMAI_PRAGMA})
         headers.update({'X-Akamai-Cloudlet-Cost': 'true'})
+        #2018/11/29 Rum-off Start
+        cookieFromCustomer = headers.get('Cookie', '')
+        if 'akamai-rum=off' not in cookieFromCustomer:
+            if cookieFromCustomer is '':
+                headers.update({'Cookie': 'akamai-rum=off'})
+            else:
+                headers.update({'Cookie': 'akamai-rum=off;' + cookieFromCustomer})
+        #2018/11/29 Rum-off End
         ft.setRequest(url, dst_ghost, headers)
-
+        
         cstat = self._current_stat(url, src_ghost, headers)
         cpcode, ttl, ck_host, subdir = self._parse_xcachekey(cstat['X-Cache-Key'])
         

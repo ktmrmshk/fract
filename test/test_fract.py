@@ -288,6 +288,11 @@ class test_Actor(unittest.TestCase):
     def test_resh(self):
         self.assertTrue( self.actorresponse.resh('status_code') == self.actorresponse.r.status_code )
         self.assertTrue( self.actorresponse.resh('Date') == self.actorresponse.r.headers['Date'] )
+    
+    #2018/12/04 Rum-off Start
+    def test_resh_null_response_header(self):
+        self.assertTrue( self.actorresponse.resh('NothingNothingNothing') == '' )
+    #2018/12/04 Rum-off End
 
     def test_siggleton(self):
         a = Actor()

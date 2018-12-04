@@ -300,7 +300,7 @@ class test_FraseGen(unittest.TestCase):
         fg.gen_from_top_urlog('topurl.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
         fg.save('out.json')
 
-    # 2018/11/29 test rum-off with custom header Start
+    #2018/11/29 Rum-off Start
     def test_current_rum_off(self):
         logging.info('Start Testing rum off')
         fg=FraseGen()
@@ -316,7 +316,7 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue(ret['X-Akamai-Transformed'] is '')
         self.assertTrue('"Cookie": "akamai-rum=off;test=123;Test=1234567890"' in ret['Request-Headers'])
         logging.info('rum off testing end')
-    # 2018/11/29 test rum-off with custom header End
+    #2018/11/29 Rum-off End
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

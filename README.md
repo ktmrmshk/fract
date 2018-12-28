@@ -51,7 +51,8 @@ Changelog
 	
 * 2018/07/31 - custom request header support
 * 2018/08/15 - redirect summary, Edge-Redirector-Cost check	
-
+* 2018/08/22 - Ignore-case option support
+* 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
 
 
 Workflow Example - Usage

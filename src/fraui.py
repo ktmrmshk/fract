@@ -7,11 +7,7 @@ import argparse
 import logging
 from datetime import datetime
 import os
-
-VERSION="Not Defined"
-with open('{}/.version'.format(os.path.dirname(__file__))) as f:
-    ver=f.read()
-    VERSION = ver.strip()
+from version import VERSION
 
 
 class fractui(object):

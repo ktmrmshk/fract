@@ -429,6 +429,19 @@ class testERCost(unittest.TestCase):
             result = json.load(f)
             self.assertTrue(result[0]['Passed'] == True)
 
+
+    def test_VersionInfo(self):
+        '''
+        Scenario
+        1. run fract with --version option
+        '''
+        # 1. run fract with --version option
+        output = self.do_cmd( 'python3 {} --version'.format(fraui_path) ).stdout.decode('utf-8')
+        self.assertTrue( output.startswith('Version: v'))
+        
+        
+        
+
 if __name__ == '__main__':
     print('Version 0.1')
     logging.basicConfig(level=logging.DEBUG)

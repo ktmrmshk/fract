@@ -6,12 +6,19 @@ from frase import *
 import argparse
 import logging
 from datetime import datetime
+import os
+
+VERSION="Not Defined"
+with open('{}/.version'.format(os.path.dirname(__file__))) as f:
+    ver=f.read()
+    VERSION = ver.strip()
 
 
 class fractui(object):
     def __init__(self):
         self.prs=argparse.ArgumentParser(prog='fract')
         self.prs.add_argument('-v', '--verbosity', help='verbos display', action='store_true')
+        self.prs.add_argument('--version', help='verion info', action='store_true')
         self.prs.set_defaults(func=self.do_usage)
         subprs=self.prs.add_subparsers(help='sub-command help')
         
@@ -122,8 +129,14 @@ class fractui(object):
     def do_usage(self, args):
         self.verbose(args)
         logging.debug(args)
-        self.prs.print_help()
+        print('Version: {}'.format(VERSION))
+        if args.version == False:
+            self.prs.print_help()
 
+    def show_version(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        print('Version: {}'.format(VERSION))
 
 
     def do_geturls(self, args):

@@ -291,7 +291,7 @@ class test_FraseGen(unittest.TestCase):
         self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
         #6 Default => No X-Check-Cacheable when 307
-        ft = fg.gen('https://fract.akamaized.net/303/','fract.akamaized.net', 'fract.akamaized-staging.net')
+        ft = fg.gen('https://fract.akamaized.net/307/','fract.akamaized.net', 'fract.akamaized-staging.net')
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
 

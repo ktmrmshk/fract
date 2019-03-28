@@ -130,12 +130,6 @@ class fractui(object):
         if args.version == False:
             self.prs.print_help()
 
-    def show_version(self, args):
-        self.verbose(args)
-        logging.debug(args)
-        print('Version: {}'.format(VERSION))
-
-
     def do_geturls(self, args):
         self.verbose(args)
         logging.debug(args)

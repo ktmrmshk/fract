@@ -429,6 +429,78 @@ class testERCost(unittest.TestCase):
             result = json.load(f)
             self.assertTrue(result[0]['Passed'] == True)
 
+
+       
+
+# edge redirector cost check support
+class test_Ignore_X_Check_Cacheability_30x(unittest.TestCase):
+    def setUp(self):
+        self.URLLIST='urllist4strict_redirect_cacheability.txt'
+        self.TESTCASE='testcase.json.test'
+
+        cmd='rm *.test'
+        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+
+    def tearDown(self):
+        #  remove files
+        cmd='rm *.test'
+        subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+
+    def do_cmd(self, cmd):
+        '''
+        cmd: command line string i.e. 'fract run -h'
+        '''
+        logging.debug('cmd => {}'.format(cmd))
+        cmd_list = shlex.split(cmd)
+        return subprocess.run(cmd_list, stdout=subprocess.PIPE)
+
+    def test_VersionInfo(self):
+        '''
+        Scenario
+        1. run fract with --version option
+        '''
+        # 1. run fract with --version option
+        output = self.do_cmd( 'python3 {} --version'.format(fraui_path) ).stdout.decode('utf-8')
+        self.assertTrue( output.startswith('Version: v'))
+ 
+    def test_strict_redirect_cacheability_OFF(self):
+        '''
+        Scenario
+        1. run testgen on redirect response WITHOUT --strict-redirect-cacheability
+        2. check if there's no x-check-cacheable in testcase
+        '''
+        
+        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        with open(self.TESTCASE) as f:
+            testcase = json.load(f)
+            self.assertTrue( 'X-Check-Cacheable' not in testcase[0]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' not in testcase[1]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' not in testcase[2]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' not in testcase[3]['TestCase'])
+            
+            # 200 OK response
+            self.assertTrue( 'X-Check-Cacheable' in testcase[4]['TestCase'])
+
+    def test_strict_redirect_cacheability_ON(self):
+        '''
+        Scenario
+        1. run testgen on redirect response WITH --strict-redirect-cacheability
+        2. check if there's no x-check-cacheable in testcase
+        '''
+        
+        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net --strict-redirect-cacheability'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        
+        with open(self.TESTCASE) as f:
+            testcase = json.load(f)
+            self.assertTrue( 'X-Check-Cacheable' in testcase[0]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' in testcase[1]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' in testcase[2]['TestCase'])
+            self.assertTrue( 'X-Check-Cacheable' in testcase[3]['TestCase'])
+            
+            # 200 OK response
+            self.assertTrue( 'X-Check-Cacheable' in testcase[4]['TestCase'])
+
+
 if __name__ == '__main__':
     print('Version 0.1')
     logging.basicConfig(level=logging.DEBUG)

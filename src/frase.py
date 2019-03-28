@@ -9,7 +9,7 @@ import logging
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from urllib.parse import urlparse, urljoin
-
+from version import VERSION, strnow
 
 
 class Htmlpsr(HTMLParser):
@@ -307,7 +307,7 @@ class FraseGen(object):
         
         ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
         ft.add('status_code', str(cstat['status_code']), option=option)
-        ft.set_comment('This test was gened by FraseGen')
+        ft.set_comment('This test was gened by FraseGen - {} at {}'.format(VERSION, strnow()))
         ft.set_testid()
         if 'Location' in cstat:
             ft.add('Location', cstat['Location'], 'exact', option=option)

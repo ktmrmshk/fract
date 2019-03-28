@@ -23,7 +23,8 @@ $ docker pull ktmrmshk/fract
 $ docker run -it ktmrmshk/fract /bin/bash
 
 root@3f10471d9422:/# fract -h
-usage: fract [-h] [-v]
+Version: v0.6-3-g46db14d
+usage: fract [-h] [-v] [--version]
              {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost}
              ...
 
@@ -44,14 +45,17 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbosity       verbos display
+  --version             verion info
 ```
 
 Changelog
 ------------
-	
+
 * 2018/07/31 - custom request header support
 * 2018/08/15 - redirect summary, Edge-Redirector-Cost check	
-
+* 2018/08/22 - Ignore-case option support
+* 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
+* 2019/03/29 - v0.7 Ignore x-check-cacheable value when 30x redirect response, version info support
 
 
 Workflow Example - Usage

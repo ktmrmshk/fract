@@ -9,7 +9,7 @@ import logging
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from urllib.parse import urlparse, urljoin
-
+from version import VERSION, strnow
 
 
 class Htmlpsr(HTMLParser):
@@ -275,7 +275,7 @@ class FraseGen(object):
                 subdir=sp[6]
         return (cpcode, ttl, ck_host, subdir)
 
-    def gen(self, url, src_ghost, dst_ghost, headers={}, option={}):
+    def gen(self, url, src_ghost, dst_ghost, headers={}, option={}, mode={}):
         '''
         in: url and ghost
         out: hassert test case
@@ -305,9 +305,12 @@ class FraseGen(object):
         else:
             ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain', option=option)
         
-        ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
+        if cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False:
+            pass
+        else:
+            ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
         ft.add('status_code', str(cstat['status_code']), option=option)
-        ft.set_comment('This test was gened by FraseGen')
+        ft.set_comment('This test was gened by FraseGen - {} at {}'.format(VERSION, strnow()))
         ft.set_testid()
         if 'Location' in cstat:
             ft.add('Location', cstat['Location'], 'exact', option=option)
@@ -342,7 +345,7 @@ class FraseGen(object):
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 
-    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}):
+    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}, mode={}):
         cnt=0
         with open(filename) as f:
             for line in f:
@@ -350,7 +353,7 @@ class FraseGen(object):
                 if url == '':
                     continue
                 try:
-                    tc = self.gen(url, src_ghost, dst_ghost, headers, option)
+                    tc = self.gen(url, src_ghost, dst_ghost, headers, option, mode)
                     self.testcases.append( tc )
                     cnt+=1
                 except Exception as e:

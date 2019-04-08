@@ -920,7 +920,7 @@ class RedirectLoopTester(object):
                     return -1
             else:
                 return 0
-        elif count < 0:
+        else:
             return -1
 
     def save(self, resultFile, outputFile, maximum):

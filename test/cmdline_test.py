@@ -295,7 +295,16 @@ class testFractCommnand(unittest.TestCase):
         if os.path.isfile(self.REDIRECTLOOP_SUMMARY):
             with open(self.REDIRECTLOOP_SUMMARY, mode='r') as rf:
                 contents = rf.read()
-                self.assertTrue(contents.index('Maximum Value 6') > 0)
+                self.assertTrue(contents.index('Maximum Value 3') > 0)
+        if os.path.isfile(self.REDIRECTION_RESULT):
+            with open(self.REDIRECTION_RESULT, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('MaximumValue') > 0)
+                self.assertTrue(contents.index('Depth') > 0)
+                self.assertTrue(contents.index('301') > 0)
+                self.assertTrue(contents.index('302') > 0)
+                self.assertTrue(contents.index('303') > 0)
+                self.assertTrue(contents.index('307') > 0)
     ### 2019/04/08 testredirectloop end
 
 

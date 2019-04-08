@@ -1,0 +1,50 @@
+
+Summary
+=================
+
+Tests not passed
+----------------
+### TestId: cc17353b5e2d9862f756ed216789b18c5ab20c5d4b5b6ea888ed24ff899e9950
+
+Request:
+  Ghost: fract.akamaized-staging.net
+  Headers:
+    Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
+      akamai-x-get-true-cache-key
+    X-Akamai-Cloudlet-Cost: 'true'
+  Method: GET
+  Url: https://fract.akamaized.net/difftest/abc123.html
+
+Location:
+- Passed: false
+  Response: https://space.ktmrmshk.com/
+  TestAssert: 'exact: "https://fract.akamaized.net/style-guide.html" - {}'
+status_code:
+- Passed: false
+  Response: 302
+  TestAssert: 'regex: "301" - {}'
+
+
+### TestId: 0ae7c05b03d4bb8b5a03acba9861b5c2840db264202a6dfb8ca36fa7316f24b7
+
+Request:
+  Ghost: fract.akamaized-staging.net
+  Headers:
+    Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
+      akamai-x-get-true-cache-key
+    X-Akamai-Cloudlet-Cost: 'true'
+  Method: GET
+  Url: https://fract.akamaized.net/difftest_cpcode/abc123.html
+
+X-Cache-Key:
+- Passed: false
+  Response: S/D/850/570031/000/lolipop-3224e3b9bb328eb6.ssl-lolipop.jp/col/difftest_cpcode/abc123.html?akamai-transform=9
+  TestAssert: 'regex: "/728260/" - {}'
+
+
+
+Total
+----------------
+ran 13 tests: 2 failed
+
+=> Not Good

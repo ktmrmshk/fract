@@ -864,7 +864,121 @@ class JsonYaml(object):
             with open(jsonfile, 'w') as fw:
                 json.dump(obj, fw)
 
+### 2019/04/05 testredirectloop start
+class RedirectLoopTester(object):
+    def __init__(self):
+        '''
+        Initiate
+        '''
+        self.resultList = list()
+        self.actor=Actor()
+        self.allcount = 0
+        self.errorcount = 0
+        self.errorArray = []
 
+    def test_from_urls(self, filename, src_ghost, maximum):
+        '''
+        get url from urllist and control subtest:
+        '''
+        with open(filename) as f:
+            for line in f:
+                self.allcount += 1
+                url=line.strip()
+                if url == '':
+                    continue
+                try:
+                    subItem = self.getNewSubItem()
+                    subItem['Source'] = url
+                    subItem['MaximumValue'] = maximum
+                    result = self.test(url, src_ghost, maximum, subItem)
+                    if result == -1:
+                        subItem['ReachedMaximumValue'] = 'Yes'
+                        self.errorcount += 1
+                        self.errorArray.append(url)
+                    subItem['Depth'] = len(subItem['Chain'])
+                    self.resultList.append( subItem )
+                except Exception as e:
+                    logging.warning(e)
+                logging.debug('RedirectLoop Tester: {} tested.'.format(url))
+
+    def test(self, url, src_ghost, count, tmpSubItem):
+        '''
+        run recursive test
+        '''
+        if count > 0:
+            testResult = self.actor.get( url, None, src_ghost )
+            statusCode = testResult.status_code()
+            if statusCode in (301, 302, 303, 307):
+                redirectToUrl = testResult.headers()['Location']
+                tmpSubDict = {}
+                tmpSubDict[redirectToUrl] = statusCode
+                tmpSubItem['Chain'].append(tmpSubDict)
+                returnCode = self.test(redirectToUrl, src_ghost, count - 1, tmpSubItem)
+                if returnCode == 0:
+                    return 0
+                else:
+                    return -1
+            else:
+                return 0
+        elif count < 0:
+            return -1
+
+    def save(self, resultFile, outputFile, maximum):
+        '''
+        save result and summary to file
+        '''
+        with open(resultFile, 'w') as fw:
+            json.dump(self.resultList, fw)
+        summary = self.make_summary(maximum)
+        print(summary)
+        with open(outputFile, 'w') as fw:
+            fw.write(summary)
+
+    def getNewSubItem(self):
+        '''
+        Make new item for json
+        '''
+        itemDic = dict()
+        itemDic['Depth'] = None
+        itemDic['Source'] = None
+        itemDic['Chain'] = list()
+        itemDic['MaximumValue'] = None
+        itemDic['ReachedMaximumValue'] = 'No'
+        return itemDic
+
+    def make_summary(self, maximum):
+        '''
+        Summary is like this
+
+        Summary
+        =====================
+        Condition
+        --------------------
+        Maximum value: 5
+
+        Total
+        --------------------
+        ran 30 tests: 4 failed
+        '''
+        summary=str()
+        summary+='''
+Summary
+=================\n'''
+        summary+='Condition\n----------------\n'
+        summary+='Maximum Value {}\n\n'.format(maximum)
+        summary+='''
+Total
+----------------\n'''
+        summary+='ran {} tests: {} failed\n\n'.format(self.allcount, self.errorcount)
+        if self.errorcount == 0:
+            summary+='=> OK\n'
+        else:
+            summary+='=> Not Good\n'
+            for i in self.errorArray:
+                summary += i
+                summary+='\n'
+        return summary
+### 2019/04/05 testredirectloop end
 
 
 import sys

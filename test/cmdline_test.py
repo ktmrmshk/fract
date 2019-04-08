@@ -45,6 +45,11 @@ class testFractCommnand(unittest.TestCase):
         self.TESTCASE_REDIRECTION = '"' + os.path.join(envpathin, 'testcase_redirection.json') + '"'
         self.REDIRECTION_RESULT = '"' + os.path.join(envpathin, 'redirection_result.json') + '"'
         self.REDIRECTION_SUMMARY = '"' + os.path.join(envpathout, 'redirection_summary.json') + '"'
+        ### 2019/04/08 testredirectloop start
+        self.REDIRECTLOOP_INPUT = '"' + os.path.join(envpathin, 'looplist.txt') + '"'
+        self.REDIRECTLOOP_RESULT = '"' + os.path.join(envpathout, 'loopresult.json') + '"'
+        self.REDIRECTLOOP_SUMMARY = '"' + os.path.join(envpathout, 'loopsummary.txt') + '"'
+        ### 2019/04/08 testredirectloop end
 
         logging.debug('remove output files')
         if (os.path.isfile(self.URLLIST)):
@@ -67,6 +72,12 @@ class testFractCommnand(unittest.TestCase):
             os.remove(self.REDIRECTION_RESULT)
         if (os.path.isfile(self.REDIRECTION_SUMMARY)):
             os.remove(self.REDIRECTION_SUMMARY)
+        ### 2019/04/08 testredirectloop start
+        if (os.path.isfile(self.REDIRECTLOOP_RESULT)):
+            os.remove(self.REDIRECTLOOP_RESULT)
+        if (os.path.isfile(self.REDIRECTLOOP_SUMMARY)):
+            os.remove(self.REDIRECTLOOP_SUMMARY)
+        ### 2019/04/08 testredirectloop end
 
     @classmethod
     def tearDownClass(self):
@@ -269,6 +280,23 @@ class testFractCommnand(unittest.TestCase):
         #    with open(self.REDIRECTION_SUMMARY, mode='r') as rf:
         #        contents = rf.read()
         #        self.assertTrue(contents.index('http://space.ktmrmshk.com/') > 0)
+
+    ### 2019/04/08 testredirectloop start
+    def test_RedirectLoop(self):
+        '''
+        Scenario
+        1. run command the same as $ fract testredirectloop -i looplist.txt -o loopsummary.txt -r loopresult.json -s fract.akamaized.net -m 3
+        '''
+        logging.info('Testing: Export Redirect Summary')
+        self.COMMAND = 'python3 {} -v testredirectloop -i {} -o {} -r {} -s {} -m {}'.format(fraui_path, self.REDIRECTLOOP_INPUT, self.REDIRECTLOOP_SUMMARY, self.REDIRECTLOOP_RESULT, "fract.akamaized.net", 3)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.REDIRECTLOOP_RESULT.strip('"')))
+        self.assertTrue(os.path.isfile(self.REDIRECTLOOP_SUMMARY.strip('"')))
+        if os.path.isfile(self.REDIRECTLOOP_SUMMARY):
+            with open(self.REDIRECTLOOP_SUMMARY, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('Maximum Value 6') > 0)
+    ### 2019/04/08 testredirectloop end
 
 
 # edge redirector cost check support

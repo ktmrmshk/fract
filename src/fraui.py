@@ -6,12 +6,15 @@ from frase import *
 import argparse
 import logging
 from datetime import datetime
+import os
+from version import VERSION
 
 
 class fractui(object):
     def __init__(self):
         self.prs=argparse.ArgumentParser(prog='fract')
         self.prs.add_argument('-v', '--verbosity', help='verbos display', action='store_true')
+        self.prs.add_argument('--version', help='verion info', action='store_true')
         self.prs.set_defaults(func=self.do_usage)
         subprs=self.prs.add_subparsers(help='sub-command help')
         
@@ -43,6 +46,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', required=True)
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
+        subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
@@ -131,9 +135,9 @@ class fractui(object):
     def do_usage(self, args):
         self.verbose(args)
         logging.debug(args)
-        self.prs.print_help()
-
-
+        print('Version: {}'.format(VERSION))
+        if args.version == False:
+            self.prs.print_help()
 
     def do_geturls(self, args):
         self.verbose(args)
@@ -156,9 +160,10 @@ class fractui(object):
         logging.debug(args)
         headers=json.loads(args.headers)
         ignore_case=args.ignore_case
+        strict_redirect_cacheability = args.strict_redirect_cacheability
 
         fg=FraseGen()
-        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case})
+        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
         fg.save(args.output)
         
         logging.info('save to {}'.format(args.output))

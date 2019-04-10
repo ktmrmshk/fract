@@ -871,17 +871,20 @@ class RedirectLoopTester(object):
         Initiate
         '''
         self.resultList = list()
-        self.actor=Actor()
+        self.actor = Actor()
         self.allcount = 0
         self.errorcount = 0
         self.errorArray = []
+        self.hasRedirect = False
+        self.hasRedirectCount = 0
 
-    def test_from_urls(self, filename, src_ghost, maximum):
+    def test_from_urls(self, filename, dst_ghost, maximum):
         '''
         get url from urllist and control subtest:
         '''
         with open(filename) as f:
             for line in f:
+                self.hasRedirect = False
                 self.allcount += 1
                 url=line.strip()
                 if url == '':
@@ -890,7 +893,10 @@ class RedirectLoopTester(object):
                     subItem = self.getNewSubItem()
                     subItem['Source'] = url
                     subItem['MaximumValue'] = maximum
-                    result = self.test(url, src_ghost, maximum, subItem)
+                    result = self.test(url, dst_ghost, maximum, subItem)
+                    if self.hasRedirect == True:
+                        self.hasRedirectCount += 1
+                        self.hasRedirect = False
                     if result == -1:
                         subItem['ReachedMaximumValue'] = 'Yes'
                         self.errorcount += 1
@@ -901,19 +907,21 @@ class RedirectLoopTester(object):
                     logging.warning(e)
                 logging.debug('RedirectLoop Tester: {} tested.'.format(url))
 
-    def test(self, url, src_ghost, count, tmpSubItem):
+    def test(self, url, dst_ghost, count, tmpSubItem):
         '''
         run recursive test
         '''
         if count > 0:
-            testResult = self.actor.get( url, None, src_ghost )
+            testResult = self.actor.get( url, None, dst_ghost )
             statusCode = testResult.status_code()
             if statusCode in (301, 302, 303, 307):
+                self.hasRedirect = True
                 redirectToUrl = testResult.headers()['Location']
                 tmpSubDict = {}
-                tmpSubDict[redirectToUrl] = statusCode
+                tmpSubDict['Location'] = redirectToUrl
+                tmpSubDict['status_code'] = statusCode
                 tmpSubItem['Chain'].append(tmpSubDict)
-                returnCode = self.test(redirectToUrl, src_ghost, count - 1, tmpSubItem)
+                returnCode = self.test(redirectToUrl, dst_ghost, count - 1, tmpSubItem)
                 if returnCode == 0:
                     return 0
                 else:
@@ -923,15 +931,15 @@ class RedirectLoopTester(object):
         else:
             return -1
 
-    def save(self, resultFile, outputFile, maximum):
+    def save(self, outputFile, summaryFile, maximum):
         '''
         save result and summary to file
         '''
-        with open(resultFile, 'w') as fw:
-            json.dump(self.resultList, fw)
+        with open(outputFile, 'w') as fw:
+            json.dump(self.resultList, fw, indent=4)
         summary = self.make_summary(maximum)
         print(summary)
-        with open(outputFile, 'w') as fw:
+        with open(summaryFile, 'w') as fw:
             fw.write(summary)
 
     def getNewSubItem(self):
@@ -969,7 +977,7 @@ Summary
         summary+='''
 Total
 ----------------\n'''
-        summary+='ran {} tests: {} failed\n\n'.format(self.allcount, self.errorcount)
+        summary+='ran {} tests: {} redirect URLs , {} failed\n\n'.format(self.allcount, self.hasRedirectCount, self.errorcount)
         if self.errorcount == 0:
             summary+='=> OK\n'
         else:

@@ -288,7 +288,7 @@ class testFractCommnand(unittest.TestCase):
         1. run command the same as $ fract testredirectloop -i looplist.txt -o loopsummary.txt -r loopresult.json -s fract.akamaized.net -m 3
         '''
         logging.info('Testing: Export Redirect Summary')
-        self.COMMAND = 'python3 {} -v testredirectloop -i {} -o {} -r {} -s {} -m {}'.format(fraui_path, self.REDIRECTLOOP_INPUT, self.REDIRECTLOOP_SUMMARY, self.REDIRECTLOOP_RESULT, "fract.akamaized.net", 3)
+        self.COMMAND = 'python3 {} -v testredirectloop -i {} -s {} -o {} -d {} -m {}'.format(fraui_path, self.REDIRECTLOOP_INPUT, self.REDIRECTLOOP_SUMMARY, self.REDIRECTLOOP_RESULT, "fract.akamaized.net", 3)
         self.do_cmd(self.COMMAND)
         self.assertTrue(os.path.isfile(self.REDIRECTLOOP_RESULT.strip('"')))
         self.assertTrue(os.path.isfile(self.REDIRECTLOOP_SUMMARY.strip('"')))

@@ -99,7 +99,9 @@ class testFractCommnand(unittest.TestCase):
         listyaml = glob.glob(os.path.join(tmpPath, r'frdiff*.yaml'))
         listjson = glob.glob(os.path.join(tmpPath, r'fret*.json'))
         listtxt = glob.glob(os.path.join(tmpPath, r'frsummary*.txt'))
-        listResult = listyaml + listjson + listtxt
+        listredirectloopjson = glob.glob(os.path.join(tmpPath, r'frrlresult*.json'))
+        listredirectlooptxt = glob.glob(os.path.join(tmpPath, r'frrlsummary*.txt'))
+        listResult = listyaml + listjson + listtxt + listredirectloopjson + listredirectlooptxt
         return listResult
 
     def test_HelpInformation(self):
@@ -305,6 +307,32 @@ class testFractCommnand(unittest.TestCase):
                 self.assertTrue(contents.index('302') > 0)
                 self.assertTrue(contents.index('303') > 0)
                 self.assertTrue(contents.index('307') > 0)
+        now = datetime.today()
+        midstart = int(now.strftime('%Y%m%d%H%M%S%f'))
+        self.COMMAND = 'python3 {} -v testredirectloop -i {}'.format(fraui_path, self.REDIRECTLOOP_INPUT)
+        self.do_cmd(self.COMMAND)
+        now = datetime.today()
+        midafter = int(now.strftime('%Y%m%d%H%M%S%f'))
+        listResult = self.getTestResultsFiles(basePath)
+        filecount = 0
+        for i in listResult:
+            tmpFilename = os.path.basename(i).split('.')[0]
+            logging.debug('Filename except extension: ' + tmpFilename)
+            if 'frrlresult' in tmpFilename:
+                tmpID = int(tmpFilename[10:])
+                if tmpID < midafter and tmpID > midstart:
+                    filecount += 1
+                    with open(i, mode='r') as rf:
+                        contents = rf.read()
+                        self.assertTrue(contents.index('Depth') > 0)
+            if 'frrlsummary' in tmpFilename:
+                tmpID = int(tmpFilename[11:])
+                if tmpID < midafter and tmpID > midstart:
+                    filecount += 1
+                    with open(i, mode='r') as rf:
+                        contents = rf.read()
+                        self.assertTrue(contents.index('Summary') > 0)
+        self.assertTrue(filecount == 2)
     ### 2019/04/08 testredirectloop end
 
 

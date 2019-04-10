@@ -113,10 +113,10 @@ class fractui(object):
         ### 2019/04/05 testredirectloop start
         subprs_geturlc=subprs.add_parser('testredirectloop', help='Test if redirect happend more than special value')
         subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
-        subprs_geturlc.add_argument('-o', '--output', help='result json file - input', default=self._tname('frrlresult', 'json', mid=mid))
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('frrlresult', 'json', mid=mid))
         subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frrlsummary', 'txt', mid=mid))
         subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', default=None)
-        subprs_geturlc.add_argument('-m', '--maximum', help='maximum value', type=int, default=5)
+        subprs_geturlc.add_argument('-m', '--maximum', help='threshold to trace redirect chain', type=int, default=5)
         subprs_geturlc.set_defaults(func=self.do_testredirectloop)
         ### 2019/04/05 testredirectloop end
 

@@ -99,8 +99,8 @@ class testFractCommnand(unittest.TestCase):
         listyaml = glob.glob(os.path.join(tmpPath, r'frdiff*.yaml'))
         listjson = glob.glob(os.path.join(tmpPath, r'fret*.json'))
         listtxt = glob.glob(os.path.join(tmpPath, r'frsummary*.txt'))
-        listredirectloopjson = glob.glob(os.path.join(tmpPath, r'frrlresult*.json'))
-        listredirectlooptxt = glob.glob(os.path.join(tmpPath, r'frrlsummary*.txt'))
+        listredirectloopjson = glob.glob(os.path.join(tmpPath, r'loopret*.json'))
+        listredirectlooptxt = glob.glob(os.path.join(tmpPath, r'loopsummary*.txt'))
         listResult = listyaml + listjson + listtxt + listredirectloopjson + listredirectlooptxt
         return listResult
 
@@ -301,7 +301,7 @@ class testFractCommnand(unittest.TestCase):
         if os.path.isfile(self.REDIRECTION_RESULT):
             with open(self.REDIRECTION_RESULT, mode='r') as rf:
                 contents = rf.read()
-                self.assertTrue(contents.index('MaximumValue') > 0)
+                self.assertTrue(contents.index('Threshold') > 0)
                 self.assertTrue(contents.index('Depth') > 0)
                 self.assertTrue(contents.index('301') > 0)
                 self.assertTrue(contents.index('302') > 0)
@@ -318,14 +318,14 @@ class testFractCommnand(unittest.TestCase):
         for i in listResult:
             tmpFilename = os.path.basename(i).split('.')[0]
             logging.debug('Filename except extension: ' + tmpFilename)
-            if 'frrlresult' in tmpFilename:
-                tmpID = int(tmpFilename[10:])
+            if 'loopret' in tmpFilename:
+                tmpID = int(tmpFilename[7:])
                 if tmpID < midafter and tmpID > midstart:
                     filecount += 1
                     with open(i, mode='r') as rf:
                         contents = rf.read()
                         self.assertTrue(contents.index('Depth') > 0)
-            if 'frrlsummary' in tmpFilename:
+            if 'loopsummary' in tmpFilename:
                 tmpID = int(tmpFilename[11:])
                 if tmpID < midafter and tmpID > midstart:
                     filecount += 1

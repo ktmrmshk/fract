@@ -591,6 +591,68 @@ class test_JsonYaml(unittest.TestCase):
         self.jy.y2j('testcase4test.yaml', 'testcase4test2.json')
 
 
+from fract import RedirectLoopTester
+class test_RedirectLoopTester(unittest.TestCase):
+    def setUp(self):
+        self.rlt=RedirectLoopTester()
+    def tearDown(self):
+        pass
+
+    def test_test_from_urls(self):
+        self.rlt.test_from_urls('urllist4redirectloop.txt', 'fract.akamaized-staging.net', 5)
+        self.assertTrue(self.rlt.allcount == 10)
+        self.assertTrue(self.rlt.errorcount == 4)
+        self.assertTrue(self.rlt.hasRedirectCount == 9)
+        #self.assertTrue( subitem['Depth'] == 1 )
+        #self.assertTrue( subitem['Threshold'] == 5 )
+        #self.assertTrue( subitem['ReachedThreshold'] == False )
+        #self.assertTrue( subitem['TargetHost'] == 'fract.akamaized.net' )
+
+
+    def test_tracechain1(self):
+        subitem = self.rlt.getNewSubItem()
+        self.rlt.tracechain('https://fract.akamaized.net/301/', 'fract.akamaized.net', 5, subitem)
+        #logging.warning('test_test_tracechain(): subitem={}'.format(subitem))
+        
+        self.assertTrue( subitem['Chain'][0]['Location'] == 'https://fract.akamaized.net/' )
+        self.assertTrue( subitem['Chain'][0]['status_code'] == 301 )
+        
+    def test_tracechain2(self):
+        testdepth=3
+        subitem = self.rlt.getNewSubItem()
+        self.rlt.tracechain('https://fract.akamaized.net/301/{}/'.format(testdepth), 'fract.akamaized.net', 5, subitem)
+        self.assertTrue( len(subitem['Chain']) == testdepth )
+    
+    def test_tracechain_overflow(self):
+        testdepth=6
+        subitem = self.rlt.getNewSubItem()
+        self.rlt.tracechain('https://fract.akamaized.net/301/{}/'.format(testdepth), 'fract.akamaized.net', 5, subitem)
+        self.assertTrue( len(subitem['Chain']) == 5 )
+
+    def test_tracechain_noredirect(self):
+        subitem = self.rlt.getNewSubItem()
+        self.rlt.tracechain('https://fract.akamaized.net/', 'fract.akamaized.net', 5, subitem)
+        self.assertTrue( len(subitem['Chain']) == 0 )
+
+    def test_save(self):
+        pass
+
+    def test_getNewSubItem(self):
+        obj = self.rlt.getNewSubItem()
+        self.assertTrue('Depth' in obj)
+        self.assertTrue('TargetHost' in obj)
+        self.assertTrue('Chain' in obj)
+        self.assertTrue('Threshold' in obj)
+        self.assertTrue( obj['ReachedTreshold'] is False)
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

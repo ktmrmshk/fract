@@ -891,23 +891,24 @@ class RedirectLoopTester(object):
                     continue
                 try:
                     subItem = self.getNewSubItem()
-                    subItem['Source'] = url
-                    subItem['MaximumValue'] = maximum
-                    result = self.test(url, dst_ghost, maximum, subItem)
+                    subItem['TargetHost'] = url
+                    subItem['Threshold'] = maximum
+                    result = self.tracechain(url, dst_ghost, maximum, subItem)
                     if self.hasRedirect == True:
                         self.hasRedirectCount += 1
                         self.hasRedirect = False
                     if result == -1:
-                        subItem['ReachedMaximumValue'] = 'Yes'
+                        subItem['ReachedTreshold'] = True
                         self.errorcount += 1
                         self.errorArray.append(url)
                     subItem['Depth'] = len(subItem['Chain'])
-                    self.resultList.append( subItem )
+                    if subItem['Depth'] != 0:
+                        self.resultList.append( subItem )
                 except Exception as e:
                     logging.warning(e)
                 logging.debug('RedirectLoop Tester: {} tested.'.format(url))
 
-    def test(self, url, dst_ghost, count, tmpSubItem):
+    def tracechain(self, url, dst_ghost, count, tmpSubItem):
         '''
         run recursive test
         '''
@@ -921,7 +922,7 @@ class RedirectLoopTester(object):
                 tmpSubDict['Location'] = redirectToUrl
                 tmpSubDict['status_code'] = statusCode
                 tmpSubItem['Chain'].append(tmpSubDict)
-                returnCode = self.test(redirectToUrl, dst_ghost, count - 1, tmpSubItem)
+                returnCode = self.tracechain(redirectToUrl, dst_ghost, count - 1, tmpSubItem)
                 if returnCode == 0:
                     return 0
                 else:
@@ -948,10 +949,10 @@ class RedirectLoopTester(object):
         '''
         itemDic = dict()
         itemDic['Depth'] = None
-        itemDic['Source'] = None
+        itemDic['TargetHost'] = None
         itemDic['Chain'] = list()
-        itemDic['MaximumValue'] = None
-        itemDic['ReachedMaximumValue'] = 'No'
+        itemDic['Threshold'] = None
+        itemDic['ReachedTreshold'] = False
         return itemDic
 
     def make_summary(self, maximum):

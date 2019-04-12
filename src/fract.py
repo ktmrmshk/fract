@@ -1,6 +1,7 @@
 import json, logging, yaml
 import re, requests
 import random, hashlib
+from urllib.parse import urlparse
 '''
 Backlog:
 
@@ -30,7 +31,6 @@ def fractsingleton(cls):
             instances[cls] = cls()
         return instances[cls]
     return getinstance
-
 
 
 class FractDset(object):
@@ -878,6 +878,7 @@ class RedirectLoopTester(object):
         self.hasRedirect = False
         self.hasRedirectCount = 0
 
+
     def test_from_urls(self, filename, dst_ghost, maximum):
         '''
         get url from urllist and control subtest:
@@ -889,16 +890,24 @@ class RedirectLoopTester(object):
                 url=line.strip()
                 if url == '':
                     continue
+
+                # strip target host
+                targethost=str()
+                if dst_ghost is None:
+                    targethost = urlparse(url).netloc
+                else:
+                    targethost = dst_ghost
                 try:
                     subItem = self.getNewSubItem()
-                    subItem['TargetHost'] = url
+                    subItem['TargetHost'] = targethost
+                    subItem['URL'] = url
                     subItem['Threshold'] = maximum
                     result = self.tracechain(url, dst_ghost, maximum, subItem)
                     if self.hasRedirect == True:
                         self.hasRedirectCount += 1
                         self.hasRedirect = False
                     if result == -1:
-                        subItem['ReachedTreshold'] = True
+                        subItem['ReachedThreshold'] = True
                         self.errorcount += 1
                         self.errorArray.append(url)
                     subItem['Depth'] = len(subItem['Chain'])
@@ -952,7 +961,7 @@ class RedirectLoopTester(object):
         itemDic['TargetHost'] = None
         itemDic['Chain'] = list()
         itemDic['Threshold'] = None
-        itemDic['ReachedTreshold'] = False
+        itemDic['ReachedThreshold'] = False
         return itemDic
 
     def make_summary(self, maximum):

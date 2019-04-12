@@ -600,13 +600,27 @@ class test_RedirectLoopTester(unittest.TestCase):
 
     def test_test_from_urls(self):
         self.rlt.test_from_urls('urllist4redirectloop.txt', 'fract.akamaized-staging.net', 5)
-        self.assertTrue(self.rlt.allcount == 10)
-        self.assertTrue(self.rlt.errorcount == 4)
-        self.assertTrue(self.rlt.hasRedirectCount == 9)
-        #self.assertTrue( subitem['Depth'] == 1 )
-        #self.assertTrue( subitem['Threshold'] == 5 )
-        #self.assertTrue( subitem['ReachedThreshold'] == False )
-        #self.assertTrue( subitem['TargetHost'] == 'fract.akamaized.net' )
+        self.assertTrue( self.rlt.allcount == 10)
+        self.assertTrue( self.rlt.errorcount == 4)
+        self.assertTrue( self.rlt.hasRedirectCount == 9)
+        self.assertTrue( self.rlt.resultList[0]['Threshold'] == 5 )
+        self.assertTrue( self.rlt.resultList[0]['ReachedThreshold'] == False )
+        self.assertTrue( self.rlt.resultList[0]['URL'] == 'https://fract.akamaized.net/301/3/' )
+        self.assertTrue( self.rlt.resultList[0]['TargetHost'] == 'fract.akamaized-staging.net' )
+        self.assertTrue( self.rlt.resultList[0]['Depth'] == 3 )
+
+    def test_test_from_urls_2(self):
+        self.rlt.test_from_urls('urllist4redirectloop.txt', None, 10)
+        self.assertTrue( self.rlt.allcount == 10)
+        self.assertTrue( self.rlt.errorcount == 0)
+        self.assertTrue( self.rlt.hasRedirectCount == 9)
+        self.assertTrue( self.rlt.resultList[0]['Threshold'] == 10 )
+        self.assertTrue( self.rlt.resultList[0]['ReachedThreshold'] == False )
+        self.assertTrue( self.rlt.resultList[0]['URL'] == 'https://fract.akamaized.net/301/3/' )
+        self.assertTrue( self.rlt.resultList[0]['TargetHost'] == 'fract.akamaized.net' )
+        self.assertTrue( self.rlt.resultList[0]['Depth'] == 3 )
+
+
 
 
     def test_tracechain1(self):
@@ -643,7 +657,7 @@ class test_RedirectLoopTester(unittest.TestCase):
         self.assertTrue('TargetHost' in obj)
         self.assertTrue('Chain' in obj)
         self.assertTrue('Threshold' in obj)
-        self.assertTrue( obj['ReachedTreshold'] is False)
+        self.assertTrue( obj['ReachedThreshold'] is False)
 
 
 

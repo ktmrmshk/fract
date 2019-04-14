@@ -25,11 +25,11 @@ $ docker run -it ktmrmshk/fract /bin/bash
 root@3f10471d9422:/# fract -h
 Version: v0.6-3-g46db14d
 usage: fract [-h] [-v] [--version]
-             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost}
+             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop}
              ...
 
 positional arguments:
-  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost}
+  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop}
                         sub-command help
     geturlc             Get URL list using built-in crawler
     geturlakm           Get URL list using Akamai Top Url List CSV files
@@ -41,6 +41,7 @@ positional arguments:
     y2j                 Yaml to json converter
     redirsum            Export redirect request/response summary in JSON form
     ercost              Export Eege-Redirector-Cost summary in JSON form
+    testredirectloop    Test if redirect happend more than special value
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -56,7 +57,7 @@ Changelog
 * 2018/08/22 - Ignore-case option support
 * 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
 * 2019/03/29 - v0.7 Ignore x-check-cacheable value when 30x redirect response, version info support
-
+* 2019/04/15 - v0.8 Redirect Loop Detection - testredirectloop option
 
 Workflow Example - Usage
 ------------
@@ -486,17 +487,135 @@ Go to #1, #2 or #3.
 
 
 
+Redirect Loop Detection Example - Usage
+------------
+
+Use `fract testredirectloop` command to check if there's redirect loop in the url list.
+`fract testredirectloop` has following options:
+
+```
+$ fract testredirectloop -h
+usage: fract testredirectloop [-h] -i INPUT [-o OUTPUT] [-s SUMMARY]
+                              [-d DSTGHOST] [-m MAXIMUM]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        input filename containing url list
+  -o OUTPUT, --output OUTPUT
+                        filename for full result output
+  -s SUMMARY, --summary SUMMARY
+                        filename for summary output
+  -d DSTGHOST, --dstghost DSTGHOST
+                        dest ghost/webserver name. This is optional. If not
+                        specified, it requests to web host based on URL in
+                        inputfile.
+  -m MAXIMUM, --maximum MAXIMUM
+                        threshold to trace redirect chain. default=5
+```
+
+This `fract testredirectloop` detects redirect loop by chasing redirect recursively and if depth of redirect chase reaches some threshold, then takes it as *redirect loop*. Default threshold depth is `5`, which can be changed by `-m` option.
+
+The input file, which is specified by `-i` option, is a text file in which URLs listed.
+
+urllist.txt - example:
+```
+https://fract.akamaized.net/301/3/
+https://fract.akamaized.net/307/6/
+https://fract.akamaized.net/
+```
+
+To check redirect loop for this URL list `urllist.txt`, run the following command. Afterwards, you get the summary and detailed results as files.
+
+```
+$ fract testredirectloop -i urllist.txt 
+
+Summary
+=================
+Condition
+----------------
+Maximum Value 5
 
 
+Total
+----------------
+ran 3 tests: 2 redirect URLs , 1 failed
 
+=> Not Good
+https://fract.akamaized.net/307/6/
+```
 
+In this summary, this `fract testredirectloop` ran test on 3 URLs, detects 2 redirect URLs, and 1 redirect chain that exceeds threshold, which is default value `5` in this test.
 
+The `fract testredirectloop` also export detailed results in files.
 
+```
+$ ls 
+loopret20190415080457421844.json
+loopsummary20190415080457421844.txt
 
+$ cat loopret20190415080457421844.json
+[
+    {
+        "Depth": 3,
+        "TargetHost": "fract.akamaized.net",
+        "Chain": [
+            {
+                "Location": "https://fract.akamaized.net/301/2/",
+                "status_code": 301
+            },
+            {
+                "Location": "https://fract.akamaized.net/301/1/",
+                "status_code": 301
+            },
+            {
+                "Location": "https://fract.akamaized.net/",
+                "status_code": 301
+            }
+        ],
+        "Threshold": 5,
+        "ReachedThreshold": false,
+        "URL": "https://fract.akamaized.net/301/3/"
+    },
+    {
+        "Depth": 5,
+        "TargetHost": "fract.akamaized.net",
+        "Chain": [
+            {
+                "Location": "https://fract.akamaized.net/307/5/",
+                "status_code": 307
+            },
+            {
+                "Location": "https://fract.akamaized.net/307/4/",
+                "status_code": 307
+            },
+            {
+                "Location": "https://fract.akamaized.net/307/3/",
+                "status_code": 307
+            },
+            {
+                "Location": "https://fract.akamaized.net/307/2/",
+                "status_code": 307
+            },
+            {
+                "Location": "https://fract.akamaized.net/307/1/",
+                "status_code": 307
+            }
+        ],
+        "Threshold": 5,
+        "ReachedThreshold": true,
+        "URL": "https://fract.akamaized.net/307/6/"
+    }
+]
+```
 
+From this result, the URL `https://fract.akamaized.net/301/3/` has 3 redirect chains, while `https://fract.akamaized.net/301/6/` has more than 5 chains, which is chain threshold `fract testredirectloop` does.
 
+To test on another webserver, e.g. Akamai staging edge server, specify the target webserver by `-d` option. For example, to test redirect loop on Akamai staging which hostname is `fract.akamaized-staging.net`, following command does that.
 
-
+```
+$ fract testredirectloop -i urllist.txt -d fract.akamaized-staging.net
+```
 
 
 

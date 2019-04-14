@@ -1,6 +1,7 @@
 import json, logging, yaml
 import re, requests
 import random, hashlib
+from urllib.parse import urlparse
 '''
 Backlog:
 
@@ -30,7 +31,6 @@ def fractsingleton(cls):
             instances[cls] = cls()
         return instances[cls]
     return getinstance
-
 
 
 class FractDset(object):
@@ -864,7 +864,139 @@ class JsonYaml(object):
             with open(jsonfile, 'w') as fw:
                 json.dump(obj, fw)
 
+### 2019/04/05 testredirectloop start
+class RedirectLoopTester(object):
+    def __init__(self):
+        '''
+        Initiate
+        '''
+        self.resultList = list()
+        self.actor = Actor()
+        self.allcount = 0
+        self.errorcount = 0
+        self.errorArray = []
+        self.hasRedirect = False
+        self.hasRedirectCount = 0
 
+
+    def test_from_urls(self, filename, dst_ghost, maximum):
+        '''
+        get url from urllist and control subtest:
+        '''
+        with open(filename) as f:
+            for line in f:
+                self.hasRedirect = False
+                self.allcount += 1
+                url=line.strip()
+                if url == '':
+                    continue
+
+                # strip target host
+                targethost=str()
+                if dst_ghost is None:
+                    targethost = urlparse(url).netloc
+                else:
+                    targethost = dst_ghost
+                try:
+                    subItem = self.getNewSubItem()
+                    subItem['TargetHost'] = targethost
+                    subItem['URL'] = url
+                    subItem['Threshold'] = maximum
+                    result = self.tracechain(url, dst_ghost, maximum, subItem)
+                    if self.hasRedirect == True:
+                        self.hasRedirectCount += 1
+                        self.hasRedirect = False
+                    if result == -1:
+                        subItem['ReachedThreshold'] = True
+                        self.errorcount += 1
+                        self.errorArray.append(url)
+                    subItem['Depth'] = len(subItem['Chain'])
+                    if subItem['Depth'] != 0:
+                        self.resultList.append( subItem )
+                except Exception as e:
+                    logging.warning(e)
+                logging.debug('RedirectLoop Tester: {} tested.'.format(url))
+
+    def tracechain(self, url, dst_ghost, count, tmpSubItem):
+        '''
+        run recursive test
+        '''
+        if count > 0:
+            testResult = self.actor.get( url, None, dst_ghost )
+            statusCode = testResult.status_code()
+            if statusCode in (301, 302, 303, 307):
+                self.hasRedirect = True
+                redirectToUrl = testResult.headers()['Location']
+                tmpSubDict = {}
+                tmpSubDict['Location'] = redirectToUrl
+                tmpSubDict['status_code'] = statusCode
+                tmpSubItem['Chain'].append(tmpSubDict)
+                returnCode = self.tracechain(redirectToUrl, dst_ghost, count - 1, tmpSubItem)
+                if returnCode == 0:
+                    return 0
+                else:
+                    return -1
+            else:
+                return 0
+        else:
+            return -1
+
+    def save(self, outputFile, summaryFile, maximum):
+        '''
+        save result and summary to file
+        '''
+        with open(outputFile, 'w') as fw:
+            json.dump(self.resultList, fw, indent=4)
+        summary = self.make_summary(maximum)
+        print(summary)
+        with open(summaryFile, 'w') as fw:
+            fw.write(summary)
+
+    def getNewSubItem(self):
+        '''
+        Make new item for json
+        '''
+        itemDic = dict()
+        itemDic['Depth'] = None
+        itemDic['TargetHost'] = None
+        itemDic['Chain'] = list()
+        itemDic['Threshold'] = None
+        itemDic['ReachedThreshold'] = False
+        return itemDic
+
+    def make_summary(self, maximum):
+        '''
+        Summary is like this
+
+        Summary
+        =====================
+        Condition
+        --------------------
+        Maximum value: 5
+
+        Total
+        --------------------
+        ran 30 tests: 4 failed
+        '''
+        summary=str()
+        summary+='''
+Summary
+=================\n'''
+        summary+='Condition\n----------------\n'
+        summary+='Maximum Value {}\n\n'.format(maximum)
+        summary+='''
+Total
+----------------\n'''
+        summary+='ran {} tests: {} redirect URLs , {} failed\n\n'.format(self.allcount, self.hasRedirectCount, self.errorcount)
+        if self.errorcount == 0:
+            summary+='=> OK\n'
+        else:
+            summary+='=> Not Good\n'
+            for i in self.errorArray:
+                summary += i
+                summary+='\n'
+        return summary
+### 2019/04/05 testredirectloop end
 
 
 import sys

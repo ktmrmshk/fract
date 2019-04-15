@@ -109,7 +109,16 @@ class fractui(object):
         subprs_geturlc.add_argument('-r', '--result', help='result json file - input', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='filename for summary output', required=True)
         subprs_geturlc.set_defaults(func=self.export_ercost_summary)
-        
+
+        ### 2019/04/05 testredirectloop start
+        subprs_geturlc=subprs.add_parser('testredirectloop', help='Test if redirect happend more than special value')
+        subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('loopret', 'json', mid=mid))
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('loopsummary', 'txt', mid=mid))
+        subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name. This is optional. If not specified, it requests to web host based on URL in inputfile.', default=None)
+        subprs_geturlc.add_argument('-m', '--maximum', help='threshold to trace redirect chain. default=5', type=int, default=5)
+        subprs_geturlc.set_defaults(func=self.do_testredirectloop)
+        ### 2019/04/05 testredirectloop end
 
 
     def _tname(self, prefix, ext, postfix='', mid=None):
@@ -245,6 +254,19 @@ class fractui(object):
         fclient = FractClient(fract_suite_file=args.testcase)
         fclient.load_resultfile(args.result)
         fclient.export_ercost_high(args.output, args.cost)
+
+    ### 2019/04/05 testredirectloop start
+    def do_testredirectloop(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        rltester = RedirectLoopTester()
+        rltester.test_from_urls(args.input, args.dstghost, args.maximum)
+        rltester.save(args.output, args.summary, args.maximum)
+
+        logging.info('Result saved to {}'.format(args.output))
+        logging.info('Summary saved to {}'.format(args.summary))
+    ### 2019/04/05 testredirectloop end
 
 if __name__ == '__main__':
     try:

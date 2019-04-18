@@ -1,12 +1,12 @@
-FROM python:3.6
+FROM python:3.6-slim
 
-RUN apt-get update && apt-get -y install vim dnsutils
-RUN pip install requests
-RUN pip install grip
-RUN pip install PyYAML
-RUN pip install urllib3
+RUN apt update && apt -y install vim dnsutils git \
+      && apt clean \
+      && rm -rf /var/lib/apt/lists/* \ 
+      && pip install requests grip PyYAML urllib3 \
+      && rm -rf /root/.cache \
+      && git clone -b release https://github.com/ktmrmshk/fract.git
 
-RUN git clone -b release https://github.com/ktmrmshk/fract.git
 ENV PYTHONPATH /fract/src/
 ENV PATH="/fract/:${PATH}"
 

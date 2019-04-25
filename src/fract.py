@@ -599,6 +599,9 @@ class FractClient(object):
         self._testsuite = list()
         self._testsuiteId = dict() # dict data to search by TestId
         _test_list = None
+        #20190416 addredirectlooptorun start
+        self._needtestingredirectloopurls = list()
+        #20190416 addredirectlooptorun end
         
         
         if fract_suite_obj is not None:
@@ -654,8 +657,9 @@ class FractClient(object):
 
     
 
-
-    def run_suite(self, testids=None):
+    #20190416 addredirectlooptorun start
+    def run_suite(self, testids=None, with_redirectloop=False):
+    #20190416 addredirectlooptorun end
         for t in self._testsuite:
             if testids is not None and t.query['TestId'] in testids:
                 ret=self.fract.run(t)
@@ -670,6 +674,13 @@ class FractClient(object):
                     self._failed_result_suite.append( ret )
             else:
                 pass
+            #20190416 addredirectlooptorun start
+            if ret['status_code'] in (301, 302, 303, 307):
+                self._needtestingredirectloopurls.append(t.query['Request']['Url'])
+        if with_redirectloop==True:
+            pass
+            #########Test Redirect##########
+        #20190416 addredirectlooptorun end
         logging.debug('# of failed: {}'.format(len(self._failed_result_suite)))
     
     def export_result(self, filename='fract_default.txt'):

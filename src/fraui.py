@@ -60,6 +60,11 @@ class fractui(object):
         subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
         subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
         subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
+        # 20190416 addredireclooptorun start
+        subprs_geturlc.add_argument('--with-redirect-loop ', help='Test if redirect happend more than special value.', action='store_true', dest='with_redirectloop')
+        subprs_geturlc.add_argument('--redirectloop-result', help='filename for full result output of redirectloop test', default=self._tname('loopret', 'json', mid=mid))
+        subprs_geturlc.add_argument('--loop-threshold', help='threshold to trace redirect chain. default=5', type=int, default=5)
+        # 20190416 addredireclooptorun end
         subprs_geturlc.set_defaults(func=self.do_run)
 
 
@@ -173,7 +178,9 @@ class fractui(object):
         logging.debug(args)
 
         fclient = FractClient(fract_suite_file=args.input)
-        fclient.run_suite(args.testid)
+        # 20190416 addredireclooptorun start
+        fclient.run_suite(args.testid, args.with_redirectloop)
+        # 20190416 addredireclooptorun end
         fclient.export_result(args.output)
         summary = fclient.make_summary()
         print(summary)

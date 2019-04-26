@@ -1,6 +1,6 @@
 import pymongo
 import os
-import json
+import json, logging
 
 class Mongo():
     '''
@@ -29,8 +29,9 @@ class mongojson():
                 jsonData = []
                 jsonData.extend(json.loads(str))
                 collection.insert_many(jsonData)
+            logging.debug('Json Data Added')
         else:
-            print('{} is not exist'.format(jsonSourceFile))
+            logging.debug('{} is not exist'.format(jsonSourceFile))
         
 
     def output(self, outputpath, dbName, collectionName, includeObjID = False):
@@ -38,11 +39,23 @@ class mongojson():
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         jsonOutput = []
+        dataCount = 0
         if includeObjID == True:
             for i in collection.find():
                 jsonOutput.append(i)
+                dataCount += 1
         else:
             for i in collection.find({}, {'_id': False}):
                 jsonOutput.append(i)
+                dataCount += 1
         with open(outputpath, mode = 'w') as jf:
             jf.write(json.dumps(jsonOutput, indent=4))
+        logging.debug(dataCount, " have been output")
+    
+    def clean(self, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        result = collection.delete_many({})
+        logging.debug(result.deleted_count, " deleted.")
+        

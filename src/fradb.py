@@ -9,7 +9,7 @@ class Mongo():
     __instance = None
 
     def __init__(self):
-        self.mdb_client = pymongo.MongoClient('localhost', 27017)
+        self.mdb_client = pymongo.MongoClient('mongo', 27017)
         print('Connecting Mongo...')
 
     @staticmethod

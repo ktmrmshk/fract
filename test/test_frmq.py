@@ -1,3 +1,9 @@
+'''
+$ export PYTHONPATH=`pwd`/src
+$ docker run --rm -p5672:5672 rabbitmq:latest
+
+'''
+
 import unittest, json, logging, re
 
 from frmq import *
@@ -49,6 +55,23 @@ class test_SimpleDumpWorker(unittest.TestCase):
     def test_consume(self):
         self.sdw.consume('kitaq')
 
+class test_TestGenPublisher(unittest.TestCase):
+    def setUp(self):
+        self.tgp = TestGenPublisher()
+    def tearDown(self):
+        pass
+    def test_push(self):
+        urllist=['http://abc1.com/', 'https://b.co/index.html']
+        self.tgp.push(urllist)
+
+        def callback(channel, method, properties, body):
+            logging.error('body => {}'.format(body))
+            print('body => {}'.format(body))
+            self.assertTrue(json.loads(body) == urllist)
+
+        dumper=SingleMessageDumper()
+        dumper.make_queue('testgen')
+        dumper.pullSingleMessage('testgen', callback)
 
 
 if __name__ == '__main__':

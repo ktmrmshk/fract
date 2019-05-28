@@ -1,4 +1,6 @@
-import pika
+import pika, json
+from fract import *
+from frase import *
 
 class MQMan(object):
     def __init__(self):
@@ -35,5 +37,43 @@ class SimpleDumpWorker(TaskWorker):
         print(body)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+class SingleMessageDumper(RabbitMQMan):
+    def pullSingleMessage(self, queuename, callback):
+        self.ch.basic_get(queuename, callback)
 
+
+class TestGenPublisher(object):
+    '''
+    testgen message: 
+ {
+    "cmd": "testgen",
+    "urllist": [
+        "https://abc.com/",
+        "..."
+    ],
+    "headers": {
+        "User-Agent": "iPhone",
+        "Referer": "http://abc.com"
+    },
+    "options": {
+        "ignore_case": true
+    },
+    "mode": {
+        "strict_redirect_cacheability": false
+    }
+}        
+    '''
+    def __init__(self):
+        self.tp = TaskPublisher()
+
+    def push(self, urllist, headers={}, options={}, mode={}):
+        queuename='testgen'
+        self.tp.make_queue(queuename)
+        msg=dict()
+        msg['cmd'] = 'testgen'
+        msg['urllist'] = urllist
+        msg['headers'] = headers
+        msg['options'] = options
+        msg['mode'] = mode
+        self.tp.push(queuename, json.dumps(msg))
 

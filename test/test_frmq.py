@@ -17,10 +17,13 @@ class test_MQMan(unittest.TestCase):
 
     def test_init(self):
         mqm=MQMan()
+        mqm.open()
 
 class test_RabbitMQMan(unittest.TestCase):
     def setUp(self):
         self.mqm = RabbitMQMan()
+        self.mqm.open()
+
     def tearDown(self):
         self.mqm.close()
     
@@ -33,6 +36,8 @@ class test_RabbitMQMan(unittest.TestCase):
 class test_TaskPublisher(unittest.TestCase):
     def setUp(self):
         self.tp = TaskPublisher()
+        self.tp.open()
+
     def tearDown(self):
         self.tp.close()
 
@@ -43,9 +48,11 @@ class test_TaskPublisher(unittest.TestCase):
 class test_TaskWorker(unittest.TestCase):
     def setUp(self):
         self.tw = TaskWorker()
+        self.tw.open()
+
     def tearDown(self):
         self.tw.close()
-    def test_callback(self):
+    def test_callbackd(self):
         pass
     #def test_comsume(self):
     #    self.tw.comsume('kitaq')
@@ -53,6 +60,8 @@ class test_TaskWorker(unittest.TestCase):
 class test_SimpleDumpWorker(unittest.TestCase):
     def setUp(self):
         self.sdw = SimpleDumpWorker()
+        self.sdw.open()
+
     def tearDown(self):
         self.sdw.close()
     def test_consume(self):
@@ -62,19 +71,43 @@ class test_SimpleDumpWorker(unittest.TestCase):
 class test_TestGenPublisher(unittest.TestCase):
     def setUp(self):
         self.tgp = TestGenPublisher()
+
     def tearDown(self):
         pass
     def test_push(self):
         urllist=['http://abc1.com/', 'https://b.co/index.html']
-        self.tgp.push(urllist)
+        self.tgp.push('fractq', urllist, 'prod.com', 'stag.com')
 
         dumper=TaskWorker()
-        dumper.make_queue('testgen')
-        m,p,b = dumper.pullSingleMessage('testgen')
+        dumper.open()
+        dumper.make_queue('fractq')
+        m,p,b = dumper.pullSingleMessage('fractq')
         
         self.assertTrue(json.loads(b)['urllist'] == urllist)
+        self.assertTrue(json.loads(b)['src_ghost'] == 'prod.com')
+        self.assertTrue(json.loads(b)['dst_ghost'] == 'stag.com')
         #self.assertTrue( b['urllist'] == urllist)
         logging.debug(b)
+        
+
+class test_FractWorker(unittest.TestCase):
+    def setUp(self):
+        pass
+    def tearDown(self):
+        pass
+
+    def test_sub_testgen(self):
+        # publish testgen
+        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
+        publisher = TestGenPublisher()
+        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+
+        ### spawn worker
+        worker = FractWorker()
+        worker.open()
+        worker.addCallback('testgen', FractSub.sub_testgen)
+        #worker.consume('fractq')
+        worker.pullSingleMessage('fractq')
         
 
 if __name__ == '__main__':

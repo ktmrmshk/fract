@@ -6,10 +6,18 @@ class MQMan(object):
     def __init__(self):
         pass
 
+    def open(self):
+        pass
+
+    def close(self):
+        pass
 
 class RabbitMQMan(MQMan):
-    def __init__(self, host='localhost'):
-        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host='localhost'))
+    def __init__(self):
+        pass
+
+    def open(self, host='localhost'):
+        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host))
         self.ch = self.conn.channel()
 
     def make_queue(self, queuename):
@@ -43,6 +51,47 @@ class SimpleDumpWorker(TaskWorker):
         logging.debug(body)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+class FractWorker(TaskWorker):
+    def __init__(self):
+        '''
+        fract_sub = {'testgen': callback_for_testgen, 'run': callback_for_run}
+        '''
+        super(FractWorker, self).__init__()
+        self.fract_sub = {}
+    
+    def addCallback(self, cmd, callback):
+        '''
+        callback: function(msg)
+        '''
+        self.fract_sub[cmd] = callback
+
+    def callback(self, ch, method, properties, body):
+        msg = json.loads(body)
+        cmd = msg['cmd']
+        self.fract_sub[cmd](msg)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+
+    def pullSingleMessage(self, queuename):
+        method, properties, body = self.ch.basic_get(queue=queuename, auto_ack=True)
+        
+        msg = json.loads(body)
+        cmd = msg['cmd']
+        self.fract_sub[cmd](msg)
+        self.ch.basic_ack(delivery_tag=method.delivery_tag)
+
+
+class FractSub(object):
+    @staticmethod
+    def sub_testgen(msg):
+        assert msg['cmd'] == 'testgen'
+        logging.debug('sub_testgen: msg => {}'.format(msg))
+        
+        fg = FraseGen()
+        fg._gen_from_urllist(msg['urllist'], msg['src_ghost'], msg['dst_ghost'], msg['headers'], msg['options'], msg['mode'])
+        ### As a temporary output
+        logging.debug('sub_testgen: ret => {}'.format(fg.testcases))
+
+
 
 class TestGenPublisher(object):
     '''
@@ -62,20 +111,25 @@ class TestGenPublisher(object):
     },
     "mode": {
         "strict_redirect_cacheability": false
-    }
+    },
+    "src_ghost" : "e13100.a.akamaiedge.net",
+    "dst_ghost" : "e13100.a.akamaiedge-staging.net"
 }        
     '''
     def __init__(self):
         self.tp = TaskPublisher()
+        self.tp.open()
 
-    def push(self, urllist, headers={}, options={}, mode={}):
-        queuename='testgen'
+    def push(self, queuename, urllist, src_ghost, dst_ghost, headers={}, options={}, mode={}):
+        #queuename='fractq'
         self.tp.make_queue(queuename)
         msg=dict()
         msg['cmd'] = 'testgen'
         msg['urllist'] = urllist
         msg['headers'] = headers
         msg['options'] = options
+        msg['src_ghost'] = src_ghost
+        msg['dst_ghost'] = dst_ghost
         msg['mode'] = mode
         self.tp.push(queuename, json.dumps(msg))
         #self.tp.push(queuename, msg)

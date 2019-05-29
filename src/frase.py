@@ -345,21 +345,29 @@ class FraseGen(object):
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 
-    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}, mode={}):
+    def _gen_from_urllist(self, urllist, src_ghost, dst_ghost, headers={}, option={}, mode={}):
         cnt=0
+        for url in urllist:
+            try:
+                tc = self.gen(url, src_ghost, dst_ghost, headers, option, mode)
+                self.testcases.append( tc )
+                cnt+=1
+            except Exception as e:
+                logging.warning(e)
+        else:
+            logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
+
+
+    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}, mode={}):
+        urllist=list()
         with open(filename) as f:
             for line in f:
                 url=line.strip()
                 if url == '':
                     continue
-                try:
-                    tc = self.gen(url, src_ghost, dst_ghost, headers, option, mode)
-                    self.testcases.append( tc )
-                    cnt+=1
-                except Exception as e:
-                    logging.warning(e)
-            else:
-                logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
+                urllist.append(url)
+
+        self._gen_from_urllist(urllist, src_ghost, dst_ghost, headers, option, mode)
 
     def save(self, filename):
         cnt=0

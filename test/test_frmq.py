@@ -1,10 +1,12 @@
 '''
 $ export PYTHONPATH=`pwd`/src
-$ docker run --rm -p5672:5672 rabbitmq:latest
+$ docker run -d --rm -p5672:5672 rabbitmq:latest
 
 '''
 
+
 import unittest, json, logging, re
+logging.basicConfig(level=logging.DEBUG)
 
 from frmq import *
 class test_MQMan(unittest.TestCase):
@@ -23,7 +25,7 @@ class test_RabbitMQMan(unittest.TestCase):
         self.mqm.close()
     
     def test_init(self):
-        pass
+        pass 
 
     def test_make_queue(self):
         self.mqm.make_queue('kitaq')
@@ -35,6 +37,7 @@ class test_TaskPublisher(unittest.TestCase):
         self.tp.close()
 
     def test_push(self):
+        self.tp.make_queue('kitaq')
         self.tp.push('kitaq', 'foobar123')
         
 class test_TaskWorker(unittest.TestCase):
@@ -53,7 +56,8 @@ class test_SimpleDumpWorker(unittest.TestCase):
     def tearDown(self):
         self.sdw.close()
     def test_consume(self):
-        self.sdw.consume('kitaq')
+        #self.sdw.consume('kitaq')
+        pass
 
 class test_TestGenPublisher(unittest.TestCase):
     def setUp(self):
@@ -64,15 +68,14 @@ class test_TestGenPublisher(unittest.TestCase):
         urllist=['http://abc1.com/', 'https://b.co/index.html']
         self.tgp.push(urllist)
 
-        def callback(channel, method, properties, body):
-            logging.error('body => {}'.format(body))
-            print('body => {}'.format(body))
-            self.assertTrue(json.loads(body) == urllist)
-
-        dumper=SingleMessageDumper()
+        dumper=TaskWorker()
         dumper.make_queue('testgen')
-        dumper.pullSingleMessage('testgen', callback)
-
+        m,p,b = dumper.pullSingleMessage('testgen')
+        
+        self.assertTrue(json.loads(b)['urllist'] == urllist)
+        #self.assertTrue( b['urllist'] == urllist)
+        logging.debug(b)
+        
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

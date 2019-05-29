@@ -31,15 +31,17 @@ class TaskWorker(RabbitMQMan):
         self.ch.basic_qos(prefetch_count=1)
         self.ch.basic_consume(queue=queuename, on_message_callback=self.callback)
         self.ch.start_consuming()
+    
+    def pullSingleMessage(self, queuename):
+        '''
+        return (method, properties, body)
+        '''
+        return self.ch.basic_get(queue=queuename, auto_ack=True)
 
 class SimpleDumpWorker(TaskWorker):
     def callback(self, ch, method, properties, body):
-        print(body)
+        logging.debug(body)
         ch.basic_ack(delivery_tag=method.delivery_tag)
-
-class SingleMessageDumper(RabbitMQMan):
-    def pullSingleMessage(self, queuename, callback):
-        self.ch.basic_get(queuename, callback)
 
 
 class TestGenPublisher(object):
@@ -76,4 +78,5 @@ class TestGenPublisher(object):
         msg['options'] = options
         msg['mode'] = mode
         self.tp.push(queuename, json.dumps(msg))
+        #self.tp.push(queuename, msg)
 

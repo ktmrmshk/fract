@@ -109,6 +109,38 @@ class test_FractWorker(unittest.TestCase):
         #worker.consume('fractq')
         worker.pullSingleMessage('fractq')
         
+    def test_sub_testgen_with_dumper(self):
+        # publish testgen
+        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
+        publisher = TestGenPublisher()
+        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+
+        ### spawn worker
+        worker = FractWorker()
+        worker.open()
+
+        def testcases_filedumper(testcases):
+            with open('test_sub_testgen_with_dumper_out.json', 'w') as f:
+                f.write('[')
+                cnt=0
+                for tc in testcases:
+                    if cnt!=0:
+                        f.write(',')
+                    f.write('{}'.format(tc))
+                    cnt+=1
+                else:
+                    f.write(']')
+
+        worker.addCallback('testgen', FractSub.sub_testgen, testcases_filedumper)
+        #worker.consume('fractq')
+        worker.pullSingleMessage('fractq')
+        
+        # check
+        with open('test_sub_testgen_with_dumper_out.json') as f:
+            raw=f.read()
+        j=json.loads(raw)
+        self.assertTrue( len(j) == 2)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

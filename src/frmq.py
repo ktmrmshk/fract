@@ -1,4 +1,5 @@
 import pika, json
+from functools import partial
 from fract import *
 from frase import *
 
@@ -59,11 +60,12 @@ class FractWorker(TaskWorker):
         super(FractWorker, self).__init__()
         self.fract_sub = {}
     
-    def addCallback(self, cmd, callback):
+    def addCallback(self, cmd, callback, dumper=None):
         '''
         callback: function(msg)
+        dumper: output adaptor function
         '''
-        self.fract_sub[cmd] = callback
+        self.fract_sub[cmd] = partial(callback, dumper=dumper)
 
     def callback(self, ch, method, properties, body):
         msg = json.loads(body)
@@ -82,15 +84,18 @@ class FractWorker(TaskWorker):
 
 class FractSub(object):
     @staticmethod
-    def sub_testgen(msg):
+    def sub_testgen(msg, dumper=None):
         assert msg['cmd'] == 'testgen'
         logging.debug('sub_testgen: msg => {}'.format(msg))
         
         fg = FraseGen()
         fg._gen_from_urllist(msg['urllist'], msg['src_ghost'], msg['dst_ghost'], msg['headers'], msg['options'], msg['mode'])
-        ### As a temporary output
-        logging.debug('sub_testgen: ret => {}'.format(fg.testcases))
-
+        if dumper != None:
+            dumper(fg.testcases)
+        else:
+            ### As a temporary output
+            for tc in fg.testcases:
+                logging.debug('sub_testgen: ret => {}'.format(tc))
 
 
 class TestGenPublisher(object):

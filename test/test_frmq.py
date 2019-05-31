@@ -1,6 +1,6 @@
 '''
 $ export PYTHONPATH=`pwd`/src
-$ docker run -d --rm -p5672:5672 rabbitmq:latest
+$ docker run -d --rm -p5672:5672 -p8080:15672 rabbitmq:3-management
 
 '''
 
@@ -88,6 +88,13 @@ class test_TestGenPublisher(unittest.TestCase):
         self.assertTrue(json.loads(b)['dst_ghost'] == 'stag.com')
         #self.assertTrue( b['urllist'] == urllist)
         logging.debug(b)
+
+    def test_push_for_multi_workertest(self):
+        # publish testgen
+        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
+        publisher = TestGenPublisher()
+        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+
         
 
 class test_FractWorker(unittest.TestCase):

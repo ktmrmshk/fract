@@ -3,6 +3,7 @@ fract ui classes
 '''
 from fract import *
 from frase import *
+from frmq import *
 import argparse
 import logging
 from datetime import datetime
@@ -119,6 +120,15 @@ class fractui(object):
         subprs_geturlc.add_argument('-m', '--maximum', help='threshold to trace redirect chain. default=5', type=int, default=5)
         subprs_geturlc.set_defaults(func=self.do_testredirectloop)
         ### 2019/04/05 testredirectloop end
+
+
+        ### worker
+        subprs_geturlc=subprs.add_parser('worker', help='spawn a worker and subscribe task queue')
+        subprs_geturlc.add_argument('-n', '--name', help='worker name', required=True)
+        subprs_geturlc.set_defaults(func=self.spawn_worker)
+
+
+
 
 
     def _tname(self, prefix, ext, postfix='', mid=None):
@@ -267,6 +277,18 @@ class fractui(object):
         logging.info('Result saved to {}'.format(args.output))
         logging.info('Summary saved to {}'.format(args.summary))
     ### 2019/04/05 testredirectloop end
+
+    def spawn_worker(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        worker = FractWorker()
+        worker.open()
+        worker.make_queue('fractq')
+        worker.addCallback('testgen', FractSub.sub_testgen)
+        worker.consume('fractq')
+
+
 
 if __name__ == '__main__':
     try:

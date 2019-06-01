@@ -81,6 +81,12 @@ class test_FractTest(unittest.TestCase):
         ft.set_testid()
         self.assertTrue( ft.query['TestId'] != 'hogehoge')
 
+    def test_set_loadtime(self):
+        ft = FractTestHassert()
+        ft.init_template()
+        ft.set_loadtime(0.123)
+        self.assertTrue( ft.query['LoadTime'] == 0.123)
+
     def test_str_summary_hassert(self):
         ft = FractTestHassert()
         ft.init_example()
@@ -299,6 +305,10 @@ class test_Actor(unittest.TestCase):
         b = Actor()
         self.assertTrue( a == b)
 
+
+    def test_getLoadTime(self):
+        self.assertTrue( type(self.actorresponse.getLoadTime()) == type(1.23))
+
 from fract import Fract
 class test_Fract(unittest.TestCase):
     def setUp(self):
@@ -381,6 +391,7 @@ class test_Fract(unittest.TestCase):
         ret = self.fr.run(testcase)
         self.assertTrue( ret.query['TestType'] == 'hassert')
         self.assertTrue( ret.query['Passed'] == False )
+        self.assertTrue( 'LoadTime' in ret.query )
         logging.info('FractResult: {}'.format(ret))
         
     def test_run2(self):

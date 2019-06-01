@@ -139,6 +139,8 @@ class test_FraseGen(unittest.TestCase):
         logging.debug('fg.ret={}'.format(ret))
         self.assertTrue(ret['X-Check-Cacheable'] == 'YES')
         self.assertTrue( '544456' in ret['X-Cache-Key'])
+        self.assertTrue( 'LoadTime' in ret )
+        self.assertTrue( type(ret['LoadTime']) == type(0.1234) )
  
     # custom header support # should be tested through specific ghost conf
     def test_current_stat2(self): 
@@ -198,6 +200,7 @@ class test_FraseGen(unittest.TestCase):
         
         self.assertTrue( len( ft.query['Comment'] ) != 0 )
         self.assertTrue( len( ft.query['TestId'] ) != 0  )
+        self.assertTrue( 'LoadTime' in ft.query )
 
     # custom_header_support
     def test_gen_20180801(self):

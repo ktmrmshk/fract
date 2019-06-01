@@ -258,6 +258,8 @@ class FraseGen(object):
         ret['X-Akamai-Transformed'] = r.resh('X-Akamai-Transformed')
         #2018/11/29 Rum-off End
         
+        ret['LoadTime'] = r.getLoadTime()
+        
         return ret
 
     def _parse_xcachekey(self, xcachekey_text):
@@ -311,6 +313,7 @@ class FraseGen(object):
             ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
         ft.add('status_code', str(cstat['status_code']), option=option)
         ft.set_comment('This test was gened by FraseGen - {} at {}'.format(VERSION, strnow()))
+        ft.set_loadtime( cstat['LoadTime'])
         ft.set_testid()
         if 'Location' in cstat:
             ft.add('Location', cstat['Location'], 'exact', option=option)

@@ -58,4 +58,22 @@ class mongojson():
         collection = mongodb[collectionName]
         result = collection.delete_many({})
         logging.debug(result.deleted_count, " deleted.")
-        
+
+    def push_many(self, dict_data_list, dbName, collectionName, serializer= lambda i:i):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        collection.insert_many( [serializer(i) for i in dict_data_list] )
+
+    def find(self, query, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+
+        ret=list()
+        for r in collection.find(query, {'_id': False}):
+            ret.append(r)
+        logging.debug(ret)
+        return ret
+
+

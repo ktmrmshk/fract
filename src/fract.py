@@ -2,6 +2,7 @@ import json, logging, yaml
 import re, requests
 import random, hashlib
 from urllib.parse import urlparse
+from version import VERSION, strnow
 '''
 Backlog:
 
@@ -432,6 +433,8 @@ class ActorResponse(object):
         return self.r.elapsed.total_seconds()
 
 
+
+
 class Fract(object):
     def __init__(self):
         self.actor=Actor()
@@ -472,6 +475,7 @@ class Fract(object):
         actres = self._throw_request(fracttest.query['Request'])
         res.setResponse(actres.status_code, actres.headers() )
         res.set_loadtime(actres.getLoadTime())
+        res.set_comment('This test was executed by Fract - {} at {}'.format(VERSION, strnow()))
         
         # validation process
         for hdr,tlist in fracttest.query['TestCase'].items(): ### Per Header

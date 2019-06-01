@@ -2,6 +2,7 @@ import json, logging, yaml
 import re, requests
 import random, hashlib
 from urllib.parse import urlparse
+from version import VERSION, strnow
 '''
 Backlog:
 
@@ -74,6 +75,12 @@ class FractDset(object):
             m.update( json.dumps(self.query).encode('utf-8'))
             self.query['TestId'] = m.hexdigest()
 
+    def set_loadtime(self, loadtime):
+        '''
+        set loadtime of request to create testcase
+        '''
+        assert type(loadtime) == type(0.123)
+        self.query['LoadTime'] = loadtime
 
 class FractDsetFactory(object):
     '''
@@ -191,7 +198,7 @@ class FractTestHassert(FractTest):
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
@@ -256,6 +263,7 @@ class FractResult(FractDset):
                 'Passed' : bool(),\
                 'Response': dict(),\
                 'Comment' : str(), \
+                'LoadTime' : float(), \
                 'TestId' : str(), \
                 'ResultCase': dict()}
 
@@ -271,7 +279,7 @@ class FractResult(FractDset):
             pass
     
     def _example_hassert(self):
-        query_json='''{"TestType":"hassert","Comment":"This is Comment","TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}}]}}'''
+        query_json='''{"TestType":"hassert","Comment":"This is Comment","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Passed":false,"Response":{"status_code":301,"Content-Length":"0","Location":"https://www.akamai.com","Date":"Mon, 26 Mar 2018 09:20:33 GMT","Connection":"keep-alive","Set-Cookie":"AKA_A2=1; expires=Mon, 26-Mar-2018 10:20:33 GMT; secure; HttpOnly","Referrer-Policy":"same-origin","X-N":"S"},"ResultCase":{"status_code":[{"Passed":false,"Value":301,"TestCase":{"type":"regex","query":"(200|404)"}},{"Passed":true,"Value":301,"TestCase":{"type":"regex","query":"301"}}],"Content-Type":[{"Passed":false,"Value":"This Header is not in Response","TestCase":{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}}]}}'''
         return json.loads( query_json )
 
     def _example_hdiff(self):
@@ -392,6 +400,10 @@ class Actor(object):
         r = self.session.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
         logging.debug(req_url)
         logging.debug(req_headers)
+
+        # request/response time profiling in csv
+        # FRPROF, url, ghost, time
+        logging.debug('FRPROF, {}, {}, {}, {}'.format('LoadTime', url, ghost, r.elapsed.total_seconds()))
         
         return ActorResponse(r)
 
@@ -416,6 +428,11 @@ class ActorResponse(object):
         #2018/11/29 Rum-off End
     def status_code(self):
         return self.r.status_code
+    
+    def getLoadTime(self):
+        return self.r.elapsed.total_seconds()
+
+
 
 
 class Fract(object):
@@ -457,6 +474,8 @@ class Fract(object):
         # throw HTTP request
         actres = self._throw_request(fracttest.query['Request'])
         res.setResponse(actres.status_code, actres.headers() )
+        res.set_loadtime(actres.getLoadTime())
+        res.set_comment('This test was executed by Fract - {} at {}'.format(VERSION, strnow()))
         
         # validation process
         for hdr,tlist in fracttest.query['TestCase'].items(): ### Per Header

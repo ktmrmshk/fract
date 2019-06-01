@@ -392,6 +392,10 @@ class Actor(object):
         r = self.session.get(req_url, headers=req_headers, verify=ssl_verify, allow_redirects=False)
         logging.debug(req_url)
         logging.debug(req_headers)
+
+        # request/response time profiling in csv
+        # FRPROF, url, ghost, time
+        logging.debug('FRPROF, {}, {}, {}'.format(url, ghost, r.elapsed.total_seconds()))
         
         return ActorResponse(r)
 
@@ -416,6 +420,9 @@ class ActorResponse(object):
         #2018/11/29 Rum-off End
     def status_code(self):
         return self.r.status_code
+    
+    def getLoadTime(self):
+        return self.r.elapsed.total_seconds()
 
 
 class Fract(object):

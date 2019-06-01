@@ -299,6 +299,10 @@ class test_Actor(unittest.TestCase):
         b = Actor()
         self.assertTrue( a == b)
 
+
+    def test_getLoadTime(self):
+        self.assertTrue( type(self.actorresponse.getLoadTime()) == type(1.23))
+
 from fract import Fract
 class test_Fract(unittest.TestCase):
     def setUp(self):

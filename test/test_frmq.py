@@ -5,10 +5,11 @@ $ docker run -d --rm -p5672:5672 -p8080:15672 rabbitmq:3-management
 '''
 
 
-import unittest, json, logging, re
+import unittest, json, logging, re, time
 logging.basicConfig(level=logging.DEBUG)
 
 from frmq import *
+from fradb import *
 class test_MQMan(unittest.TestCase):
     def setUp(self):
         pass
@@ -33,6 +34,22 @@ class test_RabbitMQMan(unittest.TestCase):
     def test_make_queue(self):
         self.mqm.make_queue('kitaq')
 
+    def test_get_queue_size(self):
+        self.mqm.make_queue('kitaq')
+        self.assertTrue(type(self.mqm.get_queue_size()) == type(123))
+
+    def test_purge(self):
+        self.mqm.make_queue('kitaq')
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        
+        self.mqm.purge('kitaq')
+        #time.sleep(0.1)
+        self.assertTrue(self.mqm.get_queue_size() == 0)
+
+
 class test_TaskPublisher(unittest.TestCase):
     def setUp(self):
         self.tp = TaskPublisher()
@@ -42,8 +59,8 @@ class test_TaskPublisher(unittest.TestCase):
         self.tp.close()
 
     def test_push(self):
-        self.tp.make_queue('kitaq')
-        self.tp.push('kitaq', 'foobar123')
+        self.tp.make_queue('kitaq2')
+        self.tp.push('kitaq2', 'foobar123')
         
 class test_TaskWorker(unittest.TestCase):
     def setUp(self):
@@ -72,9 +89,17 @@ class test_TestGenPublisher(unittest.TestCase):
     def setUp(self):
         self.tgp = TestGenPublisher()
 
+
     def tearDown(self):
         pass
     def test_push(self):
+        # clear queue
+        self.mqm = RabbitMQMan()
+        self.mqm.open()
+        self.mqm.make_queue('fractq')
+        self.mqm.purge('fractq')
+
+
         urllist=['http://abc1.com/', 'https://b.co/index.html']
         self.tgp.push('fractq', urllist, 'prod.com', 'stag.com')
 
@@ -147,6 +172,35 @@ class test_FractWorker(unittest.TestCase):
             raw=f.read()
         j=json.loads(raw)
         self.assertTrue( len(j) == 2)
+
+
+    def test_sub_testgen_with_mongo_dumper(self):
+        # publish testgen
+        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
+        publisher = TestGenPublisher()
+        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+
+        ### spawn worker
+        worker = FractWorker()
+        worker.open()
+
+        ## Clean up collection
+        mj = mongojson()
+        mj.clean('test_push_many_find', 'testcol')
+
+
+        def mongo_dumper(testcases):
+            mj = mongojson()
+            mj.push_many(testcases, 'test_push_many_find', 'testcol', lambda i : i.query)
+
+        worker.addCallback('testgen', FractSub.sub_testgen, mongo_dumper)
+        #worker.consume('fractq')
+        worker.pullSingleMessage('fractq')
+        
+        # check
+        ret = mj.find({}, 'test_push_many_find', 'testcol')
+        self.assertTrue( len(ret) == 2 )
+
 
 
 if __name__ == '__main__':

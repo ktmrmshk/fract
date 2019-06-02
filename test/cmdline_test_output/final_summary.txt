@@ -4,11 +4,12 @@ Summary
 
 Tests not passed
 ----------------
-### TestId: e3bccc4dde301b5cf2cde1dd0b18dca8581c26b6dc4c945a47d77485d42442de
+### TestId: fba526aa1f8390ef19c91fdd867c9090627ff235fd2c07a83d47ff5a6bb5a293
 
 Request:
   Ghost: fract.akamaized-staging.net
   Headers:
+    Cookie: akamai-rum=off
     Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
       akamai-x-get-true-cache-key
     Referer: http://www.abc.com/

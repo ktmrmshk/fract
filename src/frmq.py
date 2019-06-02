@@ -22,10 +22,18 @@ class RabbitMQMan(MQMan):
         self.ch = self.conn.channel()
 
     def make_queue(self, queuename):
-        self.ch.queue_declare(queue=queuename, durable=True)
+        self.qret = self.ch.queue_declare(queue=queuename, durable=True)
 
     def close(self):
         self.conn.close()
+
+    def get_queue_size(self):
+        #ret = self.ch.queue_declare(queue=queuename, durable=True)
+        return self.qret.method.message_count
+
+    def purge(self, queuename):
+        self.ch.queue_purge(queuename)
+
 
 class TaskPublisher(RabbitMQMan):
     def push(self, queuename, body):
@@ -138,4 +146,5 @@ class TestGenPublisher(object):
         msg['mode'] = mode
         self.tp.push(queuename, json.dumps(msg))
         #self.tp.push(queuename, msg)
+
 

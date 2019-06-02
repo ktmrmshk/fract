@@ -2,6 +2,7 @@ import pika, json
 from functools import partial
 from fract import *
 from frase import *
+from fradb import *
 
 class MQMan(object):
     def __init__(self):
@@ -68,12 +69,12 @@ class FractWorker(TaskWorker):
         super(FractWorker, self).__init__()
         self.fract_sub = {}
     
-    def addCallback(self, cmd, callback, dumper=None):
+    def addCallback(self, cmd, callback):
         '''
         callback: function(msg)
         dumper: output adaptor function
         '''
-        self.fract_sub[cmd] = partial(callback, dumper=dumper)
+        self.fract_sub[cmd] = partial(callback)
 
     def callback(self, ch, method, properties, body):
         msg = json.loads(body)
@@ -90,27 +91,37 @@ class FractWorker(TaskWorker):
         self.ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-class FractSub(object):
+
+class FractSubtask(object):
     @staticmethod
-    def sub_testgen(msg, dumper=None):
+    def do_task(msg):
+        pass
+
+class Subtask_TestGen(FractSubtask):
+    @staticmethod
+    def do_task(msg):
         assert msg['cmd'] == 'testgen'
         logging.debug('sub_testgen: msg => {}'.format(msg))
         
         fg = FraseGen()
         fg._gen_from_urllist(msg['urllist'], msg['src_ghost'], msg['dst_ghost'], msg['headers'], msg['options'], msg['mode'])
-        if dumper != None:
-            dumper(fg.testcases)
-        else:
-            ### As a temporary output
-            for tc in fg.testcases:
-                logging.debug('sub_testgen: ret => {}'.format(tc))
+
+        # export results to mongo
+        mj=mongojson()
+        mj.push_many(fg.testcases, msg['cmd'], msg['sessionid'], lambda i : i.query)
 
 
+
+
+'''
+This Class is used only for testing. Don't use in production. 
+'''
 class TestGenPublisher(object):
     '''
     testgen message: 
  {
     "cmd": "testgen",
+    "sessionid" : 20190430123121,
     "urllist": [
         "https://abc.com/",
         "..."
@@ -133,12 +144,13 @@ class TestGenPublisher(object):
         self.tp = TaskPublisher()
         self.tp.open()
 
-    def push(self, queuename, urllist, src_ghost, dst_ghost, headers={}, options={}, mode={}):
+    def push(self, queuename, sessionid, urllist, src_ghost, dst_ghost, headers={}, options={}, mode={}):
         #queuename='fractq'
         self.tp.make_queue(queuename)
         msg=dict()
         msg['cmd'] = 'testgen'
         msg['urllist'] = urllist
+        msg['sessionid'] = sessionid
         msg['headers'] = headers
         msg['options'] = options
         msg['src_ghost'] = src_ghost

@@ -101,7 +101,7 @@ class test_TestGenPublisher(unittest.TestCase):
 
 
         urllist=['http://abc1.com/', 'https://b.co/index.html']
-        self.tgp.push('fractq', urllist, 'prod.com', 'stag.com')
+        self.tgp.push('fractq', '12345678', urllist, 'prod.com', 'stag.com')
 
         dumper=TaskWorker()
         dumper.open()
@@ -118,7 +118,7 @@ class test_TestGenPublisher(unittest.TestCase):
         # publish testgen
         urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
         publisher = TestGenPublisher()
-        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+        publisher.push('fractq2', '12345678', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         
 
@@ -128,57 +128,12 @@ class test_FractWorker(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_sub_testgen(self):
-        # publish testgen
-        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
-        publisher = TestGenPublisher()
-        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
-
-        ### spawn worker
-        worker = FractWorker()
-        worker.open()
-        worker.addCallback('testgen', FractSub.sub_testgen)
-        #worker.consume('fractq')
-        worker.pullSingleMessage('fractq')
-        
-    def test_sub_testgen_with_dumper(self):
-        # publish testgen
-        urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
-        publisher = TestGenPublisher()
-        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
-
-        ### spawn worker
-        worker = FractWorker()
-        worker.open()
-
-        def testcases_filedumper(testcases):
-            with open('test_sub_testgen_with_dumper_out.json', 'w') as f:
-                f.write('[')
-                cnt=0
-                for tc in testcases:
-                    if cnt!=0:
-                        f.write(',')
-                    f.write('{}'.format(tc))
-                    cnt+=1
-                else:
-                    f.write(']')
-
-        worker.addCallback('testgen', FractSub.sub_testgen, testcases_filedumper)
-        #worker.consume('fractq')
-        worker.pullSingleMessage('fractq')
-        
-        # check
-        with open('test_sub_testgen_with_dumper_out.json') as f:
-            raw=f.read()
-        j=json.loads(raw)
-        self.assertTrue( len(j) == 2)
-
 
     def test_sub_testgen_with_mongo_dumper(self):
         # publish testgen
         urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
         publisher = TestGenPublisher()
-        publisher.push('fractq', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
+        publisher.push('fractq', '1981121111', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         ### spawn worker
         worker = FractWorker()
@@ -186,21 +141,18 @@ class test_FractWorker(unittest.TestCase):
 
         ## Clean up collection
         mj = mongojson()
-        mj.clean('test_push_many_find', 'testcol')
+        mj.clean('testgen', '1981121111')
 
 
-        def mongo_dumper(testcases):
-            mj = mongojson()
-            mj.push_many(testcases, 'test_push_many_find', 'testcol', lambda i : i.query)
-
-        worker.addCallback('testgen', FractSub.sub_testgen, mongo_dumper)
+        worker.addCallback('testgen', Subtask_TestGen.do_task)
         #worker.consume('fractq')
         worker.pullSingleMessage('fractq')
         
         # check
-        ret = mj.find({}, 'test_push_many_find', 'testcol')
+        ret = mj.find({}, 'testgen', '1981121111')
         self.assertTrue( len(ret) == 2 )
 
+        mj.clean('testgen', '1981121111')
 
 
 if __name__ == '__main__':

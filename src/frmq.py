@@ -35,6 +35,12 @@ class RabbitMQMan(MQMan):
     def purge(self, queuename):
         self.ch.queue_purge(queuename)
 
+    def pullSingleMessage(self, queuename):
+        '''
+        return (method, properties, body)
+        '''
+        return self.ch.basic_get(queue=queuename, auto_ack=True)
+
 
 class TaskPublisher(RabbitMQMan):
     def push(self, queuename, body):
@@ -50,11 +56,6 @@ class TaskWorker(RabbitMQMan):
         self.ch.basic_consume(queue=queuename, on_message_callback=self.callback)
         self.ch.start_consuming()
     
-    def pullSingleMessage(self, queuename):
-        '''
-        return (method, properties, body)
-        '''
-        return self.ch.basic_get(queue=queuename, auto_ack=True)
 
 class SimpleDumpWorker(TaskWorker):
     def callback(self, ch, method, properties, body):

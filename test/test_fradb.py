@@ -46,6 +46,22 @@ class test_Mongo(unittest.TestCase):
         self.assertTrue( len(ret) == 4 )
         
         
+    def test_count(self):
+        d_list=[]
+        d_list.append({'name': 'akamai', 'age': 20})
+        d_list.append({'name': 'taro', 'age': 21})
+        d_list.append({'name': 'hanako', 'age': 20})
+        d_list.append({'name': 'sato', 'age': 23})
+        d_list.append({'name': 'jiro', 'age': 20})
+        
+        mj = mongojson()
+        mj.clean('test_count', 'testcol')
+        mj.push_many(d_list, 'test_count', 'testcol')
+
+        self.assertTrue( mj.count({}, 'test_count', 'testcol') == 5)
+        self.assertTrue( mj.count({'age': 20}, 'test_count', 'testcol') == 3)
+
+
 
 
 if __name__ == '__main__':

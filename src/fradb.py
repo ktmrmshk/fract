@@ -50,14 +50,14 @@ class mongojson():
                 dataCount += 1
         with open(outputpath, mode = 'w') as jf:
             jf.write(json.dumps(jsonOutput, indent=4))
-        logging.debug(dataCount, " have been output")
+        logging.debug("{} have been output".format(dataCount))
     
     def clean(self, dbName, collectionName):
         mongoInstance = Mongo.getInstance()
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         result = collection.delete_many({})
-        logging.debug(result.deleted_count, " deleted.")
+        logging.debug("{} deleted.".format(result.deleted_count))
 
     def push_many(self, dict_data_list, dbName, collectionName, serializer= lambda i:i):
         mongoInstance = Mongo.getInstance()
@@ -76,4 +76,8 @@ class mongojson():
         logging.debug(ret)
         return ret
 
-
+    def count(self, query, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        return collection.count_documents(query)

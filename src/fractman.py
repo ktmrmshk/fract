@@ -109,15 +109,28 @@ class TestGenMan(FractMan):
             self.push(CONFIG['mq']['queuename'], urllist, src_ghost, dst_ghost, headers={}, options={}, mode={} )
 
 
-    def save(self, filename, interval=10):
+    def save(self, filename, interval=1, timeout_count=5):
+        no_diff_count=0
+        last_count=0
         while(True):
             num_comp = self.num_task_completed()
             num_task = self.num_task
             if num_comp == num_task:
                 self.mj.output(filename, self.cmd, self.sessionid)
                 break
+            
+            if last_count == num_comp:
+                no_diff_count+=1
+                if no_diff_count > timeout_count:
+                    # timeout!
+                    print('Timeout')
+                    self.mj.output(filename, self.cmd, self.sessionid)
+                    break
+            else:
+                no_diff_count=0
+                last_count = num_comp
+               
             print('FractMan: waiting results ...{} / {}'.format(num_comp, num_task))
-
             time.sleep(interval)
 
   

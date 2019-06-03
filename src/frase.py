@@ -10,7 +10,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from urllib.parse import urlparse, urljoin
 from version import VERSION, strnow
-
+import sys, os
 
 class Htmlpsr(HTMLParser):
     def start(self, html, baseurl, domains=[]):
@@ -356,7 +356,10 @@ class FraseGen(object):
                 self.testcases.append( tc )
                 cnt+=1
             except Exception as e:
-                logging.warning(e)
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+
+                logging.warning('{} - {} {} {} - fract: url:{}, src_ghost:{}, dst_ghost:{}, headers:{}, option:{}, mode:{}'.format(e, exc_type, fname, exc_tb.tb_lineno, url, src_ghost, dst_ghost, headers, option, mode))
         else:
             logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 

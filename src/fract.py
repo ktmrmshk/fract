@@ -194,11 +194,12 @@ class FractTestHassert(FractTest):
                 'Request': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
                 'TestCase': dict(),\
                 'Comment' : str(),\
-                'TestId' : str()
+                'TestId' : str(),\
+                'Active' : True\
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
+        query_json='''{"TestType":"hassert","Active":true,"Comment":"This is a test for redirect","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):

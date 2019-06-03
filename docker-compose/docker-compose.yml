@@ -15,6 +15,7 @@ services:
 
   subfracta:
     image: akamjp/fract
+    command: fract worker
 
   subfractb:
     image: akamjp/fract

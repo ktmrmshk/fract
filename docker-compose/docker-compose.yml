@@ -5,9 +5,41 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
-    links:
-      - mongodb
-      - rabbitmq
+      - subfracta
+      - subfractb
+      - subfractc
+      - subfractd
+      - subfracte
+      - subfractf
+      - subfractg
+
+  subfracta:
+    image: akamjp/fract
+    command: fract worker
+
+  subfractb:
+    image: akamjp/fract
+    command: fract worker
+
+  subfractc:
+    image: akamjp/fract
+    command: fract worker
+
+  subfractd:
+    image: akamjp/fract
+    command: fract worker
+
+  subfracte:
+    image: akamjp/fract
+    command: fract worker
+  
+  subfractf:
+    image: akamjp/fract
+    command: fract worker
+
+  subfractg:
+    image: akamjp/fract
+    command: fract worker
 
   mongodb:
     image: mongo

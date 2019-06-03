@@ -1,7 +1,9 @@
-- Comment: This test was gened by FraseGen
+- Comment: This test was gened by FraseGen - v0.7-1-g9cfdf8d at 2019/04/12, 10:16:52
+    JST
   Request:
     Ghost: fract.akamaized-staging.net
     Headers:
+      Cookie: akamai-rum=off
       Pragma: akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no,
         akamai-x-get-true-cache-key
       Referer: http://www.abc.com/
@@ -28,15 +30,10 @@
         ignore_case: false
       query: /fract.akamaized.net/col
       type: contain
-    X-Check-Cacheable:
-    - option:
-        ignore_case: false
-      query: 'NO'
-      type: regex
     status_code:
     - option:
         ignore_case: false
       query: '301'
       type: regex
-  TestId: e3bccc4dde301b5cf2cde1dd0b18dca8581c26b6dc4c945a47d77485d42442de
+  TestId: 400e300a475ca969b7c023f65cffe07e991bc3879a2b95aa4dd19d5ff492cba4
   TestType: hassert

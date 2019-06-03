@@ -3,13 +3,13 @@ import json
 CONFIG=json.loads('''
 {
     "db" : {
-        "host": "rabbitmq",
+        "host": "mongodb",
         "port": 27017,
         "db_testgen": "testgen",
         "db_run": "fret"
     },
     "mq" : {
-        "host": "mongodb",
+        "host": "rabbitmq",
         "port": 5672,
         "queuename": "fractq"
     }

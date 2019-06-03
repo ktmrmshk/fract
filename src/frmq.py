@@ -29,12 +29,17 @@ class RabbitMQMan(MQMan):
     def close(self):
         self.conn.close()
 
-    def get_queue_size(self):
-        #ret = self.ch.queue_declare(queue=queuename, durable=True)
-        return self.qret.method.message_count
+    def get_queue_size(self, queuename):
+        ret = self.ch.queue_declare(queue=queuename, durable=True, passive=True)
+        return ret.method.message_count
 
     def purge(self, queuename):
+        self.make_queue(queuename)
         self.ch.queue_purge(queuename)
+
+    def delete(self, queuename):
+        self.make_queue(queuename)
+        self.ch.queue_delete(queuename)
 
     def pullSingleMessage(self, queuename):
         '''

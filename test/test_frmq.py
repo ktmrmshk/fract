@@ -10,6 +10,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 from frmq import *
 from fradb import *
+from config import CONFIG
+
 class test_MQMan(unittest.TestCase):
     def setUp(self):
         pass
@@ -36,7 +38,7 @@ class test_RabbitMQMan(unittest.TestCase):
 
     def test_get_queue_size(self):
         self.mqm.make_queue('kitaq')
-        self.assertTrue(type(self.mqm.get_queue_size()) == type(123))
+        self.assertTrue(type(self.mqm.get_queue_size('kitaq')) == type(123))
 
     def test_purge(self):
         self.mqm.make_queue('kitaq')
@@ -46,8 +48,20 @@ class test_RabbitMQMan(unittest.TestCase):
         self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
         
         self.mqm.purge('kitaq')
+        time.sleep(0.5)
+        self.assertTrue(self.mqm.get_queue_size('kitaq') == 0)
+
+    def test_delete(self):
+        self.mqm.make_queue('kitaq')
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        self.mqm.ch.basic_publish(exchange='', routing_key='kitaq', body="test123", properties=pika.BasicProperties(delivery_mode=2))
+        
+        self.mqm.delete('kitaq')
         #time.sleep(0.1)
-        self.assertTrue(self.mqm.get_queue_size() == 0)
+        self.mqm.make_queue('kitaq')
+        self.assertTrue(self.mqm.get_queue_size('kitaq') == 0)
 
 
 class test_TaskPublisher(unittest.TestCase):

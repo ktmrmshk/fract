@@ -5,9 +5,8 @@ CONFIG=json.loads('''
     "db" : {
         "host": "rabbitmq",
         "port": 27017,
-        "dbname": "fractdb",
-        "coll_testgen": "testgen",
-        "coll_run": "fret"
+        "db_testgen": "testgen",
+        "db_run": "fret"
     },
     "mq" : {
         "host": "mongodb",

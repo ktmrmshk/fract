@@ -85,7 +85,7 @@ class TestGenMan(FractMan):
         msg['mode'] = mode
 
         self.pub.push(queuename, json.dumps(msg))
-        self.num_task = len(urllist)
+        self.num_task += len(urllist)
 
 
     def split_list(self, l, n):
@@ -110,15 +110,17 @@ class TestGenMan(FractMan):
 
 
     def save(self, filename, interval=10):
-        print('waiting0 ...')
         while(True):
-            print('waiting1 ...')
-            if self.num_task_completed() == self.num_task:
+            num_comp = self.num_task_completed()
+            num_task = self.num_task
+            if num_comp == num_task:
                 self.mj.output(filename, self.cmd, self.sessionid)
                 break
+            print('FractMan: waiting results ...{} / {}'.format(num_comp, num_task))
+
             time.sleep(interval)
 
-
+  
 
 
 

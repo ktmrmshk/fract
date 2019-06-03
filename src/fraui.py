@@ -4,12 +4,13 @@ fract ui classes
 from fract import *
 from frase import *
 from frmq import *
+from fractman import *
 import argparse
 import logging
 from datetime import datetime
 import os
 from version import VERSION
-
+from config import CONFIG
 
 class fractui(object):
     def __init__(self):
@@ -124,10 +125,21 @@ class fractui(object):
 
         ### worker
         subprs_geturlc=subprs.add_parser('worker', help='spawn a worker and subscribe task queue')
-        subprs_geturlc.add_argument('-n', '--name', help='worker name', required=True)
+        #subprs_geturlc.add_argument('-n', '--name', help='worker name', required=True)
         subprs_geturlc.set_defaults(func=self.spawn_worker)
 
 
+        ### testgen_pls - generate test from url list files
+        subprs_geturlc=subprs.add_parser('testgen_pls', help="Testcase generator based on current server's behaviors")
+        subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='output testcase file - json formatted', required=True)
+        subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
+        subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', required=True)
+        subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
+        subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
+        subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
+        subprs_geturlc.set_defaults(func=self.do_testgen_pls)
+        
 
 
 
@@ -284,9 +296,25 @@ class fractui(object):
         
         worker = FractWorker()
         worker.open()
-        worker.make_queue('fractq')
-        worker.addCallback('testgen', FractSub.sub_testgen)
-        worker.consume('fractq')
+        worker.make_queue(CONFIG['mq']['queuename'])
+        worker.addCallback('testgen', Subtask_TestGen.do_task)
+        worker.consume(CONFIG['mq']['queuename'])
+
+    def do_testgen_pls(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        headers=json.loads(args.headers)
+        ignore_case=args.ignore_case
+        strict_redirect_cacheability = args.strict_redirect_cacheability
+
+        now=datetime.today()
+        sessionid=now.strftime('%Y%m%d%H%M%S%f')
+        tgm=TestGenMan(sessionid)
+        tgm.push_urllist_from_file(args.input, 10, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
+
+        tgm.save(args.output, 1)
+
+        logging.info('save to {}'.format(args.output))
 
 
 

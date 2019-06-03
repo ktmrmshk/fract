@@ -81,3 +81,13 @@ class mongojson():
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         return collection.count_documents(query)
+
+    def delete_db(self, dbName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        mongodb.dropDataBase()
+
+    def delete_collection(self, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        mongodb.drop_collection(collectionName)

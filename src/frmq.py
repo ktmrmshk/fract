@@ -3,6 +3,7 @@ from functools import partial
 from fract import *
 from frase import *
 from fradb import *
+from config import CONFIG
 
 class MQMan(object):
     def __init__(self):
@@ -18,8 +19,8 @@ class RabbitMQMan(MQMan):
     def __init__(self):
         pass
 
-    def open(self, host='localhost'):
-        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host))
+    def open(self, host=CONFIG['mq']['host'], port=CONFIG['mq']['port']):
+        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port))
         self.ch = self.conn.channel()
 
     def make_queue(self, queuename):

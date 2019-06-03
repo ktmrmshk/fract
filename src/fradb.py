@@ -1,15 +1,15 @@
 import pymongo
 import os
 import json, logging
-
+from config import CONFIG
 class Mongo():
     '''
     Make Mongo connection instance
     '''
     __instance = None
 
-    def __init__(self):
-        self.mdb_client = pymongo.MongoClient('mongodb', 27017)
+    def __init__(self, host=CONFIG['db']['host'], port=CONFIG['db']['port']):
+        self.mdb_client = pymongo.MongoClient(host, port)
         print('Connecting Mongo...')
 
     @staticmethod

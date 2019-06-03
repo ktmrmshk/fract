@@ -359,6 +359,7 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue( ft.query['Request']['Headers']['Cookie'] == 'akamai-rum=off' )
         ret = fg._current_stat('https://fract.akamaized.net/mk20xyz/FooBar/example.html', 'fract.akamaized.net', {'Cookie': 'akamai-rum=off;test=123;Test=1234567890'})
         logging.debug('Rum-Off Debug={}'.format(ret))
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue('name=RANDOM_SAMPLE; value=false' in ret['X-Akamai-Session-Info'])
         self.assertTrue(ret['X-Akamai-Transformed'] is '')
         self.assertTrue('"Cookie": "akamai-rum=off;test=123;Test=1234567890"' in ret['Request-Headers'])

@@ -3,6 +3,7 @@ from fradb import *
 import unittest, json, logging, re, time, random
 from config import CONFIG
 
+logging.basicConfig(level=logging.DEBUG)
 
 class test_TestGenMan(unittest.TestCase):
     def setUp(self):
@@ -57,6 +58,23 @@ class test_TestGenMan(unittest.TestCase):
         self.tgm.push_urllist_from_file('urllist4test.txt', 10, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         self.assertTrue( self.tgm.pub.get_queue_size(CONFIG['mq']['queuename']) == 4)
+
+    def test_save(self):
+        # push some result to db
+        sessionid = str(random.random())
+        mj =  mongojson()
+        dat = [{'score': 1}, {'score':2}, {'score':3}]
+        mj.push_many(dat, 'testdb', sessionid)
+
+        self.tgm=TestGenMan(sessionid)
+        self.tgm.cmd='testdb'
+        self.tgm.num_task = 3
+        self.tgm.save('test_save')
+        with open('test_save') as f:
+            read_dat = json.load(f)
+            self.assertTrue( len(read_dat) == len(dat) )
+
+        #self.assertTrue( self.tgm.num_task_completed() == 3) 
 
 
 

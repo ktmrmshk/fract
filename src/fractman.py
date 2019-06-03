@@ -110,9 +110,11 @@ class TestGenMan(FractMan):
 
 
     def save(self, filename, interval=10):
+        print('waiting0 ...')
         while(True):
-            if self.numTaskCompleted() == self.num_task:
-                mj.output(filename, self.cmd, self.sessionid)
+            print('waiting1 ...')
+            if self.num_task_completed() == self.num_task:
+                self.mj.output(filename, self.cmd, self.sessionid)
                 break
             time.sleep(interval)
 

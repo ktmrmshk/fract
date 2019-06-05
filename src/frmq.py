@@ -117,6 +117,19 @@ class Subtask_TestGen(FractSubtask):
         mj=mongojson()
         mj.push_many(fg.testcases, msg['cmd'], msg['sessionid'], lambda i : i.query)
 
+class Subtask_Run(FractSubtask):
+    @staticmethod
+    def do_task(msg):
+        assert msg['cmd'] == 'run'
+        logging.debug('sub_run: msg => {}'.format(msg))
+        
+        fclient = FractClient(fract_suite_json=msg['TestJson'])
+        fclient.run_suite()
+
+        # export results to mongo
+        mj=mongojson()
+        mj.push_many(fclient._result_suite, msg['run'], msg['sessionid'] + '_all', lambda i : i.query)
+        mj.push_many(fclient._failed_result_suite, msg['run'], msg['sessionid'] + '_failed', lambda i : i.query)
 
 
 

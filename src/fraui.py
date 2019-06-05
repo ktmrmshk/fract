@@ -139,6 +139,15 @@ class fractui(object):
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
+
+        ### run_pls - run testcase from testcase file
+        subprs_geturlc=subprs.add_parser('run_pls', help='Run testcases')
+        subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
+        subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
+        subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
+        subprs_geturlc.set_defaults(func=self.do_run_pls)
         
 
 
@@ -298,6 +307,7 @@ class fractui(object):
         worker.open()
         worker.make_queue(CONFIG['mq']['queuename'])
         worker.addCallback('testgen', Subtask_TestGen.do_task)
+        worker.addCallback('run', Subtask_TestGen.do_task)
         worker.consume(CONFIG['mq']['queuename'])
 
     def do_testgen_pls(self, args):
@@ -315,7 +325,24 @@ class fractui(object):
         tgm.save(args.output, 1)
 
         logging.info('save to {}'.format(args.output))
+    
+    def do_run_pls(self, args):
+        self.verbose(args)
+        logging.debug(args)
 
+        now=datetime.today()
+        sessionid=now.strftime('%Y%m%d%H%M%S%f')
+        runman = RunMan(sessionid)
+        runman.push_testcase_from_file(args.input, 10)
+        runman.save(args.output, args.diff.replace('.json', '.yaml'), args.summary , 1)
+
+        # summary = fclient.make_summary()
+        # print(summary)
+        # with open(args.summary, 'w') as fw:
+        #     fw.write(summary)
+
+        #fclient.export_failed_testsuite(args.diff.replace('.json', '.yaml'), 'yaml')
+        logging.info('save to {}'.format(args.output))
 
 
 if __name__ == '__main__':

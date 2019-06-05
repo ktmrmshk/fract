@@ -15,5 +15,3 @@ CONFIG=json.loads('''
     }
 }
 ''')
-
-

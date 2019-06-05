@@ -672,8 +672,6 @@ class FractClient(object):
                 self._failed_result_suite.append( fret )
 
     
-
-
     def run_suite(self, testids=None):
         for t in self._testsuite:
             if testids is not None and t.query['TestId'] in testids:
@@ -690,6 +688,7 @@ class FractClient(object):
             else:
                 pass
         logging.debug('# of failed: {}'.format(len(self._failed_result_suite)))
+
     
     def export_result(self, filename='fract_default.txt'):
         ret_dict = list()

@@ -49,7 +49,7 @@ class mongojson():
                 jsonOutput.append(i)
                 dataCount += 1
         with open(outputpath, mode = 'w') as jf:
-            jf.write(json.dumps(jsonOutput, indent=4))
+            jf.write(json.dumps(jsonOutput, indent=2))
         logging.debug("{} have been output".format(dataCount))
     
     def clean(self, dbName, collectionName):
@@ -75,6 +75,18 @@ class mongojson():
             ret.append(r)
         logging.debug(ret)
         return ret
+    
+    def findall(self, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+
+        ret=list()
+        for r in collection.find({}, {'_id': False}):
+            ret.append(r)
+        logging.debug(ret)
+        return ret
+
 
     def count(self, query, dbName, collectionName):
         mongoInstance = Mongo.getInstance()

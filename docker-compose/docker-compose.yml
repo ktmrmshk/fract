@@ -5,6 +5,7 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+      - mongo-express
       - subfracta
       - subfractb
       - subfractc
@@ -12,6 +13,9 @@ services:
       - subfracte
       - subfractf
       - subfractg
+      - subfracth
+      - subfracti
+      - subfractj
 
   subfracta:
     image: akamjp/fract
@@ -41,6 +45,18 @@ services:
     image: akamjp/fract
     command: fract worker
 
+  subfracth:
+    image: akamjp/fract
+    command: fract worker
+
+  subfracti:
+    image: akamjp/fract
+    command: fract worker
+
+  subfractj:
+    image: akamjp/fract
+    command: fract worker
+
   mongodb:
     image: mongo
     restart: always
@@ -50,6 +66,17 @@ services:
       - ./mongodb/db:/data/db
       - ./mongodb/logs:/var/log/mongodb/
     command: mongod --logpath /var/log/mongodb/mongod.log
+
+  mongo-express:
+    image: mongo-express
+    environment:
+        - ME_CONFIG_MONGODB_SERVER=db
+        - ME_CONFIG_MONGODB_PORT=27017
+        - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+    depends_on:
+        - mongodb
+    ports:
+      - "8081:8099"
 
   rabbitmq:
     image: rabbitmq

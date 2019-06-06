@@ -3,61 +3,11 @@ services:
   fract:
     image: akamjp/fract
     depends_on:
-      - mongodb
+      - mongo
       - rabbitmq
       - mongo-express
-      - subfracta
-      - subfractb
-      - subfractc
-      - subfractd
-      - subfracte
-      - subfractf
-      - subfractg
-      - subfracth
-      - subfracti
-      - subfractj
 
-  subfracta:
-    image: akamjp/fract
-    command: fract worker
-
-  subfractb:
-    image: akamjp/fract
-    command: fract worker
-
-  subfractc:
-    image: akamjp/fract
-    command: fract worker
-
-  subfractd:
-    image: akamjp/fract
-    command: fract worker
-
-  subfracte:
-    image: akamjp/fract
-    command: fract worker
-  
-  subfractf:
-    image: akamjp/fract
-    command: fract worker
-
-  subfractg:
-    image: akamjp/fract
-    command: fract worker
-
-  subfracth:
-    image: akamjp/fract
-    command: fract worker
-
-  subfracti:
-    image: akamjp/fract
-    command: fract worker
-
-  subfractj:
-    image: akamjp/fract
-    command: fract worker
-
-  mongodb:
+  mongo:
     image: mongo
     restart: always
     ports:
@@ -69,19 +19,20 @@ services:
 
   mongo-express:
     image: mongo-express
-    environment:
-        - ME_CONFIG_MONGODB_SERVER=db
-        - ME_CONFIG_MONGODB_PORT=27017
-        - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
-    depends_on:
-        - mongodb
+    restart: always
     ports:
-      - "8081:8099"
+      - 8081:8081
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    depends_on:
+      - mongo
 
   rabbitmq:
     image: rabbitmq
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - '15672:15672'
+      - '5672:5672'
     volumes:
       - ./rabbitmq:/var/lib/rabbitmq/

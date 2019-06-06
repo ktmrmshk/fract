@@ -126,9 +126,7 @@ class RunMan(FractMan):
         self.cmd="run"
         self.sessionid = sessionid
         self.num_task=0
-        self._testsuite = list()
-        self._testsuiteId = dict()
-        _test_list = None
+        self.fclient=None
 
     def push(self, queuename, testcase_list):
         '''
@@ -197,10 +195,9 @@ class RunMan(FractMan):
         msg=dict()
         msg['cmd'] = 'run'
         msg['sessionid'] = self.sessionid
-        msg['TestJson'] = testcase_list
-
+        msg['TestJson'] = str(testcase_list)
         self.pub.push(queuename, json.dumps(msg))
-        self.num_task += len(testcase_list)
+        self.num_task += 1
 
 
     def split_list(self, l, n):
@@ -212,36 +209,24 @@ class RunMan(FractMan):
 
 
     def push_testcase_from_file(self, testcase_file, chunksize):
-        if testcase_file is not None:
-            with open(testcase_file) as f:
-                self._test_list = json.load(f)
-        else:
+        if testcase_file is None:
             return -1
-
-        if self._test_list is not None:
-            for t in self._test_list:
-                f = FractDsetFactory.create( json.dumps(t) )
-                self._testsuite.append(f)
-                self._testsuiteId[f.query['TestId']] = f
-        else:
-            return -1
+        self.fclient = FractClient(fract_suite_file=testcase_file)
         
-        for subtestcase_list in self.split_list(self._testsuite, chunksize):
-            self.push(CONFIG['mq']['queuename'], subtestcase_list)
-
+        for subtestcase_list in self.split_list(self.fclient._testsuite, chunksize):
+            for nodetestcase_list in subtestcase_list:
+                self.push(CONFIG['mq']['queuename'], nodetestcase_list)
 
     def save(self, result_filename, diff_filename, summary_filename, interval=10):
         while(True):
             num_comp = self.num_task_completed()
             num_task = self.num_task
             if num_comp == num_task:
-                fclient = FractClient()
-                fclient._testsuiteId = self._testsuiteId
-                fclient._result_suite = self.mj.findall(self.cmd, self.sessionid + '_all')
-                fclient._failed_result_suite = self.mj.findall(self.cmd, self.sessionid + '_failed')
-                fclient.export_result(result_filename)
-                fclient.export_failed_testsuite(diff_filename, 'yaml')
-                summary = fclient.make_summary()
+                self.fclient._result_suite = self.mj.findall(self.cmd, self.sessionid + '_all')
+                self.fclient._failed_result_suite = self.mj.findall(self.cmd, self.sessionid + '_failed')
+                self.fclient.export_result(result_filename)
+                self.fclient.export_failed_testsuite(diff_filename, 'yaml')
+                summary = self.fclient.make_summary()
                 print(summary)
                 with open(summary_filename, 'w') as fw:
                     fw.write(summary)

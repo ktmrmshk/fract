@@ -333,15 +333,9 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         runman = RunMan(sessionid)
-        runman.push_testcase_from_file(args.input, 10)
+        runman.push_testcase_from_file(args.input, 2)
         runman.save(args.output, args.diff.replace('.json', '.yaml'), args.summary , 1)
 
-        # summary = fclient.make_summary()
-        # print(summary)
-        # with open(args.summary, 'w') as fw:
-        #     fw.write(summary)
-
-        #fclient.export_failed_testsuite(args.diff.replace('.json', '.yaml'), 'yaml')
         logging.info('save to {}'.format(args.output))
 
 

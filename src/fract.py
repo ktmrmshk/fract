@@ -619,20 +619,18 @@ class FractClient(object):
         self._testsuiteId = dict() # dict data to search by TestId
         _test_list = None
         
-        
         if fract_suite_obj is not None:
             self._testsuite = fract_suite_obj
             for t in self._testsuite:
                 self._testsuiteId[ t.query['TestId'] ] = t
                 logging.warning(t.query['TestId'])
-
         else:
             if fract_suite_json is not None:
                 _test_list = json.loads(fract_suite_json)
             elif fract_suite_file is not None:
                 with open(fract_suite_file) as f:
                     _test_list = json.load(f)
-
+        
             if _test_list is not None:
                 for t in _test_list:
                     #f=FractTest()

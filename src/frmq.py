@@ -132,16 +132,15 @@ class Subtask_Run(FractSubtask):
         # export results to mongo
         mj=mongojson()
         if len(fclient._result_suite) > 0:
-            resultl = list()
-            for node_result in fclient._result_suite:
-                resultl.append(node_result.__str__())
-                # mj.push(node_result.__str__(), msg['run'], msg['sessionid'] + '_all')
-            mj.push_many(resultl, msg['run'], msg['sessionid'] + '_all', lambda i : i.query)
+            # resultl = list()
+            # for node_result in fclient._result_suite:
+            #     resultl.append(node_result.__str__())
+            mj.push_many(fclient._result_suite, msg['cmd'], msg['sessionid'] + '_all', lambda i : i.query)
         if len(fclient._failed_result_suite) > 0:
-            resultl = list()
-            for node_result in fclient._result_suite:
-                resultl.append(node_result.__str__())
-            mj.push_many(resultl, msg['run'], msg['sessionid'] + '_failed', lambda i : i.query)
+            # resultl = list()
+            # for node_result in fclient._result_suite:
+            #     resultl.append(node_result.__str__())
+            mj.push_many(fclient._failed_result_suite, msg['cmd'], msg['sessionid'] + '_failed', lambda i : i.query)
 
 
 

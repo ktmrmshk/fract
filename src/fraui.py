@@ -307,7 +307,7 @@ class fractui(object):
         worker.open()
         worker.make_queue(CONFIG['mq']['queuename'])
         worker.addCallback('testgen', Subtask_TestGen.do_task)
-        worker.addCallback('run', Subtask_TestGen.do_task)
+        worker.addCallback('run', Subtask_Run.do_task)
         worker.consume(CONFIG['mq']['queuename'])
 
     def do_testgen_pls(self, args):

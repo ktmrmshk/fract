@@ -195,7 +195,7 @@ class RunMan(FractMan):
         msg=dict()
         msg['cmd'] = 'run'
         msg['sessionid'] = self.sessionid
-        msg['TestJson'] = str(testcase_list)
+        msg['TestJson'] = testcase_list
         self.pub.push(queuename, json.dumps(msg))
         self.num_task += 1
 
@@ -214,8 +214,8 @@ class RunMan(FractMan):
         self.fclient = FractClient(fract_suite_file=testcase_file)
         
         for subtestcase_list in self.split_list(self.fclient._testsuite, chunksize):
-            for nodetestcase_list in subtestcase_list:
-                self.push(CONFIG['mq']['queuename'], nodetestcase_list)
+            for nodetestcase in subtestcase_list:
+                self.push(CONFIG['mq']['queuename'], nodetestcase.__str__())
 
     def save(self, result_filename, diff_filename, summary_filename, interval=10):
         while(True):

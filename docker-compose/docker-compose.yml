@@ -1,11 +1,21 @@
 version: "3"
 services:
-  fract:
-    image: akamjp/fract
+  localfract:
+    image: localfract
     depends_on:
       - mongo
       - rabbitmq
       - mongo-express
+      - localfracta
+      - localfractb
+
+  localfracta:
+    image: localfract
+    command: fract worker
+
+  localfractb:
+    image: localfract
+    command: fract worker
 
   mongo:
     image: mongo
@@ -31,6 +41,7 @@ services:
 
   rabbitmq:
     image: rabbitmq
+    hostname: rabbitmq
     ports:
       - '15672:15672'
       - '5672:5672'

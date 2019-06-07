@@ -122,14 +122,22 @@ class Subtask_Run(FractSubtask):
     def do_task(msg):
         assert msg['cmd'] == 'run'
         logging.debug('sub_run: msg => {}'.format(msg))
-        
-        fclient = FractClient(fract_suite_json=msg['TestJson'])
-        fclient.run_suite()
+
+        testjson = json.loads(msg['TestJson'])
+        tl = list()
+        tl.append(testjson['query'])
+        fclient = FractClient(fract_suite_json=json.dumps(tl))
+        fclient.run_suite()        
 
         # export results to mongo
         mj=mongojson()
-        mj.push_many(fclient._result_suite, msg['run'], msg['sessionid'] + '_all', lambda i : i.query)
-        mj.push_many(fclient._failed_result_suite, msg['run'], msg['sessionid'] + '_failed', lambda i : i.query)
+        if len(fclient._result_suite) > 0:
+            resultl = list()
+            for node_result in fclient._result_suite:
+                resultl.append(node_result.__str__())
+            mj.push_many(resultl, msg['run'], msg['sessionid'] + '_all', lambda i : i.query)
+        if len(fclient._failed_result_suite) > 0:
+            mj.push_many(fclient._failed_result_suite, msg['run'], msg['sessionid'] + '_failed', lambda i : i.query)
 
 
 

@@ -225,8 +225,10 @@ class RunMan(FractMan):
             num_comp = self.num_task_completed(session=self.sessionid + '_all')
             num_task = self.num_task
             if num_comp == num_task:
-                self.fclient._result_suite = self.mj.findall(self.cmd, self.sessionid + '_all')
-                self.fclient._failed_result_suite = self.mj.findall(self.cmd, self.sessionid + '_failed')
+                for suball in self.mj.findall(self.cmd, self.sessionid + '_all'):
+                    self.fclient._result_suite.append(FractDsetFactory.create(suball))
+                for subfail in self.mj.findall(self.cmd, self.sessionid + '_failed'):
+                    self.fclient._failed_result_suite.append(FractDsetFactory.create(subfail))
                 self.fclient.export_result(result_filename)
                 self.fclient.export_failed_testsuite(diff_filename, 'yaml')
                 summary = self.fclient.make_summary()

@@ -64,6 +64,12 @@ class mongojson():
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         collection.insert_many( [serializer(i) for i in dict_data_list] )
+    
+    def push_one(self, dict_data, dbName, collectionName):
+        mongoInstance = Mongo.getInstance()
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        collection.insert_one(dict_data)
 
     def find(self, query, dbName, collectionName):
         mongoInstance = Mongo.getInstance()

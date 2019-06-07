@@ -125,7 +125,7 @@ class Subtask_Run(FractSubtask):
 
         testjson = json.loads(msg['TestJson'])
         tl = list()
-        tl.append(testjson['query'])
+        tl.append(testjson)
         fclient = FractClient(fract_suite_json=json.dumps(tl))
         fclient.run_suite()        
 
@@ -135,6 +135,7 @@ class Subtask_Run(FractSubtask):
             resultl = list()
             for node_result in fclient._result_suite:
                 resultl.append(node_result.__str__())
+                # mj.push(node_result.__str__(), msg['run'], msg['sessionid'] + '_all')
             mj.push_many(resultl, msg['run'], msg['sessionid'] + '_all', lambda i : i.query)
         if len(fclient._failed_result_suite) > 0:
             resultl = list()

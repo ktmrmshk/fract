@@ -26,8 +26,11 @@ class FractMan(object):
         self.pub.make_queue(queuename)
         return self.pub.get_queue_size(queuename) == 0
         
-    def num_task_completed(self):
-        return self.mj.count({}, self.cmd, self.sessionid)
+    def num_task_completed(self, session=None):
+        if session == None:
+            return self.mj.count({}, self.cmd, self.sessionid)
+        else:
+            return self.mj.count({}, self.cmd, session)
         
     def save(self, filename):
         pass
@@ -219,7 +222,7 @@ class RunMan(FractMan):
 
     def save(self, result_filename, diff_filename, summary_filename, interval=10):
         while(True):
-            num_comp = self.num_task_completed()
+            num_comp = self.num_task_completed(session=self.sessionid + '_all')
             num_task = self.num_task
             if num_comp == num_task:
                 self.fclient._result_suite = self.mj.findall(self.cmd, self.sessionid + '_all')

@@ -194,11 +194,12 @@ class FractTestHassert(FractTest):
                 'Request': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
                 'TestCase': dict(),\
                 'Comment' : str(),\
-                'TestId' : str()
+                'TestId' : str(),\
+                'Active' : True\
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hassert","Comment":"This is a test for redirect","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
+        query_json='''{"TestType":"hassert","Active":true,"Comment":"This is a test for redirect","LoadTime":0.1234,"TestId":"3606bd5770167eaca08586a8c77d05e6ed076899","Request":{"Ghost":"www.akamai.com.edgekey.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"TestCase":{"status_code":[{"type":"regex","query":"(200|404)"},{"type":"regex","query":"301"}],"Content-Type":[{"type":"regex","query":"text/html$","option":{"ignore_case":true,"not":false}}]}}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
@@ -236,11 +237,12 @@ class FractTestHdiff(FractTest):
                 'RequestB': {'Ghost': str(), 'Method':str(), 'Url':str(), 'Headers':dict() }, \
                 'TestCase': dict(),\
                 'TestId'  : str(),\
-                'Comment' : str()
+                'Comment' : str(),\
+                'Active' : True\
                 }
 
     def init_example(self):
-        query_json='''{"TestType":"hdiff","Comment":"This is comment","TestID":"3606bd5770167eaca08586a8c77d05e6ed076899","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
+        query_json='''{"TestType":"hdiff","Active":true,"Comment":"This is comment","TestID":"3606bd5770167eaca08586a8c77d05e6ed076899","RequestA":{"Ghost":"www.akamai.com","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"RequestB":{"Ghost":"www.akamai.com.edgekey-staging.net","Method":"GET","Url":"https://www.akamai.com/us/en/","Headers":{"Cookie":"abc=123","Accept-Encoding":"gzip"}},"VerifyHeaders":["Last-Modified","Cache-Control"]}'''
         self.query = json.loads( query_json )
     
     def valid_query(self, query):
@@ -440,6 +442,8 @@ class Fract(object):
         self.actor=Actor()
 
     def run(self, fracttest):
+        if 'Active' in fracttest.query and fracttest.query['Active'] == False:
+            return None
         if fracttest.query['TestType'] == FractDset.HASSERT:
             return self._run_hassert(fracttest)
         elif fracttest.query['TestType'] == FractDset.HDIFF:
@@ -678,12 +682,22 @@ class FractClient(object):
         for t in self._testsuite:
             if testids is not None and t.query['TestId'] in testids:
                 ret=self.fract.run(t)
+                
+                # skip if inactive test
+                if ret is None:
+                    continue
+
                 self._result_suite.append( ret )
                 logging.debug(ret)
                 if not ret.query['Passed']:
                     self._failed_result_suite.append( ret )
             elif testids is None:
                 ret=self.fract.run(t)
+
+                # skip if inactive test
+                if ret is None:
+                    continue
+
                 self._result_suite.append( ret )
                 if not ret.query['Passed']:
                     self._failed_result_suite.append( ret )

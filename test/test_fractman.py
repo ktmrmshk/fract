@@ -143,11 +143,16 @@ class test_RunMan(unittest.TestCase):
 
         
         rm.num_task=len(results)
-        rm.save('test_save_ret.json', 'test_save_diff.json', 'test_save_summary.json')
+        rm.save('resultcase4test_sub.json', 'test_save_ret.json', 'test_save_diff.json', 'test_save_summary.json')
 
 
-
-
+#    def test_save2(self):
+#        sessionid = '20190610185033196701'
+#        rm=RunMan(sessionid)
+#        mj =  mongojson()
+#        rm.num_task=mj.count({}, 'run', sessionid)
+#        rm.save('../src/bigtest.json','test_save_ret.json', 'test_save_diff.json', 'test_save_summary.json')
+#
 
 
 if __name__ == '__main__':

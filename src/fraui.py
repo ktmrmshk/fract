@@ -333,8 +333,8 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         runman = RunMan(sessionid)
-        runman.push_testcase_from_file(args.input, 2)
-        runman.save(args.output, args.diff.replace('.json', '.yaml'), args.summary , 1)
+        runman.push_testcase_from_file(args.input, 10)
+        runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , 1)
 
         logging.info('save to {}'.format(args.output))
 

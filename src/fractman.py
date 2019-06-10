@@ -227,8 +227,8 @@ class RunMan(FractMan):
             else:
                 self.push(CONFIG['mq']['queuename'], testcases)
 
-    def save(self, result_filename, diff_filename, summary_filename, interval=10):
-        fclient = FractClient()
+    def save(self, testcase_file, result_filename, diff_filename, summary_filename, interval=10):
+        fclient = FractClient(fract_suite_file=testcase_file)
         while(True):
             num_comp = self.num_task_completed(session=self.sessionid)
             num_task = self.num_task

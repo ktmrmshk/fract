@@ -41,7 +41,7 @@ class RabbitMQMan(MQMan):
         self.make_queue(queuename)
         self.ch.queue_delete(queuename)
 
-    def pullSingleMessage(self, queuename):
+    def pull_single_msg(self, queuename):
         '''
         return (method, properties, body)
         '''
@@ -89,7 +89,7 @@ class FractWorker(TaskWorker):
         self.fract_sub[cmd](msg)
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def pullSingleMessage(self, queuename):
+    def pull_single_msg(self, queuename):
         method, properties, body = self.ch.basic_get(queue=queuename, auto_ack=True)
         
         msg = json.loads(body)
@@ -123,10 +123,8 @@ class Subtask_Run(FractSubtask):
         assert msg['cmd'] == 'run'
         logging.debug('sub_run: msg => {}'.format(msg))
 
-        testjson = json.loads(msg['TestJson'])
-        tl = list()
-        tl.append(testjson)
-        fclient = FractClient(fract_suite_json=json.dumps(tl))
+        testcases = msg['testcases']
+        fclient = FractClient(fract_suite_json=json.dumps(testcases) )
         fclient.run_suite()        
 
         # export results to mongo
@@ -135,7 +133,7 @@ class Subtask_Run(FractSubtask):
             # resultl = list()
             # for node_result in fclient._result_suite:
             #     resultl.append(node_result.__str__())
-            mj.push_many(fclient._result_suite, msg['cmd'], msg['sessionid'] + '_all', lambda i : i.query)
+            mj.push_many(fclient._result_suite, msg['cmd'], msg['sessionid'], lambda i : i.query)
         if len(fclient._failed_result_suite) > 0:
             # resultl = list()
             # for node_result in fclient._result_suite:

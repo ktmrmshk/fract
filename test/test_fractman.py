@@ -1,5 +1,7 @@
 from fractman import *
 from fradb import *
+from fract import *
+
 import unittest, json, logging, re, time, random
 from config import CONFIG
 
@@ -75,6 +77,63 @@ class test_TestGenMan(unittest.TestCase):
             self.assertTrue( len(read_dat) == len(dat) )
 
         #self.assertTrue( self.tgm.num_task_completed() == 3) 
+
+
+class test_RunMan(unittest.TestCase):
+    def setUp(self):
+        pass
+    def tearDown(self):
+        pass
+
+    def test_push(self):
+        sessionid = str(random.random())
+        rm=RunMan(sessionid)
+
+        # push data to mq
+        testcases=None #FractClient(fract_suite_file='testcase4test.json')
+        with open('testcase4test.json') as f:
+            testcases=json.load(f)
+        rm.pub.purge(CONFIG['mq']['queuename'])
+        rm.push(CONFIG['mq']['queuename'], testcases)
+        
+        # pull from mq
+        m, p, b = rm.pub.pull_single_msg(CONFIG['mq']['queuename'])
+        msg = json.loads(b)
+        self.assertTrue( msg['cmd'] == 'run')
+        self.assertTrue('sessionid' in msg)
+        #print(msg['testcases'])
+        self.assertTrue(msg['testcases'][0]['TestType'] == 'hassert')
+
+        
+    def test_push_testcase_from_file(self):
+        sessionid = str(random.random())
+        rm=RunMan(sessionid)
+        
+        rm.pub.purge(CONFIG['mq']['queuename'])
+        chunksize=5
+        rm.push_testcase_from_file('testcase4test.json', chunksize)
+        m, p, b = rm.pub.pull_single_msg(CONFIG['mq']['queuename'])
+        msg = json.loads(b)
+        self.assertTrue( msg['cmd'] == 'run')
+        self.assertTrue('sessionid' in msg)
+        self.assertTrue( len(msg['testcases']) == chunksize )
+
+    def test_save(self):
+        sessionid = str(random.random())
+        rm=RunMan(sessionid)
+        
+        # test data push to mongo
+        mj =  mongojson()
+        with open('resultcase4test_sub.json') as f:
+            results=json.load(f)
+        mj.push_many(results, 'run', sessionid)
+
+        
+        rm.num_task=len(results)
+        rm.save('test_save_ret.json', 'test_save_diff.json', 'test_save_summary.json')
+
+
+
 
 
 

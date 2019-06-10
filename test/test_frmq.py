@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 from frmq import *
 from fradb import *
 from config import CONFIG
+from fractman import *
 
 class test_MQMan(unittest.TestCase):
     def setUp(self):
@@ -120,7 +121,7 @@ class test_TestGenPublisher(unittest.TestCase):
         dumper=TaskWorker()
         dumper.open()
         dumper.make_queue('fractq')
-        m,p,b = dumper.pullSingleMessage('fractq')
+        m,p,b = dumper.pull_single_msg('fractq')
         
         self.assertTrue(json.loads(b)['urllist'] == urllist)
         self.assertTrue(json.loads(b)['src_ghost'] == 'prod.com')
@@ -160,13 +161,45 @@ class test_FractWorker(unittest.TestCase):
 
         worker.addCallback('testgen', Subtask_TestGen.do_task)
         #worker.consume('fractq')
-        worker.pullSingleMessage('fractq')
+        worker.pull_single_msg('fractq')
         
         # check
         ret = mj.find({}, 'testgen', '1981121111')
         self.assertTrue( len(ret) == 2 )
 
         mj.clean('testgen', '1981121111')
+
+    def test_subtask_run(self):
+        
+        ### spawn worker
+        worker = FractWorker()
+        worker.open()
+        worker.addCallback('run', Subtask_Run.do_task)
+
+
+        # push msg
+        sessionid = str(random.random())
+        rm=RunMan(sessionid)
+
+        rm.pub.purge(CONFIG['mq']['queuename'])
+        chunksize=5
+        rm.push_testcase_from_file('testcase4test.json', chunksize)
+        
+        # count number of testcase in this testcases file
+        num_test=0
+        with open('testcase4test.json') as f:
+            tests = json.load(f)
+            num_test=len(tests)
+               
+        # pull msg and do task
+        worker.pull_single_msg(CONFIG['mq']['queuename'])
+        
+        # check the testresult
+        mj = mongojson()
+        
+        ret = mj.find({}, 'run', sessionid)
+        self.assertTrue( len(ret) == chunksize )
+
 
 
 if __name__ == '__main__':

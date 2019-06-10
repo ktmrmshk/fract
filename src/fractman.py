@@ -132,10 +132,10 @@ class RunMan(FractMan):
         self.cmd="run"
         self.sessionid = sessionid
         self.num_task=0
-        self.fclient=None
 
     def push(self, queuename, testcase_list):
         '''
+        testcase_list: list of dict "query" in class FractTest
         return: size of testcase_file
     
         msg format
@@ -144,7 +144,7 @@ class RunMan(FractMan):
         {
             "cmd": "run",
             "sessionid" : 20190430123121,
-            "TestJson" : [{
+            "testcases" : [{
                 "TestType": "hassert",
                 "Request": {
                     "Ghost": "e13663.x.akamaiedge-staging.net",
@@ -194,39 +194,40 @@ class RunMan(FractMan):
             ]
         }        
         ---
-
-
         '''
         self.pub.make_queue(queuename)
         msg=dict()
         msg['cmd'] = 'run'
         msg['sessionid'] = self.sessionid
-        msg['TestJson'] = testcase_list
+        msg['testcases'] = testcase_list
         self.pub.push(queuename, json.dumps(msg))
-        self.num_task += 1
+        self.num_task += len(testcase_list)
 
 
     def push_testcase_from_file(self, testcase_file, chunksize):
-        if testcase_file is None:
-            return -1
-        self.fclient = FractClient(fract_suite_file=testcase_file)
+        fclient = FractClient(fract_suite_file=testcase_file)
         
-        for subtestcase_list in self.split_list(self.fclient._testsuite, chunksize):
+        for subtestcase_list in self.split_list(fclient._testsuite, chunksize):
+            # construct list of raw data (FractClient.query)
+            testcases = list()
             for nodetestcase in subtestcase_list:
-                self.push(CONFIG['mq']['queuename'], nodetestcase.__str__())
+                testcases.append(nodetestcase.query)
+            else:
+                self.push(CONFIG['mq']['queuename'], testcases)
 
     def save(self, result_filename, diff_filename, summary_filename, interval=10):
+        fclient = FractClient()
         while(True):
-            num_comp = self.num_task_completed(session=self.sessionid + '_all')
+            num_comp = self.num_task_completed(session=self.sessionid)
             num_task = self.num_task
             if num_comp == num_task:
-                for suball in self.mj.findall(self.cmd, self.sessionid + '_all'):
-                    self.fclient._result_suite.append(FractDsetFactory.create(suball))
+                for suball in self.mj.findall(self.cmd, self.sessionid):
+                    fclient._result_suite.append(FractDsetFactory.create(suball))
                 for subfail in self.mj.findall(self.cmd, self.sessionid + '_failed'):
-                    self.fclient._failed_result_suite.append(FractDsetFactory.create(subfail))
-                self.fclient.export_result(result_filename)
-                self.fclient.export_failed_testsuite(diff_filename, 'yaml')
-                summary = self.fclient.make_summary()
+                    fclient._failed_result_suite.append(FractDsetFactory.create(subfail))
+                fclient.export_result(result_filename)
+                fclient.export_failed_testsuite(diff_filename, 'yaml')
+                summary = fclient.make_summary()
                 print(summary)
                 with open(summary_filename, 'w') as fw:
                     fw.write(summary)

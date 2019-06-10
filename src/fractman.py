@@ -38,6 +38,16 @@ class FractMan(object):
     def clear_taskqueue(self, queuename):
         self.pub.purge(queuename)
 
+    def split_list(self, l, n):
+        '''
+        split list 'l' to include 'n' memmber each
+        '''
+        for i in range(0, len(l), n):
+            yield l[i:i+n]
+
+
+
+
 class TestGenMan(FractMan):
     def __init__(self, sessionid):
         super(TestGenMan, self).__init__()
@@ -90,13 +100,6 @@ class TestGenMan(FractMan):
         self.pub.push(queuename, json.dumps(msg))
         self.num_task += len(urllist)
 
-
-    def split_list(self, l, n):
-        '''
-        split list 'l' to include 'n' memmber each
-        '''
-        for i in range(0, len(l), n):
-            yield l[i:i+n]
 
 
     def push_urllist_from_file(self, filename, chunksize, src_ghost, dst_ghost, headers={}, options={}, mode={}):
@@ -201,14 +204,6 @@ class RunMan(FractMan):
         msg['TestJson'] = testcase_list
         self.pub.push(queuename, json.dumps(msg))
         self.num_task += 1
-
-
-    def split_list(self, l, n):
-        '''
-        split list 'l' to include 'n' memmber each
-        '''
-        for i in range(0, len(l), n):
-            yield l[i:i+n]
 
 
     def push_testcase_from_file(self, testcase_file, chunksize):

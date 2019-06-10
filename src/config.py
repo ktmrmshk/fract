@@ -3,7 +3,7 @@ import json
 CONFIG=json.loads('''
 {
     "db" : {
-        "host": "mongo",
+        "host": "mongodb",
         "port": 27017,
         "db_testgen": "testgen",
         "db_run": "fret"

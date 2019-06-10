@@ -34,7 +34,7 @@ class RabbitMQMan(MQMan):
 #            else:
 #                break
 #
-        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port))
+        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port, connection_attempts=20))
         self.ch = self.conn.channel()
 
     def make_queue(self, queuename):

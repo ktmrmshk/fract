@@ -9,22 +9,22 @@ services:
   
   fract:
     image: fract/dev
+    command: /bin/bash
    
-
   mongodb:
     image: mongo
     restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongodb/db:/data/db
-      - ./mongodb/logs:/var/log/mongodb/
-    command: mongod --logpath /var/log/mongodb/mongod.log
+    #ports:
+    #  - "27017:27017"
+    #volumes:
+    #  - ./mongodb/db:/data/db
+    #  - ./mongodb/logs:/var/log/mongodb/
+    #command: mongod --logpath /var/log/mongodb/mongod.log
 
   rabbitmq:
     image: rabbitmq
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    volumes:
-      - ./rabbitmq:/var/lib/rabbitmq/
+    #ports:
+    #  - "15672:15672"
+    #  - "5672:5672"
+    #volumes:
+    #  - ./rabbitmq:/var/lib/rabbitmq/

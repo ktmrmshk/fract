@@ -1,0 +1,150 @@
+[
+    {
+        "TestType": "hassert",
+        "Request": {
+            "Ghost": "fract.akamaized.net",
+            "Method": "GET",
+            "Url": "https://fract.akamaized.net/",
+            "Headers": {
+                "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key",
+                "X-Akamai-Cloudlet-Cost": "true",
+                "Cookie": "akamai-rum=off"
+            }
+        },
+        "TestCase": {
+            "X-Cache-Key": [
+                {
+                    "type": "regex",
+                    "query": "/728260/"
+                },
+                {
+                    "type": "regex",
+                    "query": "/000/"
+                },
+                {
+                    "type": "contain",
+                    "query": "/fract.akamaized.net/col"
+                }
+            ],
+            "X-Check-Cacheable": [
+                {
+                    "type": "regex",
+                    "query": "NO"
+                }
+            ],
+            "status_code": [
+                {
+                    "type": "regex",
+                    "query": "200"
+                }
+            ]
+        },
+        "Comment": "This test was gened by FraseGen - v0.8 at 2019/06/10, 14:19:45 JST",
+        "TestId": "b229945cf180b874a290ffdbf5f2761201967060f7b17597c65802eff990f3f7",
+        "Active": true,
+        "LoadTime": 1.463164
+    },
+    {
+        "TestType": "hassert",
+        "Request": {
+            "Ghost": "fract.akamaized.net",
+            "Method": "GET",
+            "Url": "https://fract.akamaized.net/images/thumbs/masonry/gallery/gallery-2-400.jpg",
+            "Headers": {
+                "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key",
+                "X-Akamai-Cloudlet-Cost": "true",
+                "Cookie": "akamai-rum=off"
+            }
+        },
+        "TestCase": {
+            "X-Cache-Key": [
+                {
+                    "type": "regex",
+                    "query": "/729521/"
+                },
+                {
+                    "type": "regex",
+                    "query": "/30d/"
+                },
+                {
+                    "type": "contain",
+                    "query": "/fract.akamaized.net/images"
+                }
+            ],
+            "X-Check-Cacheable": [
+                {
+                    "type": "regex",
+                    "query": "YES"
+                }
+            ],
+            "status_code": [
+                {
+                    "type": "regex",
+                    "query": "200"
+                }
+            ]
+        },
+        "Comment": "This test was gened by FraseGen - v0.8 at 2019/06/10, 14:19:45 JST",
+        "TestId": "1b0bf2d8b2d2885451968171887bb22810c9945411796c5e836a7727784428f7",
+        "Active": true,
+        "LoadTime": 0.040863
+    },
+    {
+        "TestType": "hassert",
+        "Request": {
+            "Ghost": "fract.akamaized.net",
+            "Method": "GET",
+            "Url": "https://fract.akamaized.net/js/main.js",
+            "Headers": {
+                "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key",
+                "X-Akamai-Cloudlet-Cost": "true",
+                "Cookie": "akamai-rum=off"
+            }
+        },
+        "TestCase": {
+            "X-Cache-Key": [
+                {
+                    "type": "regex",
+                    "query": "/728260/"
+                },
+                {
+                    "type": "regex",
+                    "query": "/1d/"
+                },
+                {
+                    "type": "contain",
+                    "query": "/fract.akamaized.net/col"
+                }
+            ],
+            "X-Check-Cacheable": [
+                {
+                    "type": "regex",
+                    "query": "YES"
+                }
+            ],
+            "status_code": [
+                {
+                    "type": "regex",
+                    "query": "200"
+                }
+            ]
+        },
+        "Comment": "This test was gened by FraseGen - v0.8 at 2019/06/10, 14:19:45 JST",
+        "TestId": "b26811d9804e08184026bf85c870097eda2b4a25419d0315ca2bb79685b0e1c1",
+        "Active": true,
+        "LoadTime": 0.015191
+    },
+    {
+        "TestType": "hassert",
+        "Request": {
+            "Ghost": "",
+            "Method": "",
+            "Url": "",
+            "Headers": {}
+        },
+        "TestCase": {},
+        "Comment": "list index out of range - <class 'IndexError'> frase.py 301 - fract: url:https://fract.akamaized.net/nodebuginfo/main.js, src_ghost:fract.akamaized-staging.net, dst_ghost:fract.akamaized.net, headers:{'Pragma': 'akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key', 'X-Akamai-Cloudlet-Cost': 'true', 'Cookie': 'akamai-rum=off'}, option:{}, mode:{}",
+        "TestId": "",
+        "Active": false
+    }
+]

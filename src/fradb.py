@@ -34,7 +34,7 @@ class mongojson():
             logging.debug('{} is not exist'.format(jsonSourceFile))
         
 
-    def output(self, outputpath, dbName, collectionName, includeObjID = False):
+    def output(self, outputpath, dbName, collectionName, query={}, includeObjID = False):
         mongoInstance = Mongo.getInstance()
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
@@ -45,7 +45,7 @@ class mongojson():
                 jsonOutput.append(i)
                 dataCount += 1
         else:
-            for i in collection.find({}, {'_id': False}):
+            for i in collection.find(query, {'_id': False}):
                 jsonOutput.append(i)
                 dataCount += 1
         with open(outputpath, mode = 'w') as jf:

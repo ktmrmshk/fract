@@ -64,6 +64,7 @@ class test_TestGenMan(unittest.TestCase):
         sessionid = str(random.random())
         mj =  mongojson()
         dat = [{'score': 1}, {'score':2}, {'score':3}]
+        mj.clean('testdb', sessionid)
         mj.push_many(dat, 'testdb', sessionid)
 
         self.tgm=TestGenMan(sessionid)
@@ -75,6 +76,18 @@ class test_TestGenMan(unittest.TestCase):
             self.assertTrue( len(read_dat) == len(dat) )
 
         #self.assertTrue( self.tgm.num_task_completed() == 3) 
+
+    def test_save_except_inactive_testcase(self):
+        # push testdata to mongo
+        mj =  mongojson()
+        mj.clean('testgen', '123456')
+        mj.input('testcasejson4mongodbtest.json', 'testgen', '123456')
+        tgm=TestGenMan('123456')
+        tgm.num_task = 4
+        tgm.save('test_save_except_inactive_testcase.json')
+        with open('test_save_except_inactive_testcase.json') as f:
+            d=json.load(f)
+            self.assertTrue(len(d)==3)
 
 
 

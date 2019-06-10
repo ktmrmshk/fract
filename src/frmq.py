@@ -4,6 +4,8 @@ from fract import *
 from frase import *
 from fradb import *
 from config import CONFIG
+import socket, time
+
 
 class MQMan(object):
     def __init__(self):
@@ -20,6 +22,18 @@ class RabbitMQMan(MQMan):
         pass
 
     def open(self, host=CONFIG['mq']['host'], port=CONFIG['mq']['port']):
+#        while True:
+#            try:
+#                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+#                    s.connect((host,port))
+#            except ConnectionRefusedError as e:
+#                print(e)
+#                print('...retry connect...')
+#                time.sleep(2)
+#                continue
+#            else:
+#                break
+#
         self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port))
         self.ch = self.conn.channel()
 

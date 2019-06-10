@@ -18,7 +18,6 @@ class FractMan(object):
         cmd: "testgen", "run"
         '''
 
-
     def push(self, filename):
         pass
 
@@ -109,14 +108,14 @@ class TestGenMan(FractMan):
             self.push(CONFIG['mq']['queuename'], urllist, src_ghost, dst_ghost, headers={}, options={}, mode={} )
 
 
-    def save(self, filename, interval=1, timeout_count=5):
+    def save(self, filename, interval=1, timeout_count=10000):
         no_diff_count=0
         last_count=0
         while(True):
             num_comp = self.num_task_completed()
             num_task = self.num_task
             if num_comp == num_task:
-                self.mj.output(filename, self.cmd, self.sessionid)
+                self.mj.output(filename, self.cmd, self.sessionid, query={"Active" : { "$not" : {"$eq": False}}})
                 break
             
             if last_count == num_comp:

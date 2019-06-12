@@ -138,6 +138,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
+        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning.', type=int, default=CONFIG['testgen']['check_interval'])
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
 
         ### run_pls - run testcase from testcase file
@@ -320,9 +321,9 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         tgm=TestGenMan(sessionid)
-        tgm.push_urllist_from_file(args.input, 10, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
+        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
 
-        tgm.save(args.output, 1)
+        tgm.save(args.output, CONFIG['testgen']['check_interval'])
 
         logging.info('save to {}'.format(args.output))
     
@@ -333,8 +334,8 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         runman = RunMan(sessionid)
-        runman.push_testcase_from_file(args.input, 10)
-        runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , 1)
+        runman.push_testcase_from_file(args.input, CONFIG['run']['chunksize'])
+        runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , CONFIG['run']['check_interval'])
 
         logging.info('save to {}'.format(args.output))
 

@@ -12,6 +12,14 @@ CONFIG=json.loads('''
         "host": "rabbitmq",
         "port": 5672,
         "queuename": "fractq"
+    },
+    "testgen" : {
+        "chunksize" : 1,
+        "check_interval" : 1
+    },
+    "run" : {
+        "chunksize" : 1,
+        "check_interval" : 1
     }
 }
 ''')

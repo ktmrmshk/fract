@@ -11,6 +11,8 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from urllib.parse import urlparse, urljoin
 from version import VERSION, strnow
 import sys, os
+from config import CONFIG
+
 
 class Htmlpsr(HTMLParser):
     def start(self, html, baseurl, domains=[]):

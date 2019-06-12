@@ -10,7 +10,11 @@ services:
   fract:
     image: fract/dev
     command: /bin/bash
-   
+    stdin_open: true
+    tty: true
+    volumes:
+      - ../:/test
+
   mongodb:
     image: mongo
     restart: always

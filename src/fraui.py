@@ -138,16 +138,17 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
-        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning.', type=int, default=CONFIG['testgen']['check_interval'])
+        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['testgen']['chunksize']), type=int, default=CONFIG['testgen']['chunksize'])
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
 
         ### run_pls - run testcase from testcase file
         subprs_geturlc=subprs.add_parser('run_pls', help='Run testcases')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
-        subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
+        #subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
         subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
         subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
         subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
+        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['run']['chunksize']), type=int, default=CONFIG['run']['chunksize'])
         subprs_geturlc.set_defaults(func=self.do_run_pls)
         
 
@@ -334,7 +335,7 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         runman = RunMan(sessionid)
-        runman.push_testcase_from_file(args.input, CONFIG['run']['chunksize'])
+        runman.push_testcase_from_file(args.input, args.chunksize)
         runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , CONFIG['run']['check_interval'])
 
         logging.info('save to {}'.format(args.output))

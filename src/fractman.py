@@ -223,6 +223,8 @@ class RunMan(FractMan):
             # construct list of raw data (FractClient.query)
             testcases = list()
             for nodetestcase in subtestcase_list:
+                if 'Active' in nodetestcase.query and nodetestcase.query['Active'] == False:
+                    continue
                 testcases.append(nodetestcase.query)
             else:
                 self.push(CONFIG['mq']['queuename'], testcases)

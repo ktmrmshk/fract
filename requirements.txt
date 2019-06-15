@@ -3,3 +3,5 @@ pika
 PyYAML
 urllib3
 pymongo
+docker
+docker-compose

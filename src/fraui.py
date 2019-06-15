@@ -5,6 +5,7 @@ from fract import *
 from frase import *
 from frmq import *
 from fractman import *
+from fractworker import *
 import argparse
 import logging
 from datetime import datetime
@@ -151,6 +152,12 @@ class fractui(object):
         subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['run']['chunksize']), type=int, default=CONFIG['run']['chunksize'])
         subprs_geturlc.set_defaults(func=self.do_run_pls)
         
+        ### wait_mq_ready
+        subprs_geturlc=subprs.add_parser('wait_mq_ready', help='Check if mq server is ready')
+        subprs_geturlc.add_argument('-s', '--host', help='hostname of mq server: default={}'.format(CONFIG['mq']['host']), default=CONFIG['mq']['host'], type=str)
+        subprs_geturlc.add_argument('-p', '--port', help='port number of mq server: defaul={}'.format(CONFIG['mq']['port']), default=CONFIG['mq']['port'], type=int)
+        subprs_geturlc.set_defaults(func=self.wait_mq_ready)
+
 
 
 
@@ -306,7 +313,7 @@ class fractui(object):
         logging.debug(args)
         
         worker = FractWorker()
-        worker.open()
+        worker.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
         worker.make_queue(CONFIG['mq']['queuename'])
         worker.addCallback('testgen', Subtask_TestGen.do_task)
         worker.addCallback('run', Subtask_Run.do_task)
@@ -339,6 +346,11 @@ class fractui(object):
         runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , CONFIG['run']['check_interval'])
 
         logging.info('save to {}'.format(args.output))
+
+    def wait_mq_ready(self, args):
+        RabbitMQMan.wait_until_mq_ready(args.host, args.port)
+        logging.info('mq server is ready')
+        print('mq server is ready')
 
 
 if __name__ == '__main__':

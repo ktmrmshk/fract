@@ -12,6 +12,13 @@ class MQMan(object):
     def close(self):
         pass
 
+    @staticmethod
+    def wait_until_mq_ready(host, port):
+        '''
+        block until mq server become ready and connected.
+        '''
+        pass
+
 class RabbitMQMan(MQMan):
     def __init__(self):
         pass
@@ -43,6 +50,16 @@ class RabbitMQMan(MQMan):
         return (method, properties, body)
         '''
         return self.ch.basic_get(queue=queuename, auto_ack=True)
+
+    @staticmethod
+    def wait_until_mq_ready(host, port):
+        '''
+        block until mq server become ready and connected.
+        '''
+        _mq=RabbitMQMan()
+        _mq.open(host, port)
+        _mq.close()
+        return
 
 
 class TaskPublisher(RabbitMQMan):

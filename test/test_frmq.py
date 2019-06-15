@@ -27,7 +27,7 @@ class test_MQMan(unittest.TestCase):
 class test_RabbitMQMan(unittest.TestCase):
     def setUp(self):
         self.mqm = RabbitMQMan()
-        self.mqm.open()
+        self.mqm.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
     def tearDown(self):
         self.mqm.close()
@@ -69,7 +69,7 @@ class test_RabbitMQMan(unittest.TestCase):
 class test_TaskPublisher(unittest.TestCase):
     def setUp(self):
         self.tp = TaskPublisher()
-        self.tp.open()
+        self.tp.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
     def tearDown(self):
         self.tp.close()
@@ -81,7 +81,7 @@ class test_TaskPublisher(unittest.TestCase):
 class test_TaskWorker(unittest.TestCase):
     def setUp(self):
         self.tw = TaskWorker()
-        self.tw.open()
+        self.tw.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
     def tearDown(self):
         self.tw.close()
@@ -93,7 +93,7 @@ class test_TaskWorker(unittest.TestCase):
 class test_SimpleDumpWorker(unittest.TestCase):
     def setUp(self):
         self.sdw = SimpleDumpWorker()
-        self.sdw.open()
+        self.sdw.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
     def tearDown(self):
         self.sdw.close()
@@ -103,7 +103,7 @@ class test_SimpleDumpWorker(unittest.TestCase):
 
 class test_TestGenPublisher(unittest.TestCase):
     def setUp(self):
-        self.tgp = TestGenPublisher()
+        self.tgp = TestGenPublisher(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
 
     def tearDown(self):
@@ -111,7 +111,7 @@ class test_TestGenPublisher(unittest.TestCase):
     def test_push(self):
         # clear queue
         self.mqm = RabbitMQMan()
-        self.mqm.open()
+        self.mqm.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
         self.mqm.make_queue('fractq')
         self.mqm.purge('fractq')
 
@@ -120,7 +120,7 @@ class test_TestGenPublisher(unittest.TestCase):
         self.tgp.push('fractq', '12345678', urllist, 'prod.com', 'stag.com')
 
         dumper=TaskWorker()
-        dumper.open()
+        dumper.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
         dumper.make_queue('fractq')
         m,p,b = dumper.pull_single_msg('fractq')
         
@@ -133,7 +133,7 @@ class test_TestGenPublisher(unittest.TestCase):
     def test_push_for_multi_workertest(self):
         # publish testgen
         urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
-        publisher = TestGenPublisher()
+        publisher = TestGenPublisher(CONFIG['mq']['host'], CONFIG['mq']['port'])
         publisher.push('fractq2', '12345678', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         
@@ -148,12 +148,12 @@ class test_FractWorker(unittest.TestCase):
     def test_sub_testgen_with_mongo_dumper(self):
         # publish testgen
         urllist=['https://space.ktmrmshk.com/', 'https://space.ktmrmshk.com/js/mobile.js']
-        publisher = TestGenPublisher()
+        publisher = TestGenPublisher(CONFIG['mq']['host'], CONFIG['mq']['port'])
         publisher.push('fractq', '1981121111', urllist, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         ### spawn worker
         worker = FractWorker()
-        worker.open()
+        worker.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
         ## Clean up collection
         mj = mongojson()
@@ -174,7 +174,7 @@ class test_FractWorker(unittest.TestCase):
         
         ### spawn worker
         worker = FractWorker()
-        worker.open()
+        worker.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
         worker.addCallback('run', Subtask_Run.do_task)
 
 

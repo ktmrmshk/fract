@@ -8,7 +8,7 @@ from config import CONFIG
 class FractMan(object):
     def __init__(self):
         self.pub = TaskPublisher()
-        self.pub.open()
+        self.pub.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
         self.mj = mongojson()
 

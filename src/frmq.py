@@ -3,7 +3,6 @@ from functools import partial
 from fract import *
 from frase import *
 from fradb import *
-from config import CONFIG
 import socket, time
 
 
@@ -21,8 +20,8 @@ class RabbitMQMan(MQMan):
     def __init__(self):
         pass
 
-    def open(self, host=CONFIG['mq']['host'], port=CONFIG['mq']['port']):
-        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port, connection_attempts=20))
+    def open(self, host, port=5672, connection_attempts=20):
+        self.conn = pika.BlockingConnection( pika.ConnectionParameters(host, port, connection_attempts=connection_attempts))
         self.ch = self.conn.channel()
 
     def make_queue(self, queuename):
@@ -171,9 +170,9 @@ class TestGenPublisher(object):
     "dst_ghost" : "e13100.a.akamaiedge-staging.net"
 }        
     '''
-    def __init__(self):
+    def __init__(self, host, port):
         self.tp = TaskPublisher()
-        self.tp.open()
+        self.tp.open(host, port)
 
     def push(self, queuename, sessionid, urllist, src_ghost, dst_ghost, headers={}, options={}, mode={}):
         #queuename='fractq'

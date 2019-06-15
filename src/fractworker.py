@@ -4,6 +4,7 @@ from fract import *
 from frase import *
 from fradb import *
 from frmq import *
+from config import CONFIG
 import socket, time
 
 
@@ -69,7 +70,7 @@ class Subtask_TestGen(FractSubtask):
         fg._gen_from_urllist(msg['urllist'], msg['src_ghost'], msg['dst_ghost'], msg['headers'], msg['options'], msg['mode'])
 
         # export results to mongo
-        mj=mongojson()
+        mj=mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.push_many(fg.testcases, msg['cmd'], msg['sessionid'], lambda i : i.query)
 
 class Subtask_Run(FractSubtask):
@@ -83,7 +84,7 @@ class Subtask_Run(FractSubtask):
         fclient.run_suite()        
 
         # export results to mongo
-        mj=mongojson()
+        mj=mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         if len(fclient._result_suite) > 0:
             # resultl = list()
             # for node_result in fclient._result_suite:

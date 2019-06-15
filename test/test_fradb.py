@@ -1,14 +1,26 @@
 import sys
 sys.path.append('../src/')
 import unittest, json, logging, os
-from fradb import mongojson
+from fradb import *
+from config import CONFIG
+
 
 logging.basicConfig(level=logging.DEBUG)
 
 inputjsonfile = './cmdline_test_input/testcase_redirection.json'
 outputjsonfile = './cmdline_test_output/mongodb_output.json'
 
+
 class test_Mongo(unittest.TestCase):
+    def test_getInstance(self):
+        m1 = Mongo.getInstance('localhost', 27017)
+        m2 = Mongo.getInstance('localhost', 27017)
+        self.assertTrue(m1 is m2)
+
+        m3 = Mongo.getInstance('127.0.0.1', 27017)
+        self.assertTrue(m1 is not m3)
+
+class test_mongojson(unittest.TestCase):
     def setUp(self):
         pass
     def tearDown(self):
@@ -16,7 +28,7 @@ class test_Mongo(unittest.TestCase):
 
     def test_inputandoutput(self):
         logging.info('Testing: MongoDB input and output Start')
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.input(inputjsonfile, 'testdb', 'testcollection')
         mj.output(outputjsonfile, 'testdb', 'testcollection')
         self.assertTrue(os.path.isfile(outputjsonfile))
@@ -38,7 +50,7 @@ class test_Mongo(unittest.TestCase):
         d_list.append( testobj('aws', 42) )
         d_list.append( testobj('sato', 29) )
 
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.clean('test_push_many_find', 'testcol')
         mj.push_many(d_list, 'test_push_many_find', 'testcol', lambda i : i.dat)
 
@@ -54,7 +66,7 @@ class test_Mongo(unittest.TestCase):
         d_list.append({'name': 'sato', 'age': 23})
         d_list.append({'name': 'jiro', 'age': 20})
         
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.clean('test_count', 'testcol')
         mj.push_many(d_list, 'test_count', 'testcol')
 
@@ -69,7 +81,7 @@ class test_Mongo(unittest.TestCase):
         d_list.append({'name': 'sato', 'age': 23})
         d_list.append({'name': 'jiro', 'age': 20})
         
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.clean('test_count', 'testcol')
         mj.push_many(d_list, 'test_count', 'testcol')
 

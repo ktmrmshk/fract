@@ -58,7 +58,7 @@ class test_FractWorker(unittest.TestCase):
         worker.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
         ## Clean up collection
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.clean('testgen', '1981121111')
 
 
@@ -98,7 +98,7 @@ class test_FractWorker(unittest.TestCase):
         worker.pull_single_msg(CONFIG['mq']['queuename'])
         
         # check the testresult
-        mj = mongojson()
+        mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         
         ret = mj.find({}, 'run', sessionid)
         self.assertTrue( len(ret) == chunksize )

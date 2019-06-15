@@ -20,7 +20,7 @@ class test_TestGenMan(unittest.TestCase):
     def test_num_task_completed(self):
         # push some result to db
         sessionid = str(random.random())
-        mj =  mongojson()
+        mj =  mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         dat = [{'score': 1}, {'score':2}, {'score':3}]
         mj.push_many(dat, 'testdb', sessionid)
 
@@ -64,7 +64,7 @@ class test_TestGenMan(unittest.TestCase):
     def test_save(self):
         # push some result to db
         sessionid = str(random.random())
-        mj =  mongojson()
+        mj =  mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         dat = [{'score': 1}, {'score':2}, {'score':3}]
         mj.clean('testdb', sessionid)
         mj.push_many(dat, 'testdb', sessionid)
@@ -81,7 +81,7 @@ class test_TestGenMan(unittest.TestCase):
 
     def test_save_except_inactive_testcase(self):
         # push testdata to mongo
-        mj =  mongojson()
+        mj =  mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         mj.clean('testgen', '123456')
         mj.input('testcasejson4mongodbtest.json', 'testgen', '123456')
         tgm=TestGenMan('123456')
@@ -136,7 +136,7 @@ class test_RunMan(unittest.TestCase):
         rm=RunMan(sessionid)
         
         # test data push to mongo
-        mj =  mongojson()
+        mj =  mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
         with open('resultcase4test_sub.json') as f:
             results=json.load(f)
         mj.push_many(results, 'run', sessionid)

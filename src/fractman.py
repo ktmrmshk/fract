@@ -10,7 +10,7 @@ class FractMan(object):
         self.pub = TaskPublisher()
         self.pub.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
 
-        self.mj = mongojson()
+        self.mj = mongojson(CONFIG['db']['host'], CONFIG['db']['port'])
 
         self.sessionid=int()
         self.cmd=str()

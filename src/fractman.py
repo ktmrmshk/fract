@@ -229,7 +229,7 @@ class RunMan(FractMan):
             else:
                 self.push(CONFIG['mq']['queuename'], testcases)
 
-    def save(self, testcase_file, result_filename, diff_filename, summary_filename, interval=10):
+    def save(self, testcase_file, result_filename, diff_filename, summary_filename, interval=10, cleanup=True):
         fclient = FractClient(fract_suite_file=testcase_file)
         while(True):
             num_comp = self.num_task_completed(session=self.sessionid)
@@ -249,3 +249,7 @@ class RunMan(FractMan):
             print('FractMan: waiting results ...{} / {}'.format(num_comp, num_task))
 
             time.sleep(interval)
+        if cleanup:
+            self.mj.clean(self.cmd, self.sessionid)
+
+        

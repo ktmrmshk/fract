@@ -13,6 +13,10 @@ import os
 from version import VERSION
 from config import CONFIG
 
+# this is used for fileid and session id based on currnet time
+now=datetime.today()
+mid=now.strftime('%Y%m%d%H%M%S%f')
+
 class fractui(object):
     def __init__(self):
         self.prs=argparse.ArgumentParser(prog='fract')
@@ -54,8 +58,6 @@ class fractui(object):
         
 
         ### run - run test case and output results
-        now=datetime.today()
-        mid=now.strftime('%Y%m%d%H%M%S%f')
         
         subprs_geturlc=subprs.add_parser('run', help='Run testcases')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
@@ -339,9 +341,7 @@ class fractui(object):
         self.verbose(args)
         logging.debug(args)
 
-        now=datetime.today()
-        sessionid=now.strftime('%Y%m%d%H%M%S%f')
-        runman = RunMan(sessionid)
+        runman = RunMan(mid)
         runman.push_testcase_from_file(args.input, args.chunksize)
         runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , CONFIG['run']['check_interval'])
 

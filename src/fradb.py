@@ -38,7 +38,7 @@ class mongojson():
             logging.debug('{} is not exist'.format(jsonSourceFile))
         
 
-    def output(self, outputpath, dbName, collectionName, query={}, includeObjID = False):
+    def output(self, outputpath, dbName, collectionName, query={}, includeObjID = False, cleanup=True):
         mongoInstance = Mongo.getInstance(self.host, self.port)
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
@@ -55,6 +55,10 @@ class mongojson():
         with open(outputpath, mode = 'w') as jf:
             jf.write(json.dumps(jsonOutput, indent=2))
         logging.debug("{} have been output".format(dataCount))
+
+        if cleanup:
+            print('removing db tables')
+            self.clean(dbName, collectionName)
     
     def clean(self, dbName, collectionName):
         mongoInstance = Mongo.getInstance(self.host, self.port)

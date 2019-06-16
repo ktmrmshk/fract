@@ -1,6 +1,6 @@
 - Active: true
-  Comment: This test was gened by FraseGen - v0.8 at 2019/06/15, 12:25:26 JST
-  LoadTime: 0.006633
+  Comment: This test was gened by FraseGen - v0.8 at 2019/06/16, 09:46:09 JST
+  LoadTime: 0.007011
   Request:
     Ghost: fract.akamaized-staging.net
     Headers:
@@ -36,5 +36,5 @@
         ignore_case: false
       query: '301'
       type: regex
-  TestId: a1a79430e8518afb464762a4213b16837600e6bec9c2cb9179152cac3de2dc92
+  TestId: 1b0a8fa8a78060a988203a4f8962fb03dc3c3427ead2095ec269bf7ccccb4545
   TestType: hassert

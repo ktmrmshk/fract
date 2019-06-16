@@ -1,49 +1,21 @@
 version: "3"
 services:
-  localfract:
-    image: localfract
+  worker:
+    image: ktmrmshk/fract
     depends_on:
-      - mongo
+      - mongodb
       - rabbitmq
-      - mongo-express
-      - localfracta
-      - localfractb
-
-  localfracta:
-    image: localfract
     command: fract worker
+  
+  fract:
+    image: ktmrmshk/fract
+    command: /bin/bash
+    stdin_open: true
+    tty: true
 
-  localfractb:
-    image: localfract
-    command: fract worker
-
-  mongo:
+  mongodb:
     image: mongo
     restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongodb/db:/data/db
-      - ./mongodb/logs:/var/log/mongodb/
-    command: mongod --logpath /var/log/mongodb/mongod.log
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin
-      - ME_CONFIG_MONGODB_SERVER=mongo
-    depends_on:
-      - mongo
 
   rabbitmq:
     image: rabbitmq
-    hostname: rabbitmq
-    ports:
-      - '15672:15672'
-      - '5672:5672'
-    volumes:
-      - ./rabbitmq:/var/lib/rabbitmq/

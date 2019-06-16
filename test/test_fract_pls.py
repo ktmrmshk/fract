@@ -51,7 +51,14 @@ class test_testgen_pls(unittest.TestCase):
         self.assertTrue( os.path.exists(summary)  )
         #self.assertTrue( os.path.exists(diff)  )
 
-
+    
+    def test_testgen_run_pls(self):
+        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen -i /this/{} -o /this/{} -s {} -d {}'.format(os.getcwd(), 'urllist2.txt', 't.json', 'www.uniqlo.com', 'www.uniqlo.com')
+        subprocess.check_call(cmd.split(' '))
+        
+        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract run_pls -i /this/{}'.format(os.getcwd(), 't.json')
+        subprocess.check_call(cmd.split(' '))
+        
 
 
 if __name__ == '__main__':

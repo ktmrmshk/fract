@@ -1,5 +1,5 @@
 # $ cd fract
-# $ docker build -f docker/Dockerfile-dev -t fract/dev .
+# $ docker build -f docker/Dockerfile -t fract/dev .
 
 FROM python:3.6-slim
 

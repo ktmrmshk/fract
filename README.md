@@ -58,8 +58,9 @@ Changelog
 * 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
 * 2019/03/29 - v0.7 Ignore x-check-cacheable value when 30x redirect response, version info support
 * 2019/04/15 - v0.8 Redirect Loop Detection - testredirectloop option
+* 2019/06/17 - v1.0 parallelization by fract worker 
 
-Workflow Example - Usage
+Workflow Example 1 - Basic usage with single prcess
 ------------
 
 ### 1. Collect URL list
@@ -618,11 +619,192 @@ $ fract testredirectloop -i urllist.txt -d fract.akamaized-staging.net
 ```
 
 
+Workflow Example 2 - Parallel execution by fract worker
+------------
+
+### Installation
+
+In addition to docker execution enviromnent, 
+[`docker-compose`](https://docs.docker.com/compose/) is requried to run in multi process fashion.
+There's some ways to install docker-compose though, let's take `python pip` way here.
+Visit the [Install Docker Compose](https://docs.docker.com/compose/install/) on alternative installation choice. 
+
+```
+$ python3 -m pip install docker-compose
+```
+
+### Workflow cycle
+
+1. start fract workers up
+2. run fract command (many times)
+3. shutdown and cleanup fract worker
+
+#### 1. start fract worker up
+
+First, there's need to start fract workers up before executing fract.
+
+```
+(from shell on your host machine)
+### make working directory
+
+$ mkdir test
+$ cd test
+
+### get docker-compose.yml
+$ cp docker-compose/docker-compose.yml .
+$ ls
+docker-compose.yml  <=== downloaded!
+
+### pull the docker container needed first
+$ docker-compose pull
+
+### finally, start up fract workers - 4 workers in this example
+$ docker-compose up -d --scale worker=4
+
+Creating test_rabbitmq_1 ... done
+Creating test_mongodb_1  ... done
+Creating test_fract_1    ... done
+Creating test_worker_1   ... done
+Creating test_worker_2   ... done
+Creating test_worker_3   ... done
+Creating test_worker_4   ... done
+```
+
+If you change the number of fract worker, which is equal to number of process in parallel execution, type same `docker-compose run` command at any time.
+
+```
+#### Changed number of woker to 16
+$ docker-compose up -d --scale worker=16
+```
+
+
+#### 2. run fract command (many times)
+
+Then, run fract container and fract command in that container. Almost workflow is same as conventional fract execution, except for `testgen` and `run` commands. To execute `testgen` and `run` command in parallel, we use `testgen_pls` and `run_pls` command, which uses fract worker to run sub process like fetch HTTP request to web sever.
+
+```
+### start and enter fract container
+$ docker-compose run fract /bin/bash
+
+(entered container)
+# fract -h
+
+usage: fract [-h] [-v] [--version]
+             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
+             ...
+
+positional arguments:
+  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
+                        sub-command help
+    geturlc             Get URL list using built-in crawler
+    geturlakm           Get URL list using Akamai Top Url List CSV files
+    testgen             Testcase generator based on current server's behaviors
+    run                 Run testcases
+    tmerge              Merge multiple testcases into signle file
+    rmerge              Merge multiple results into signle form
+    j2y                 Json to yaml converter
+    y2j                 Yaml to json converter
+    redirsum            Export redirect request/response summary in JSON form
+    ercost              Export Eege-Redirector-Cost summary in JSON form
+    testredirectloop    Test if redirect happend more than special value
+    worker              spawn a worker and subscribe task queue
+    testgen_pls         Testcase generator based on current server's behaviors
+    run_pls             Run testcases
+    wait_mq_ready       Check if mq server is ready
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbosity       verbos display
+  --version             verion info
+```
+
+Same as before, first we have to have urllis. Let's get urllist from `geturlc` command here.
+```
+# fract geturlc -e https://www.uniqlo.com/ -o urllist.txt -D www.uniqlo.com
+
+# ls
+urllist.txt  <=== Generated!
+```
+
+Then, run `testgen` in parallel using `testgen_pls` command:
+```
+$ fract testgen_pls -i urllist.txt -o testcase.json -s www.uniqlo.com.edgekey.net -d e13663.x.akamaiedge-staging.net 
+
+Connecting Mongo...
+FractMan: waiting results ...0 / 189
+FractMan: waiting results ...85 / 189
+removing db tables
+
+
+# ls
+urllist.txt
+testcase.json  <=== Generated!
+```
+
+Next, do `run` in parallel using `run_pls` command:
+```
+# fract run_pls -i testcase.json
+
+Connecting Mongo...
+FractMan: waiting results ...0 / 188
+FractMan: waiting results ...21 / 188
+FractMan: waiting results ...64 / 188
+FractMan: waiting results ...114 / 188
+FractMan: waiting results ...163 / 188
+
+Summary
+=================
+
+Tests not passed
+----------------
+
+Total
+----------------
+ran 188 tests: 0 failed
+
+=> OK
+
+
+# ls
+urllist.txt
+testcase.json
+frdiff20190616021244806694.yaml  <=== Generated!
+fret20190616021244806694.json  <=== Generated!
+frsummary20190616021244806694.txt  <=== Generated!
+```
+
+Following workflow, i.e. retry failed test and merge testcases, is totally same as before.
 
 
 
+#### 3. shutdown and cleanup fract worker
+
+Once all workflow completed, you can clean up fract worker enviroment.
+
+```
+(exit from fract container)
+# exit
+
+(shell on host machine)
+$ docker-compose down
+docker-compose down
+Stopping test_worker_4   ... done
+Stopping test_worker_1   ... done
+Stopping test_worker_2   ... done
+Stopping test_worker_3   ... done
+Stopping test_fract_1    ... done
+Stopping test_rabbitmq_1 ... done
+Stopping test_mongodb_1  ... done
+Removing test_fract_run_85116ef5a98e ... done
+Removing test_worker_4               ... done
+Removing test_worker_1               ... done
+Removing test_worker_2               ... done
+Removing test_worker_3               ... done
+Removing test_fract_1                ... done
+Removing test_rabbitmq_1             ... done
+Removing test_mongodb_1              ... done
+Removing network test_default
+```
 
 
-
-
-
+That's it!

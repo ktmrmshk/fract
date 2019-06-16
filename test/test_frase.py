@@ -1,4 +1,5 @@
 import unittest, json, logging
+logging.basicConfig(level=logging.DEBUG)
 
 from frase import Htmlpsr
 class test_Htmlpsr(unittest.TestCase):
@@ -139,6 +140,8 @@ class test_FraseGen(unittest.TestCase):
         logging.debug('fg.ret={}'.format(ret))
         self.assertTrue(ret['X-Check-Cacheable'] == 'YES')
         self.assertTrue( '544456' in ret['X-Cache-Key'])
+        self.assertTrue( 'LoadTime' in ret )
+        self.assertTrue( type(ret['LoadTime']) == type(0.1234) )
  
     # custom header support # should be tested through specific ghost conf
     def test_current_stat2(self): 
@@ -198,6 +201,7 @@ class test_FraseGen(unittest.TestCase):
         
         self.assertTrue( len( ft.query['Comment'] ) != 0 )
         self.assertTrue( len( ft.query['TestId'] ) != 0  )
+        self.assertTrue( 'LoadTime' in ft.query )
 
     # custom_header_support
     def test_gen_20180801(self):
@@ -300,6 +304,15 @@ class test_FraseGen(unittest.TestCase):
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
+    def test_gen_inactive_testcase(self):
+        fg=FraseGen()
+        ft = fg.gen('https://ktmrmshk.github.io/demosite/col/','ktmrmshk.github.io', 'ktmrmshk.github.io')
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( ft.query['TestType'] == 'hassert' )
+        self.assertTrue( ft.query['Active'] == False )
+        
+        self.assertTrue( len( ft.query['Comment'] ) != 0 )
+
 
 
 
@@ -364,6 +377,19 @@ class test_FraseGen(unittest.TestCase):
         self.assertTrue('"Cookie": "akamai-rum=off;test=123;Test=1234567890"' in ret['Request-Headers'])
         logging.info('rum off testing end')
     #2018/11/29 Rum-off End
+
+
+    def test_save_inactive_testcase(self):
+        fg=FraseGen()
+        ft = fg.gen('https://ktmrmshk.github.io/demosite/col/','ktmrmshk.github.io', 'ktmrmshk.github.io')
+        fg.testcases.append(ft)
+        ft = fg.gen('https://fract.akamaized.net/302/','fract.akamaized.net', 'fract.akamaized-staging.net')
+        fg.testcases.append(ft)
+        fg.save('test_save_inactive_testcase.json')
+
+        with open('test_save_inactive_testcase.json') as f:
+            testcases = json.load(f)
+            self.assertTrue(len(testcases) == 1)
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

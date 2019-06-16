@@ -1,15 +1,20 @@
-FROM python:3.6
+# $ cd fract
+# $ docker build -f docker/Dockerfile -t fract/dev .
 
-RUN apt-get update && apt-get -y install vim dnsutils
-RUN pip install requests
-RUN pip install grip
-RUN pip install PyYAML
-RUN pip install urllib3
+FROM python:3.6-slim
 
-RUN git clone -b release https://github.com/ktmrmshk/fract.git
+COPY requirements.txt requirements.txt
+
+RUN apt update && apt -y install vim dnsutils git \
+      && apt clean \
+      && rm -rf /var/lib/apt/lists/* \ 
+      && pip install -r requirements.txt \
+      && rm -rf /root/.cache 
+
+RUN mkdir -p /fract/src
+COPY ./src /fract/src/
+COPY fract /fract/
+
 ENV PYTHONPATH /fract/src/
 ENV PATH="/fract/:${PATH}"
-
-
-
 

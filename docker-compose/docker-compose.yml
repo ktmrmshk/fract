@@ -1,0 +1,21 @@
+version: "3"
+services:
+  worker:
+    image: ktmrmshk/fract
+    depends_on:
+      - mongodb
+      - rabbitmq
+    command: fract worker
+  
+  fract:
+    image: ktmrmshk/fract
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+
+  mongodb:
+    image: mongo
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq

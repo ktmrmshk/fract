@@ -646,7 +646,6 @@ First, there's need to start fract workers up before executing fract.
 ```
 (from shell on your host machine)
 ### make working directory
-
 $ mkdir test
 $ cd test
 

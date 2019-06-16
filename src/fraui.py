@@ -3,12 +3,19 @@ fract ui classes
 '''
 from fract import *
 from frase import *
+from frmq import *
+from fractman import *
+from fractworker import *
 import argparse
 import logging
 from datetime import datetime
 import os
 from version import VERSION
+from config import CONFIG
 
+# this is used for fileid and session id based on currnet time
+now=datetime.today()
+mid=now.strftime('%Y%m%d%H%M%S%f')
 
 class fractui(object):
     def __init__(self):
@@ -51,8 +58,6 @@ class fractui(object):
         
 
         ### run - run test case and output results
-        now=datetime.today()
-        mid=now.strftime('%Y%m%d%H%M%S%f')
         
         subprs_geturlc=subprs.add_parser('run', help='Run testcases')
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
@@ -119,6 +124,43 @@ class fractui(object):
         subprs_geturlc.add_argument('-m', '--maximum', help='threshold to trace redirect chain. default=5', type=int, default=5)
         subprs_geturlc.set_defaults(func=self.do_testredirectloop)
         ### 2019/04/05 testredirectloop end
+
+
+        ### worker
+        subprs_geturlc=subprs.add_parser('worker', help='spawn a worker and subscribe task queue')
+        #subprs_geturlc.add_argument('-n', '--name', help='worker name', required=True)
+        subprs_geturlc.set_defaults(func=self.spawn_worker)
+
+
+        ### testgen_pls - generate test from url list files
+        subprs_geturlc=subprs.add_parser('testgen_pls', help="Testcase generator based on current server's behaviors")
+        subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
+        subprs_geturlc.add_argument('-o', '--output', help='output testcase file - json formatted', required=True)
+        subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
+        subprs_geturlc.add_argument('-d', '--dstghost', help='dest ghost/webserver name', required=True)
+        subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
+        subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
+        subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
+        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['testgen']['chunksize']), type=int, default=CONFIG['testgen']['chunksize'])
+        subprs_geturlc.set_defaults(func=self.do_testgen_pls)
+
+        ### run_pls - run testcase from testcase file
+        subprs_geturlc=subprs.add_parser('run_pls', help='Run testcases')
+        subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
+        #subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
+        subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))
+        subprs_geturlc.add_argument('-s', '--summary', help='filename for summary output', default=self._tname('frsummary', 'txt', mid=mid))
+        subprs_geturlc.add_argument('-d', '--diff', help='test case generated based on diffs', default=self._tname('frdiff', 'json', mid=mid))
+        subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['run']['chunksize']), type=int, default=CONFIG['run']['chunksize'])
+        subprs_geturlc.set_defaults(func=self.do_run_pls)
+        
+        ### wait_mq_ready
+        subprs_geturlc=subprs.add_parser('wait_mq_ready', help='Check if mq server is ready')
+        subprs_geturlc.add_argument('-s', '--host', help='hostname of mq server: default={}'.format(CONFIG['mq']['host']), default=CONFIG['mq']['host'], type=str)
+        subprs_geturlc.add_argument('-p', '--port', help='port number of mq server: defaul={}'.format(CONFIG['mq']['port']), default=CONFIG['mq']['port'], type=int)
+        subprs_geturlc.set_defaults(func=self.wait_mq_ready)
+
+
 
 
     def _tname(self, prefix, ext, postfix='', mid=None):
@@ -267,6 +309,49 @@ class fractui(object):
         logging.info('Result saved to {}'.format(args.output))
         logging.info('Summary saved to {}'.format(args.summary))
     ### 2019/04/05 testredirectloop end
+
+    def spawn_worker(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        
+        worker = FractWorker()
+        worker.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
+        worker.make_queue(CONFIG['mq']['queuename'])
+        worker.addCallback('testgen', Subtask_TestGen.do_task)
+        worker.addCallback('run', Subtask_Run.do_task)
+        worker.consume(CONFIG['mq']['queuename'])
+
+    def do_testgen_pls(self, args):
+        self.verbose(args)
+        logging.debug(args)
+        headers=json.loads(args.headers)
+        ignore_case=args.ignore_case
+        strict_redirect_cacheability = args.strict_redirect_cacheability
+
+        now=datetime.today()
+        sessionid=now.strftime('%Y%m%d%H%M%S%f')
+        tgm=TestGenMan(sessionid)
+        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
+
+        tgm.save(args.output, CONFIG['testgen']['check_interval'])
+
+        logging.info('save to {}'.format(args.output))
+    
+    def do_run_pls(self, args):
+        self.verbose(args)
+        logging.debug(args)
+
+        runman = RunMan(mid)
+        runman.push_testcase_from_file(args.input, args.chunksize)
+        runman.save(args.input, args.output, args.diff.replace('.json', '.yaml'), args.summary , CONFIG['run']['check_interval'])
+
+        logging.info('save to {}'.format(args.output))
+
+    def wait_mq_ready(self, args):
+        RabbitMQMan.wait_until_mq_ready(args.host, args.port)
+        logging.info('mq server is ready')
+        print('mq server is ready')
+
 
 if __name__ == '__main__':
     try:

@@ -10,6 +10,8 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from urllib.parse import urlparse, urljoin
 from version import VERSION, strnow
+import sys, os
+from config import CONFIG
 
 
 class Htmlpsr(HTMLParser):
@@ -282,44 +284,56 @@ class FraseGen(object):
         in: url and ghost
         out: hassert test case
         '''
-
-        ft = fract.FractTestHassert()
-        ft.init_template()
-        headers.update({'Pragma':fract.AKAMAI_PRAGMA})
-        headers.update({'X-Akamai-Cloudlet-Cost': 'true'})
-        #2018/11/29 Rum-off Start
-        cookieFromCustomer = headers.get('Cookie', '')
-        if 'akamai-rum=off' not in cookieFromCustomer:
-            if cookieFromCustomer is '':
-                headers.update({'Cookie': 'akamai-rum=off'})
+        try:
+            ft = fract.FractTestHassert()
+            ft.init_template()
+            headers.update({'Pragma':fract.AKAMAI_PRAGMA})
+            headers.update({'X-Akamai-Cloudlet-Cost': 'true'})
+            #2018/11/29 Rum-off Start
+            cookieFromCustomer = headers.get('Cookie', '')
+            if 'akamai-rum=off' not in cookieFromCustomer:
+                if cookieFromCustomer is '':
+                    headers.update({'Cookie': 'akamai-rum=off'})
+                else:
+                    headers.update({'Cookie': 'akamai-rum=off;' + cookieFromCustomer})
+            #2018/11/29 Rum-off End
+            ft.setRequest(url, dst_ghost, headers)
+            
+            cstat = self._current_stat(url, src_ghost, headers)
+            cpcode, ttl, ck_host, subdir = self._parse_xcachekey(cstat['X-Cache-Key'])
+            
+            ft.add('X-Cache-Key', '/{}/'.format(cpcode), option=option)
+            ft.add('X-Cache-Key', '/{}/'.format(ttl), option=option)
+            if subdir:
+                ft.add('X-Cache-Key', '/{}/{}'.format(ck_host, subdir), 'contain', option=option)
             else:
-                headers.update({'Cookie': 'akamai-rum=off;' + cookieFromCustomer})
-        #2018/11/29 Rum-off End
-        ft.setRequest(url, dst_ghost, headers)
-        
-        cstat = self._current_stat(url, src_ghost, headers)
-        cpcode, ttl, ck_host, subdir = self._parse_xcachekey(cstat['X-Cache-Key'])
-        
-        ft.add('X-Cache-Key', '/{}/'.format(cpcode), option=option)
-        ft.add('X-Cache-Key', '/{}/'.format(ttl), option=option)
-        if subdir:
-            ft.add('X-Cache-Key', '/{}/{}'.format(ck_host, subdir), 'contain', option=option)
-        else:
-            ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain', option=option)
-        
-        if cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False:
-            pass
-        else:
-            ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
-        ft.add('status_code', str(cstat['status_code']), option=option)
-        ft.set_comment('This test was gened by FraseGen - {} at {}'.format(VERSION, strnow()))
-        ft.set_loadtime( cstat['LoadTime'])
-        ft.set_testid()
-        if 'Location' in cstat:
-            ft.add('Location', cstat['Location'], 'exact', option=option)
-            #ft.add('status_code', str(cstat['status_code']) )
-        return ft
+                ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain', option=option)
+            
+            if cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False:
+                pass
+            else:
+                ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)
+            ft.add('status_code', str(cstat['status_code']), option=option)
+            ft.set_comment('This test was gened by FraseGen - {} at {}'.format(VERSION, strnow()))
+            ft.set_loadtime( cstat['LoadTime'])
+            ft.set_testid()
+            if 'Location' in cstat:
+                ft.add('Location', cstat['Location'], 'exact', option=option)
+                #ft.add('status_code', str(cstat['status_code']) )
+            return ft
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            d_msg='{} - {} {} {} - fract: url:{}, src_ghost:{}, dst_ghost:{}, headers:{}, option:{}, mode:{}'.format(e, exc_type, fname, exc_tb.tb_lineno, url, src_ghost, dst_ghost, headers, option, mode)
+            logging.debug(d_msg)
 
+            ft = fract.FractTestHassert()
+            ft.init_template()
+            ft.query['Active'] = False
+            ft.query['Comment'] = d_msg
+            return ft
+
+    
     def _replaceDP(self, logurl, dp):
         '''
         in: logurl: from akamai's top url list. e.g. origin.ktmr.com/jp/css/top-140509.css
@@ -348,26 +362,33 @@ class FraseGen(object):
             else:
                 logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
 
-    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}, mode={}):
+    def _gen_from_urllist(self, urllist, src_ghost, dst_ghost, headers={}, option={}, mode={}):
         cnt=0
+        for url in urllist:
+            tc = self.gen(url, src_ghost, dst_ghost, headers, option, mode)
+            self.testcases.append( tc )
+            cnt+=1
+        else:
+            logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
+
+
+    def gen_from_urls(self, filename, src_ghost, dst_ghost, headers={}, option={}, mode={}):
+        urllist=list()
         with open(filename) as f:
             for line in f:
                 url=line.strip()
                 if url == '':
                     continue
-                try:
-                    tc = self.gen(url, src_ghost, dst_ghost, headers, option, mode)
-                    self.testcases.append( tc )
-                    cnt+=1
-                except Exception as e:
-                    logging.warning(e)
-            else:
-                logging.debug('FraseGen: testcase generanted: {}'.format(cnt))
+                urllist.append(url)
+
+        self._gen_from_urllist(urllist, src_ghost, dst_ghost, headers, option, mode)
 
     def save(self, filename):
         cnt=0
         with open(filename ,'w') as fw:
             for tc in self.testcases:
+                if 'Active' in tc.query and  tc.query['Active'] == False:
+                    continue
                 if cnt==0:
                     fw.write('[\n')
                 else:

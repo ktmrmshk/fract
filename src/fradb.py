@@ -1,26 +1,30 @@
 import pymongo
 import os
 import json, logging
-
 class Mongo():
     '''
     Make Mongo connection instance
     '''
-    __instance = None
+    __instance = dict()
 
-    def __init__(self):
-        self.mdb_client = pymongo.MongoClient('mongodb', 27017)
+    def __init__(self, host, port):
+        self.mdb_client = pymongo.MongoClient(host, port)
         print('Connecting Mongo...')
 
     @staticmethod
-    def getInstance():
-        if Mongo.__instance is None:
-            Mongo.__instance = Mongo()
-        return Mongo.__instance
+    def getInstance(host, port):
+        key='{}.{}'.format(host, port)
+        if key not in Mongo.__instance:
+            Mongo.__instance[key] = Mongo(host, port)
+        return Mongo.__instance[key]
 
 class mongojson():
+    def __init__(self, host, port):
+        self.host=host
+        self.port=port
+
     def input(self, jsonSourceFile, dbName, collectionName):
-        mongoInstance = Mongo.getInstance()
+        mongoInstance = Mongo.getInstance(self.host, self.port)
         if os.path.isfile(jsonSourceFile):
             mongodb = mongoInstance.mdb_client[dbName]
             collection = mongodb[collectionName]
@@ -34,8 +38,8 @@ class mongojson():
             logging.debug('{} is not exist'.format(jsonSourceFile))
         
 
-    def output(self, outputpath, dbName, collectionName, includeObjID = False):
-        mongoInstance = Mongo.getInstance()
+    def output(self, outputpath, dbName, collectionName, query={}, includeObjID = False, cleanup=True):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         jsonOutput = []
@@ -45,28 +49,38 @@ class mongojson():
                 jsonOutput.append(i)
                 dataCount += 1
         else:
-            for i in collection.find({}, {'_id': False}):
+            for i in collection.find(query, {'_id': False}):
                 jsonOutput.append(i)
                 dataCount += 1
         with open(outputpath, mode = 'w') as jf:
-            jf.write(json.dumps(jsonOutput, indent=4))
-        logging.debug(dataCount, " have been output")
+            jf.write(json.dumps(jsonOutput, indent=2))
+        logging.debug("{} have been output".format(dataCount))
+
+        if cleanup:
+            print('removing db tables')
+            self.clean(dbName, collectionName)
     
     def clean(self, dbName, collectionName):
-        mongoInstance = Mongo.getInstance()
+        mongoInstance = Mongo.getInstance(self.host, self.port)
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         result = collection.delete_many({})
-        logging.debug(result.deleted_count, " deleted.")
+        logging.debug("{} deleted.".format(result.deleted_count))
 
     def push_many(self, dict_data_list, dbName, collectionName, serializer= lambda i:i):
-        mongoInstance = Mongo.getInstance()
+        mongoInstance = Mongo.getInstance(self.host, self.port)
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
         collection.insert_many( [serializer(i) for i in dict_data_list] )
+    
+    def push_one(self, dict_data, dbName, collectionName):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        collection.insert_one(dict_data)
 
     def find(self, query, dbName, collectionName):
-        mongoInstance = Mongo.getInstance()
+        mongoInstance = Mongo.getInstance(self.host, self.port)
         mongodb = mongoInstance.mdb_client[dbName]
         collection = mongodb[collectionName]
 
@@ -75,5 +89,31 @@ class mongojson():
             ret.append(r)
         logging.debug(ret)
         return ret
+    
+    def findall(self, dbName, collectionName):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+
+        ret=list()
+        for r in collection.find({}, {'_id': False}):
+            ret.append(r)
+        logging.debug(ret)
+        return ret
 
 
+    def count(self, query, dbName, collectionName):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
+        mongodb = mongoInstance.mdb_client[dbName]
+        collection = mongodb[collectionName]
+        return collection.count_documents(query)
+
+    def delete_db(self, dbName):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
+        mongodb = mongoInstance.mdb_client[dbName]
+        mongodb.dropDataBase()
+
+    def delete_collection(self, dbName, collectionName):
+        mongoInstance = Mongo.getInstance(self.host, self.port)
+        mongodb = mongoInstance.mdb_client[dbName]
+        mongodb.drop_collection(collectionName)

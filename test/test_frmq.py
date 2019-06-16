@@ -3,6 +3,9 @@ $ export PYTHONPATH=`pwd`/src
 $ docker run -d --rm -p5672:5672 -p8080:15672 --name mq rabbitmq:3-management 
 $ docker run -d --rm -p27017:27017 --name db mongo 
 
+/etc/hosts
+127.0.0.1 rabbitmq mongodb
+
 '''
 
 

@@ -54,6 +54,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
+        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict-check-cacheability')
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
@@ -141,6 +142,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
+        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict-check-cacheability')
         subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['testgen']['chunksize']), type=int, default=CONFIG['testgen']['chunksize'])
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
 
@@ -203,9 +205,10 @@ class fractui(object):
         headers=json.loads(args.headers)
         ignore_case=args.ignore_case
         strict_redirect_cacheability = args.strict_redirect_cacheability
+        strict_check_cacheability = args.strict_check_cacheability
 
         fg=FraseGen()
-        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
+        fg.gen_from_urls(args.input, args.srcghost, args.dstghost, headers=headers, option={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability, 'strict_check_cacheability': strict_check_cacheability})
         fg.save(args.output)
         
         logging.info('save to {}'.format(args.output))
@@ -331,7 +334,7 @@ class fractui(object):
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         tgm=TestGenMan(sessionid)
-        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability})
+        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability, 'strict-check-cacheability': strict-check-cacheability})
 
         tgm.save(args.output, CONFIG['testgen']['check_interval'])
 

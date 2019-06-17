@@ -206,7 +206,7 @@ class test_FraseGen(unittest.TestCase):
     # custom_header_support
     def test_gen_20180801(self):
         fg=FraseGen()
-        ft = fg.gen('https://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'strict_redirect_cacheability': False, 'strict_check_cacheability': True})
+        ft = fg.gen('https://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, mode={'strict_redirect_cacheability': False, 'strict_check_cacheability': True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( ft.query['TestType'] == 'hassert' )
         self.assertTrue( ft.query['Request']['Method'] == 'GET' )
@@ -240,7 +240,7 @@ class test_FraseGen(unittest.TestCase):
     # 2018/08/21 ignore case support
     def test_gen_ignore_case(self):
         fg=FraseGen()
-        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'ignore_case':True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( ft.query['TestType'] == 'hassert' )
         self.assertTrue( ft.query['Request']['Method'] == 'GET' )

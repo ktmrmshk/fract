@@ -6,7 +6,7 @@ from config import CONFIG
 class test_testgen_pls(unittest.TestCase):
     def setUp(self):
         ### docker build
-        cmd='docker build -f docker/Dockerfile-dev -t fract/dev .'
+        cmd='docker build -f docker/Dockerfile -t fract/dev .'
         subprocess.check_call(cmd.split(' '), cwd='../')
 
         ### mongo and rabbit mq up

@@ -330,11 +330,12 @@ class fractui(object):
         headers=json.loads(args.headers)
         ignore_case=args.ignore_case
         strict_redirect_cacheability = args.strict_redirect_cacheability
+        strict_check_cacheability = args.strict_check_cacheability
 
         now=datetime.today()
         sessionid=now.strftime('%Y%m%d%H%M%S%f')
         tgm=TestGenMan(sessionid)
-        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability, 'strict-check-cacheability': strict-check-cacheability})
+        tgm.push_urllist_from_file(args.input, args.chunksize, args.srcghost, args.dstghost, headers=headers, options={'ignore_case':ignore_case}, mode={ 'strict_redirect_cacheability': strict_redirect_cacheability, 'strict_check_cacheability': strict_check_cacheability})
 
         tgm.save(args.output, CONFIG['testgen']['check_interval'])
 

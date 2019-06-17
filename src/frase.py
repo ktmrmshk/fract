@@ -309,7 +309,8 @@ class FraseGen(object):
             else:
                 ft.add('X-Cache-Key', '/{}/'.format(ck_host), 'contain', option=option)
             
-            if cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False:
+            #if cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False:
+            if (cstat['status_code'] in (301, 302, 303, 307) and mode.get('strict_redirect_cacheability', False) == False) or (mode.get('strict_check_cacheability', False) == False):
                 pass
             else:
                 ft.add('X-Check-Cacheable', cstat['X-Check-Cacheable'], option=option)

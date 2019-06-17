@@ -206,7 +206,7 @@ class test_FraseGen(unittest.TestCase):
     # custom_header_support
     def test_gen_20180801(self):
         fg=FraseGen()
-        ft = fg.gen('https://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
+        ft = fg.gen('https://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'strict_redirect_cacheability': False, 'strict_check_cacheability': True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( ft.query['TestType'] == 'hassert' )
         self.assertTrue( ft.query['Request']['Method'] == 'GET' )
@@ -240,7 +240,7 @@ class test_FraseGen(unittest.TestCase):
     # 2018/08/21 ignore case support
     def test_gen_ignore_case(self):
         fg=FraseGen()
-        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net',  {'User-Agent': 'iPhone', 'Debug-abc':'foobar' }, {'ignore_case':True})
+        ft = fg.gen('http://space.ktmrmshk.com/','space.ktmrmshk.com.edgekey.net', 'space.ktmrmshk.com.edgekey-staging.net', {'User-Agent': 'iPhone', 'Debug-abc':'foobar' })
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( ft.query['TestType'] == 'hassert' )
         self.assertTrue( ft.query['Request']['Method'] == 'GET' )
@@ -274,12 +274,12 @@ class test_FraseGen(unittest.TestCase):
         self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
         #2 strict_redirect_cacheability == True Option => There's  X-Check-Cacheable when 30x
-        ft = fg.gen('https://fract.akamaized.net/301/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_redirect_cacheability': True})
+        ft = fg.gen('https://fract.akamaized.net/301/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_redirect_cacheability': True, 'strict_check_cacheability': True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
         #3 Explicit strict_redirect_cacheability == False Option => No X-Check-Cacheable when 30x
-        ft = fg.gen('https://fract.akamaized.net/301/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_redirect_cacheability': False})
+        ft = fg.gen('https://fract.akamaized.net/301/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_redirect_cacheability': False ,'strict_check_cacheability': True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
@@ -300,9 +300,28 @@ class test_FraseGen(unittest.TestCase):
         self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
 
         #7 Default => There's X-Check-Cacheable when NOT 303
-        ft = fg.gen('https://fract.akamaized.net/','fract.akamaized.net', 'fract.akamaized-staging.net')
+        ft = fg.gen('https://fract.akamaized.net/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_check_cacheability': True})
         logging.debug('test_case={}'.format(json.dumps(ft.query)))
         self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+
+    def test_gen_strict_check_cacheability(self):
+        fg=FraseGen()
+        
+        #1 Default => No X-Check-Cacheable when 30x
+        ft = fg.gen('https://fract.akamaized.net/','fract.akamaized.net', 'fract.akamaized-staging.net')
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
+
+        #2 strict_check_cacheability == True
+        ft = fg.gen('https://fract.akamaized.net/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_check_cacheability': True})
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertTrue( 'X-Check-Cacheable' in ft.query['TestCase'] )
+
+        #3 Explicit strict_check_cacheability == False
+        ft = fg.gen('https://fract.akamaized.net/','fract.akamaized.net', 'fract.akamaized-staging.net', mode={'strict_check_cacheability': False})
+        logging.debug('test_case={}'.format(json.dumps(ft.query)))
+        self.assertFalse( 'X-Check-Cacheable' in ft.query['TestCase'] )
+
 
     def test_gen_inactive_testcase(self):
         fg=FraseGen()

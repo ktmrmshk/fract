@@ -153,13 +153,28 @@ class testFractCommnand(unittest.TestCase):
         2. check if test case for https://fract.akamaized.net/css/main.css exists.
         '''
         logging.info('Testing: Making test cases by urllist.txt')
-        self.COMMAND = 'python3 {} -v testgen -i {} -o {} -s {} -d {}'.format(fraui_path, self.URLLIST_FORINPUT, self.TESTCASE, self.TESTHOST, self.TESTHOST_STAGING)
+        self.COMMAND = 'python3 {} -v testgen -i {} -o {} -s {} -d {} --strict-check-cacheability'.format(fraui_path, self.URLLIST_FORINPUT, self.TESTCASE, self.TESTHOST, self.TESTHOST_STAGING)
         self.do_cmd(self.COMMAND)
         self.assertTrue(os.path.isfile(self.TESTCASE.strip('"')))
         if os.path.isfile(self.TESTCASE):
             with open(self.TESTCASE, mode='r') as rf:
                 contents = rf.read()
                 self.assertTrue(contents.index('{"TestType": "hassert", "Request": {"Ghost": "fract.akamaized-staging.net", "Method": "GET", "Url": "https://fract.akamaized.net/css/main.css", "Headers": {"Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key"}}, "TestCase": {"X-Cache-Key": [{"type": "regex", "query": "/728260/"}, {"type": "regex", "query": "/1d/"}], "X-Check-Cacheable": [{"type": "regex", "query": "YES"}], "status_code": [{"type": "regex", "query": "200"}]}, "Comment": "This test was gened by FraseGen"') > 0)
+
+    def test_MaketestcasesWithoutcheckcacheability(self):
+        '''
+        Scenario
+        1. run commmand the same as $ fract -v testgen -i urllist_for_input.txt -o testcase.json -s fract.akamaized.net -d fract.akamaized-staging.net
+        2. check if test case for https://fract.akamaized.net/css/main.css exists.
+        '''
+        logging.info('Testing: Making test cases by urllist.txt')
+        self.COMMAND = 'python3 {} -v testgen -i {} -o {} -s {} -d {}'.format(fraui_path, self.URLLIST_FORINPUT, self.TESTCASE, self.TESTHOST, self.TESTHOST_STAGING)
+        self.do_cmd(self.COMMAND)
+        self.assertTrue(os.path.isfile(self.TESTCASE.strip('"')))
+        if os.path.isfile(self.TESTCASE):
+            with open(self.TESTCASE, mode='r') as rf:
+                contents = rf.read()
+                self.assertTrue(contents.index('{"TestType": "hassert", "Request": {"Ghost": "fract.akamaized-staging.net", "Method": "GET", "Url": "https://fract.akamaized.net/css/main.css", "Headers": {"Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key"}}, "TestCase": {"X-Cache-Key": [{"type": "regex", "query": "/728260/"}, {"type": "regex", "query": "/1d/"}], "status_code": [{"type": "regex", "query": "200"}]}, "Comment": "This test was gened by FraseGen"') > 0)
 
     def test_MaketestcasesWithAddtionalHeader(self):
         '''
@@ -501,7 +516,7 @@ class testERCost(unittest.TestCase):
 class test_Ignore_X_Check_Cacheability_30x(unittest.TestCase):
     def setUp(self):
         self.URLLIST='urllist4strict_redirect_cacheability.txt'
-        self.TESTCASE='testcase.json.test'
+        self.TESTCASE='testcase.json'
 
         cmd='rm *.test'
         subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
@@ -535,7 +550,7 @@ class test_Ignore_X_Check_Cacheability_30x(unittest.TestCase):
         2. check if there's no x-check-cacheable in testcase
         '''
         
-        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net --strict-check-cacheability'.format(fraui_path, self.URLLIST, self.TESTCASE))
         with open(self.TESTCASE) as f:
             testcase = json.load(f)
             self.assertTrue( 'X-Check-Cacheable' not in testcase[0]['TestCase'])
@@ -553,7 +568,7 @@ class test_Ignore_X_Check_Cacheability_30x(unittest.TestCase):
         2. check if there's no x-check-cacheable in testcase
         '''
         
-        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net --strict-redirect-cacheability'.format(fraui_path, self.URLLIST, self.TESTCASE))
+        self.do_cmd('python3 {} testgen -i {} -o {} -s fract.akamaized.net -d fract.akamaized-staging.net --strict-redirect-cacheability --strict-check-cacheability'.format(fraui_path, self.URLLIST, self.TESTCASE))
         
         with open(self.TESTCASE) as f:
             testcase = json.load(f)

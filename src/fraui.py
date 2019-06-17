@@ -54,7 +54,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
-        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict-check-cacheability')
+        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict_check_cacheability')
         subprs_geturlc.set_defaults(func=self.do_testgen)
         
 
@@ -142,7 +142,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on testcase requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.add_argument('-I', '--ignore_case', help='ignore case in test', action='store_true')
         subprs_geturlc.add_argument('--strict-redirect-cacheability', help='to check x-check-cacheability when 30x response', action='store_true', dest='strict_redirect_cacheability')
-        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict-check-cacheability')
+        subprs_geturlc.add_argument('--strict-check-cacheability', help='to check x-check-cacheability', action='store_true', dest='strict_check_cacheability')
         subprs_geturlc.add_argument('-c', '--chunksize', help='chunksize of task assigning. default={}'.format(CONFIG['testgen']['chunksize']), type=int, default=CONFIG['testgen']['chunksize'])
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
 

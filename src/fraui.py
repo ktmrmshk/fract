@@ -134,7 +134,7 @@ class fractui(object):
 
 
         ### testgen_pls - generate test from url list files
-        subprs_geturlc=subprs.add_parser('testgen_pls', help="Testcase generator based on current server's behaviors")
+        subprs_geturlc=subprs.add_parser('testgen_pls', help="execute 'testgen' command in parallel using fract workers")
         subprs_geturlc.add_argument('-i', '--input', help='input filename containing url list', required=True)
         subprs_geturlc.add_argument('-o', '--output', help='output testcase file - json formatted', required=True)
         subprs_geturlc.add_argument('-s', '--srcghost', help='src ghost/webserver name', required=True)
@@ -147,7 +147,7 @@ class fractui(object):
         subprs_geturlc.set_defaults(func=self.do_testgen_pls)
 
         ### run_pls - run testcase from testcase file
-        subprs_geturlc=subprs.add_parser('run_pls', help='Run testcases')
+        subprs_geturlc=subprs.add_parser('run_pls', help="execute 'run' command in parallel using fract workers")
         subprs_geturlc.add_argument('-i', '--input', help='filename of test case json', required=True)
         #subprs_geturlc.add_argument('-t', '--testid', help='TestId in test case to run', default=None, nargs='+')
         subprs_geturlc.add_argument('-o', '--output', help='filename for full result output', default=self._tname('fret', 'json', mid=mid))

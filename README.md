@@ -672,7 +672,7 @@ Creating test_worker_4   ... done
 If you change the number of fract worker, which is equal to number of process in parallel execution, type same `docker-compose run` command at any time.
 
 ```
-#### Changed number of woker to 16
+#### Change number of woker to 16
 $ docker-compose up -d --scale worker=16
 ```
 

@@ -111,7 +111,7 @@ class TestGenMan(FractMan):
                 urllist_all.append(url)
         
         for urllist in self.split_list(urllist_all, chunksize):
-            self.push(CONFIG['mq']['queuename'], urllist, src_ghost, dst_ghost, headers={}, options={}, mode={} )
+            self.push(CONFIG['mq']['queuename'], urllist, src_ghost, dst_ghost, headers=headers, options=options, mode=mode )
 
 
     def save(self, filename, interval=1, timeout_count=10000):

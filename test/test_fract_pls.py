@@ -3,7 +3,7 @@ import unittest
 from frmq import *
 from config import CONFIG
 
-class test_testgen_pls(unittest.TestCase):
+class TestFractPlus(unittest.TestCase):
     def setUp(self):
         ### docker build
         cmd='docker build -f docker/Dockerfile -t fract/dev .'
@@ -27,13 +27,32 @@ class test_testgen_pls(unittest.TestCase):
         subprocess.check_call(cmd.split(' '))
 
         
-    def test_testgen_pls(self):
-        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen -i /this/urllist4inactive.txt -o /this/testcase123.json -s fract.akamaized.net -d fract.akamaized.net'.format(os.getcwd())
+    def test_testgen_pls_simple(self):
+        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen_pls -i /this/urllist4inactive.txt -o /this/testcase123.json -s fract.akamaized.net -d fract.akamaized.net'.format(os.getcwd())
         subprocess.check_call(cmd.split(' '))
 
         with open('testcase123.json') as f:
             testcases=json.load(f)
             self.assertTrue( len(testcases) == 3)
+            self.assertTrue( 'X-Check-Cacheable' not in testcases[0]['TestCase'] )
+            self.assertTrue( testcases[0]['TestCase']['X-Cache-Key'][0]['option']['ignore_case'] == False)
+
+    def test_testgen_pls_options(self):
+        cmd='''docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen_pls -i /this/urllist4inactive.txt -o /this/testcase123.json -s fract.akamaized.net -d fract.akamaized.net -H {{"User-Agent":"iPhone","Referer":"http://www.uniqlo.com/"}} --strict-check-cacheability --ignore_case'''.format(os.getcwd())
+        subprocess.check_call(cmd.split(' '))
+
+        with open('testcase123.json') as f:
+            testcases=json.load(f)
+            self.assertTrue( testcases[0]['Request']['Headers']['User-Agent'] == 'iPhone')
+            self.assertTrue( testcases[0]['Request']['Headers']['Referer'] == 'http://www.uniqlo.com/')
+            self.assertTrue( testcases[0]['Request']['Headers']['X-Akamai-Cloudlet-Cost'] == "true")
+            self.assertTrue( testcases[0]['Request']['Headers']['Cookie'] == 'akamai-rum=off')
+            
+            self.assertTrue( 'X-Check-Cacheable' in testcases[0]['TestCase'] )
+            self.assertTrue( testcases[0]['TestCase']['X-Cache-Key'][0]['option']['ignore_case'] == True)
+
+            
+
 
     def test_run_pls(self):
         infile='testcasejson4mongodbtest.json'
@@ -53,7 +72,7 @@ class test_testgen_pls(unittest.TestCase):
 
     
     def test_testgen_run_pls(self):
-        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen -i /this/{} -o /this/{} -s {} -d {}'.format(os.getcwd(), 'urllist2.txt', 't.json', 'www.uniqlo.com', 'www.uniqlo.com')
+        cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract testgen_pls -i /this/{} -o /this/{} -s {} -d {}'.format(os.getcwd(), 'urllist2.txt', 't.json', 'www.uniqlo.com', 'www.uniqlo.com')
         subprocess.check_call(cmd.split(' '))
         
         cmd='docker-compose -p test_fract_pls -f ../docker-compose-dev/docker-compose.yml run --rm -v{}:/this fract fract run_pls -i /this/{}'.format(os.getcwd(), 't.json')

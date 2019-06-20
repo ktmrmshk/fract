@@ -1,6 +1,7 @@
 from fractman import *
 from fradb import *
 from fract import *
+from frmq import *
 
 import unittest, json, logging, re, time, random
 from config import CONFIG
@@ -60,6 +61,29 @@ class test_TestGenMan(unittest.TestCase):
         self.tgm.push_urllist_from_file('urllist4test.txt', 10, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net')
 
         self.assertTrue( self.tgm.pub.get_queue_size(CONFIG['mq']['queuename']) == 4)
+
+    def test_push_urllist_from_file_with_options(self):
+        sessionid = str(random.random())
+        self.tgm=TestGenMan(sessionid)
+        self.tgm.pub.purge(CONFIG['mq']['queuename'])
+        headers={"User-Agent":"iPhone", "Referer":"http://abc.com"}
+        options={"ignore_case": True}
+        mode={"strict_redirect_cacheability" : False}
+
+        self.tgm.push_urllist_from_file('urllist4test.txt', 10, 'e13100.a.akamaiedge.net', 'e13100.a.akamaiedge-staging.net', headers, options, mode)
+
+        mq = RabbitMQMan()
+        mq.open(CONFIG['mq']['host'], CONFIG['mq']['port'])
+        
+        m, p, b = mq.pull_single_msg(CONFIG['mq']['queuename'])
+        msg = json.loads(b)
+
+        self.assertTrue( msg['headers'] == headers)
+        self.assertTrue( msg['options'] == options)
+        self.assertTrue( msg['mode'] == mode)
+
+
+
 
     def test_save(self):
         # push some result to db

@@ -1,7 +1,5 @@
 import subprocess, os, logging, time, json
 import unittest
-from frmq import *
-from config import CONFIG
 
 class TestFractPlus(unittest.TestCase):
     def setUp(self):

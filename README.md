@@ -23,13 +23,12 @@ $ docker pull ktmrmshk/fract
 $ docker run -it ktmrmshk/fract /bin/bash
 
 root@3f10471d9422:/# fract -h
-Version: v0.6-3-g46db14d
 usage: fract [-h] [-v] [--version]
-             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop}
+             {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
              ...
 
 positional arguments:
-  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop}
+  {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
                         sub-command help
     geturlc             Get URL list using built-in crawler
     geturlakm           Get URL list using Akamai Top Url List CSV files
@@ -42,6 +41,11 @@ positional arguments:
     redirsum            Export redirect request/response summary in JSON form
     ercost              Export Eege-Redirector-Cost summary in JSON form
     testredirectloop    Test if redirect happend more than special value
+    worker              spawn a worker and subscribe task queue
+    testgen_pls         execute 'testgen' command in parallel using fract
+                        workers
+    run_pls             execute 'run' command in parallel using fract workers
+    wait_mq_ready       Check if mq server is ready
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -58,7 +62,12 @@ Changelog
 * 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
 * 2019/03/29 - v0.7 Ignore x-check-cacheable value when 30x redirect response, version info support
 * 2019/04/15 - v0.8 Redirect Loop Detection - testredirectloop option
-* 2019/06/17 - v1.0 parallelization by fract worker 
+* 2019/06/17 - v1.0 parallelization by fract worker
+  - Fract worker `fract woker`, `fract testgen_pls` and `fract run_pls` command are introduced to run process in parallel. 
+  - No check on `X-Check-Cacheable` header by default as it's not reliable checkpoint. Use `fract testgen --strict-check-cacheability` if you need to check `X-Check-Cacheable`.
+  - Testcase and result (JSON format) changed to have new field `LoadTime` and `Comment`, which contains actual laoding time at request and generator's info respectively.
+  
+  
 
 Workflow Example 1 - Basic usage with single prcess
 ------------

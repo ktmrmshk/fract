@@ -14,6 +14,7 @@ RUN apt update && apt -y install vim dnsutils git \
 RUN mkdir -p /fract/src
 COPY ./src /fract/src/
 COPY fract /fract/
+COPY sprett /fract/
 
 ENV PYTHONPATH /fract/src/
 ENV PATH="/fract/:${PATH}"

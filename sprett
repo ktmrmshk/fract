@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export PYTHONPATH=/fract/src/
+python3 /fract/src/fraui.py "$@"
+

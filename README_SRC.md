@@ -1,11 +1,12 @@
 <!-- 
-sprett
-sprett
-sprett
+__CMD__
+__NAME__
+__CONTAINER__
 
+$ cat README_SRC.md | sed -e 's/__CMD__/sprett/g' | sed -e 's/__NAME__/sprett/g' | sed -e 's/__CONTAINER__/sprett/g' > README.md
 -->
 
-sprett
+__NAME__
 =============
 
 A web tool for CDN regression test
@@ -25,12 +26,12 @@ Installation
 Faster and handy way to quickly start.
 
 ```
-$ docker pull ktmrmshk/sprett
+$ docker pull ktmrmshk/__CONTAINER__
 
-$ docker run -it ktmrmshk/sprett /bin/bash
+$ docker run -it ktmrmshk/__CONTAINER__ /bin/bash
 
-root@3f10471d9422:/# sprett -h
-usage: sprett [-h] [-v] [--version]
+root@3f10471d9422:/# __CMD__ -h
+usage: __CMD__ [-h] [-v] [--version]
              {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
              ...
 
@@ -49,9 +50,9 @@ positional arguments:
     ercost              Export Eege-Redirector-Cost summary in JSON form
     testredirectloop    Test if redirect happend more than special value
     worker              spawn a worker and subscribe task queue
-    testgen_pls         execute 'testgen' command in parallel using sprett
+    testgen_pls         execute 'testgen' command in parallel using __CMD__
                         workers
-    run_pls             execute 'run' command in parallel using sprett workers
+    run_pls             execute 'run' command in parallel using __CMD__ workers
     wait_mq_ready       Check if mq server is ready
 
 optional arguments:
@@ -69,9 +70,9 @@ Changelog
 * 2018/12/04 - changed request generating testcase to avoid Rum-on/off mismatches test failuer
 * 2019/03/29 - v0.7 Ignore x-check-cacheable value when 30x redirect response, version info support
 * 2019/04/15 - v0.8 Redirect Loop Detection - testredirectloop option
-* 2019/06/17 - v1.0 parallelization by sprett worker
-  - Fract worker `sprett woker`, `sprett testgen_pls` and `sprett run_pls` command are introduced to run process in parallel. 
-  - No check on `X-Check-Cacheable` header by default as it's not reliable checkpoint. Use `sprett testgen --strict-check-cacheability` if you need to check `X-Check-Cacheable`.
+* 2019/06/17 - v1.0 parallelization by __CMD__ worker
+  - Fract worker `__CMD__ woker`, `__CMD__ testgen_pls` and `__CMD__ run_pls` command are introduced to run process in parallel. 
+  - No check on `X-Check-Cacheable` header by default as it's not reliable checkpoint. Use `__CMD__ testgen --strict-check-cacheability` if you need to check `X-Check-Cacheable`.
   - Testcase and result (JSON format) changed to have new field `LoadTime` and `Comment`, which contains actual laoding time at request and generator's info respectively.
   
   
@@ -87,15 +88,15 @@ Testcase is generated based on specific URL, so that you need to collect URLs an
 Fract helps collect URLs using built-in crawler.
 
 ```
-$ sprett geturlc -e https://www.abc123.com/ -d 1 -o urllist.txt -D www.abc123.com
+$ __CMD__ geturlc -e https://www.abc123.com/ -d 1 -o urllist.txt -D www.abc123.com
 ```
 
 Show help to get more details:
 
 ```
-$ sprett geturlc -h
+$ __CMD__ geturlc -h
 
-usage: sprett geturlc [-h] -e ENTRYPOINT [-d DEPTH] -o OUTPUT -D DOMAIN
+usage: __CMD__ geturlc [-h] -e ENTRYPOINT [-d DEPTH] -o OUTPUT -D DOMAIN
                      [DOMAIN ...]
 
 optional arguments:
@@ -135,7 +136,7 @@ http://www.abc123.com/jp/css/top-140509.css
 If akamai top url csv files are available, testcase can be made from that.
 
 ```
-$ sprett geturlakm -i top_u_r_l_hits_1.csv top_u_r_l_hits_2.csv -D www.abc123.com -p https -o urllist.txt
+$ __CMD__ geturlakm -i top_u_r_l_hits_1.csv top_u_r_l_hits_2.csv -D www.abc123.com -p https -o urllist.txt
 ```
 
 Akamai's log doesn't contains protocol info and FQDN, so that you must specify these params.
@@ -168,7 +169,7 @@ In this case, source server is `www.abc123.com.edgekey.net`, while dest server i
 With that, testgeases can be generated as follows.
 
 ```
-$ sprett -v testgen -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net
+$ __CMD__ -v testgen -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net
 ```
 
 
@@ -176,7 +177,7 @@ If you like to modify or append custom request header like User-Agent and Refere
 
 
 ```
-$ sprett -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}' -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net 
+$ __CMD__ -v testgen -H '{"User-Agent": "iPhone", "Referer": "http://www.abc.com/"}' -i urllist.txt -o testcase.json -s www.abc123.com.edgekey.net -d e1234.b.akamaiedge-staging.net 
 
 $ ls
 testcase.json urllist.txt
@@ -194,7 +195,7 @@ $ less testcase.json
 Run testcases, then you can get summary and full result data.
 
 ```
-$ sprett -v run -i testcase.json
+$ __CMD__ -v run -i testcase.json
 
 Summary
 =================
@@ -280,13 +281,13 @@ $ vim frdiff20180523141553196655.yaml
 First, convert to json before retrying.
 
 ```
-$ sprett y2j frdiff20180523141553196655.yaml frdiff20180523141553196655.json
+$ __CMD__ y2j frdiff20180523141553196655.yaml frdiff20180523141553196655.json
 ```
 
 Then, it's time to re-run.
 
 ```
-$ sprett -v run -i frdiff20180523141553196655.json
+$ __CMD__ -v run -i frdiff20180523141553196655.json
 Summary
 =================
 
@@ -321,7 +322,7 @@ urllist.txt
 After all testcases passed the test, merge and put all results together for a permanent record.
 
 ```
-$ sprett rmerge -t testcase.json frdiff*.json -r fret* -s final_summary.txt -o final_result.json
+$ __CMD__ rmerge -t testcase.json frdiff*.json -r fret* -s final_summary.txt -o final_result.json
 
 Summary
 =================
@@ -357,7 +358,7 @@ urllist.txt
 Finally, merge testcases into signle file for next round.
 
 ```
-$ sprett tmerge -t testcase.json frdiff*.json -o final_testcase.json 
+$ __CMD__ tmerge -t testcase.json frdiff*.json -o final_testcase.json 
 
 $ ls -l
 final_result.json
@@ -380,7 +381,7 @@ urllist.txt
 Summary on redirect request/response can be parsed from test result.
 
 ```
-$ sprett redirsum -t final_testcase.json -r final_result.json -o redirect_summary.json
+$ __CMD__ redirsum -t final_testcase.json -r final_result.json -o redirect_summary.json
 
 $ ls -l
 final_result.json
@@ -437,7 +438,7 @@ $ cat redirect_summary.json
 Similarly, Edge-Redirector-Cost can be checked from test result. To list up requests of Edge-Redirector-Cost over 1000000, type as follows:
 
 ```
-$ sprett ercost -c 1000000 -t final_testcase.json -r final_result.json -o ercost_summary.json.test
+$ __CMD__ ercost -c 1000000 -t final_testcase.json -r final_result.json -o ercost_summary.json.test
 
 $ ls -l 
 final_result.json
@@ -507,12 +508,12 @@ Go to #1, #2 or #3.
 Redirect Loop Detection Example - Usage
 ------------
 
-Use `sprett testredirectloop` command to check if there's redirect loop in the url list.
-`sprett testredirectloop` has following options:
+Use `__CMD__ testredirectloop` command to check if there's redirect loop in the url list.
+`__CMD__ testredirectloop` has following options:
 
 ```
-$ sprett testredirectloop -h
-usage: sprett testredirectloop [-h] -i INPUT [-o OUTPUT] [-s SUMMARY]
+$ __CMD__ testredirectloop -h
+usage: __CMD__ testredirectloop [-h] -i INPUT [-o OUTPUT] [-s SUMMARY]
                               [-d DSTGHOST] [-m MAXIMUM]
 
 optional arguments:
@@ -531,7 +532,7 @@ optional arguments:
                         threshold to trace redirect chain. default=5
 ```
 
-This `sprett testredirectloop` detects redirect loop by chasing redirect recursively and if depth of redirect chase reaches some threshold, then takes it as *redirect loop*. Default threshold depth is `5`, which can be changed by `-m` option.
+This `__CMD__ testredirectloop` detects redirect loop by chasing redirect recursively and if depth of redirect chase reaches some threshold, then takes it as *redirect loop*. Default threshold depth is `5`, which can be changed by `-m` option.
 
 The input file, which is specified by `-i` option, is a text file in which URLs listed.
 
@@ -545,7 +546,7 @@ https://fract.akamaized.net/
 To check redirect loop for this URL list `urllist.txt`, run the following command. Afterwards, you get the summary and detailed results as files.
 
 ```
-$ sprett testredirectloop -i urllist.txt 
+$ __CMD__ testredirectloop -i urllist.txt 
 
 Summary
 =================
@@ -562,9 +563,9 @@ ran 3 tests: 2 redirect URLs , 1 failed
 https://fract.akamaized.net/307/6/
 ```
 
-In this summary, this `sprett testredirectloop` ran test on 3 URLs, detects 2 redirect URLs, and 1 redirect chain that exceeds threshold, which is default value `5` in this test.
+In this summary, this `__CMD__ testredirectloop` ran test on 3 URLs, detects 2 redirect URLs, and 1 redirect chain that exceeds threshold, which is default value `5` in this test.
 
-The `sprett testredirectloop` also export detailed results in files.
+The `__CMD__ testredirectloop` also export detailed results in files.
 
 ```
 $ ls 
@@ -631,11 +632,11 @@ From this result, the URL `https://fract.akamaized.net/301/3/` has 3 redirect ch
 To test on another webserver, e.g. Akamai staging edge server, specify the target webserver by `-d` option. For example, to test redirect loop on Akamai staging which hostname is `fract.akamaized-staging.net`, following command does that.
 
 ```
-$ sprett testredirectloop -i urllist.txt -d fract.akamaized-staging.net
+$ __CMD__ testredirectloop -i urllist.txt -d fract.akamaized-staging.net
 ```
 
 
-Workflow Example 2 - Parallel execution by sprett worker
+Workflow Example 2 - Parallel execution by __NAME__ worker
 ------------
 
 ### Installation
@@ -651,13 +652,13 @@ $ python3 -m pip install docker-compose
 
 ### Workflow cycle
 
-1. start sprett workers up
-2. run sprett command (many times)
-3. shutdown and cleanup sprett worker
+1. start __NAME__ workers up
+2. run __NAME__ command (many times)
+3. shutdown and cleanup __NAME__ worker
 
-#### 1. start sprett worker up
+#### 1. start __NAME__ worker up
 
-First, there's need to start sprett workers up before executing sprett.
+First, there's need to start __NAME__ workers up before executing __NAME__.
 
 ```
 (from shell on your host machine)
@@ -673,7 +674,7 @@ docker-compose.yml  <=== downloaded!
 ### pull the docker container needed first
 $ docker-compose pull
 
-### finally, start up sprett workers - 4 workers in this example
+### finally, start up __NAME__ workers - 4 workers in this example
 $ docker-compose up -d --scale worker=4
 
 Creating test_rabbitmq_1 ... done
@@ -685,7 +686,7 @@ Creating test_worker_3   ... done
 Creating test_worker_4   ... done
 ```
 
-If you change the number of sprett worker, which is equal to number of process in parallel execution, type same `docker-compose run` command at any time.
+If you change the number of __NAME__ worker, which is equal to number of process in parallel execution, type same `docker-compose run` command at any time.
 
 ```
 #### Change number of woker to 16
@@ -693,18 +694,18 @@ $ docker-compose up -d --scale worker=16
 ```
 
 
-#### 2. run sprett command (many times)
+#### 2. run __CMD__ command (many times)
 
-Then, run sprett container and sprett command in that container. Almost workflow is same as conventional fract execution, except for `testgen` and `run` commands. To execute `testgen` and `run` command in parallel, we use `testgen_pls` and `run_pls` command, which uses sprett worker to run sub process like fetch HTTP request to web sever.
+Then, run __NAME__ container and __CMD__ command in that container. Almost workflow is same as conventional fract execution, except for `testgen` and `run` commands. To execute `testgen` and `run` command in parallel, we use `testgen_pls` and `run_pls` command, which uses __NAME__ worker to run sub process like fetch HTTP request to web sever.
 
 ```
-### start and enter sprett container
-$ docker-compose run sprett /bin/bash
+### start and enter __NAME__ container
+$ docker-compose run __CMD__ /bin/bash
 
 (entered container)
-# sprett -h
+# __CMD__ -h
 
-usage: sprett [-h] [-v] [--version]
+usage: __CMD__ [-h] [-v] [--version]
              {geturlc,geturlakm,testgen,run,tmerge,rmerge,j2y,y2j,redirsum,ercost,testredirectloop,worker,testgen_pls,run_pls,wait_mq_ready}
              ...
 
@@ -735,7 +736,7 @@ optional arguments:
 
 Same as before, first we have to have urllis. Let's get urllist from `geturlc` command here.
 ```
-# sprett geturlc -e https://www.uniqlo.com/ -o urllist.txt -D www.uniqlo.com
+# __CMD__ geturlc -e https://www.uniqlo.com/ -o urllist.txt -D www.uniqlo.com
 
 # ls
 urllist.txt  <=== Generated!
@@ -743,7 +744,7 @@ urllist.txt  <=== Generated!
 
 Then, run `testgen` in parallel using `testgen_pls` command:
 ```
-$ sprett testgen_pls -i urllist.txt -o testcase.json -s www.uniqlo.com.edgekey.net -d e13663.x.akamaiedge-staging.net 
+$ __CMD__ testgen_pls -i urllist.txt -o testcase.json -s www.uniqlo.com.edgekey.net -d e13663.x.akamaiedge-staging.net 
 
 Connecting Mongo...
 FractMan: waiting results ...0 / 189
@@ -758,7 +759,7 @@ testcase.json  <=== Generated!
 
 Next, do `run` in parallel using `run_pls` command:
 ```
-# sprett run_pls -i testcase.json
+# __CMD__ run_pls -i testcase.json
 
 Connecting Mongo...
 FractMan: waiting results ...0 / 188
@@ -792,12 +793,12 @@ Following workflow, i.e. retry failed test and merge testcases, is totally same 
 
 
 
-#### 3. shutdown and cleanup sprett worker
+#### 3. shutdown and cleanup __NAME__ worker
 
-Once all workflow completed, you can clean up sprett worker enviroment.
+Once all workflow completed, you can clean up __NAME__ worker enviroment.
 
 ```
-(exit from sprett container)
+(exit from __NAME__ container)
 # exit
 
 (shell on host machine)

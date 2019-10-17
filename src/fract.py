@@ -1,7 +1,7 @@
 import json, logging, yaml
 import re, requests
 import random, hashlib
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qsl
 from version import VERSION, strnow
 '''
 Backlog:
@@ -545,11 +545,16 @@ class Fract(object):
         '''
         hdr_resultcase = list()
         has_this_header = False
+        # 2019/10/15 Ignore gclid Query String Start
+        is_location_header = False
         if header_name in response_header:
             has_this_header = True
             logging.debug('hdr value: {}: {}'.format(header_name, response_header[ header_name ]))
+            if header_name.lower() == 'location':
+                is_location_header = True
         else:
             logging.debug('hdr value: {}: Not Included on Response'.format(header_name))
+        # 2019/10/15 Ignore gclid Query String End
 
         # parse each testcase
         for t in testlist:
@@ -560,10 +565,45 @@ class Fract(object):
                 ignore_case = False
                 if 'option' in t:
                     ignore_case = t['option'].get('ignore_case', False)
-                hdr_resultcase.append(\
-                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
+                # 2019/10/15 Ignore gclid Query String Start
+                if is_location_header:
+                    # Add process for gclid
+                    # details for gclid start
+                    queryString_query = parse_qsl(t['query'], keep_blank_values=True)
+                    urlparse_query = urlparse(['query'])
+                    test_query = ''
+                    for kvinquery in queryString_query:
+                        key = kvinquery[0]
+                        value = kvinquery[1]
+                        if key == 'gclid' or key == '/?gclid' or key == '?gclid':
+                            continue
+                        else:
+                            test_query = test_query + key + ':' + value + ','
+                    test_query = urlparse_query.scheme + urlparse_query.netloc + urlparse_query.path + test_query + urlparse_query.fragment
+
+                    queryString_text = parse_qsl(str(response_header[ header_name ]), keep_blank_values=True)
+                    urlparse_text = urlparse(str(response_header[ header_name ]))
+                    test_text = ''
+                    for kvintext in queryString_text:
+                        key = kvintext[0]
+                        value = kvintext[1]
+                        if key == 'gclid' or key == '/?gclid' or key == '?gclid':
+                            continue
+                        else:
+                            test_text = test_text + key + ':' + value + ','
+                    test_text = urlparse_text.scheme + urlparse_text.netloc + urlparse_text.path + test_text + urlparse_text.fragment
+                    
+                    # details for gclid end
+                    hdr_resultcase.append(\
+                        {'Passed': self._passed(t['type'], test_query, test_text, ignore_case ),\
                         'Value': response_header[ header_name ],\
                         'TestCase': t })
+                else:
+                # 2019/10/15 Ignore gclid Query String End
+                    hdr_resultcase.append(\
+                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
+                        'Value': response_header[ header_name ],\
+                        'TestCase': t })     
             else: # header not in response
                 logging.debug('  -> test failed: testcase={}'.format(t['query']) )
                 hdr_resultcase.append(\

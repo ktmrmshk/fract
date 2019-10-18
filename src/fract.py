@@ -546,6 +546,8 @@ class Fract(object):
         hdr_resultcase = list()
         has_this_header = False
         # 2019/10/15 Ignore gclid Query String Start
+        ignore_query_list_exact = ['gclid', '/?gclid', '?gclid', '_ga', '/?_ga', '?_ga']
+        ignore_query_startwith = 'utm_'
         is_location_header = False
         if header_name in response_header:
             has_this_header = True
@@ -567,15 +569,16 @@ class Fract(object):
                     ignore_case = t['option'].get('ignore_case', False)
                 # 2019/10/15 Ignore gclid Query String Start
                 if is_location_header:
-                    # Add process for gclid
-                    # details for gclid start
+                    logging.debug('is location header: header name : {}'.format(header_name))
+                    # Add process for gclid, ga, utm_
+                    # details for gclid, ga, utm_ start
                     queryString_query = parse_qsl(t['query'], keep_blank_values=True)
-                    urlparse_query = urlparse(['query'])
+                    urlparse_query = urlparse(t['query'])
                     test_query = ''
                     for kvinquery in queryString_query:
                         key = kvinquery[0]
                         value = kvinquery[1]
-                        if key == 'gclid' or key == '/?gclid' or key == '?gclid':
+                        if key in ignore_query_list_exact or key.startswith(ignore_query_startwith):
                             continue
                         else:
                             test_query = test_query + key + ':' + value + ','
@@ -587,19 +590,19 @@ class Fract(object):
                     for kvintext in queryString_text:
                         key = kvintext[0]
                         value = kvintext[1]
-                        if key == 'gclid' or key == '/?gclid' or key == '?gclid':
+                        if key in ignore_query_list_exact or key.startswith(ignore_query_startwith):
                             continue
                         else:
                             test_text = test_text + key + ':' + value + ','
                     test_text = urlparse_text.scheme + urlparse_text.netloc + urlparse_text.path + test_text + urlparse_text.fragment
                     
-                    # details for gclid end
+                    # details for gclid, ga, utm_ end
                     hdr_resultcase.append(\
                         {'Passed': self._passed(t['type'], test_query, test_text, ignore_case ),\
                         'Value': response_header[ header_name ],\
                         'TestCase': t })
                 else:
-                # 2019/10/15 Ignore gclid Query String End
+                # 2019/10/15 Ignore gclid, ga, utm_ Query String End
                     hdr_resultcase.append(\
                         {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
                         'Value': response_header[ header_name ],\

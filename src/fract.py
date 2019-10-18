@@ -583,7 +583,8 @@ class Fract(object):
                             continue
                         else:
                             test_query = test_query + key + ':' + value + ','
-                    test_query = urlparse_query.scheme + urlparse_query.netloc + urlparse_query.path + test_query + urlparse_query.fragment
+                    test_query = urlparse_query.scheme + urlparse_query.netloc + urlparse_query.path + urlparse_query.params + test_query + urlparse_query.fragment + '' if urlparse_query.username is None else urlparse_query.username + '' if urlparse_query.password is None else urlparse_query.password + '' if urlparse_query.hostname is None else urlparse_query.hostname + '' if urlparse_query.port is None else urlparse_query.port
+                    logging.debug('test_query : {}'.format(test_query))
 
                     urlparse_text = urlparse(str(response_header[ header_name ]))
                     queryString_text = parse_qsl(urlparse_text.query, keep_blank_values=True)
@@ -595,7 +596,8 @@ class Fract(object):
                             continue
                         else:
                             test_text = test_text + key + ':' + value + ','
-                    test_text = urlparse_text.scheme + urlparse_text.netloc + urlparse_text.path + test_text + urlparse_text.fragment
+                    test_text = urlparse_text.scheme + urlparse_text.netloc + urlparse_text.path + urlparse_text.params + test_text + urlparse_text.fragment + '' if urlparse_text.username is None else urlparse_text.username + '' if urlparse_text.password is None else urlparse_text.password + '' if urlparse_text.hostname is None else urlparse_text.hostname + '' if urlparse_text.port is None else urlparse_text.port
+                    logging.debug('test_text : {}'.format(test_text))
                     
                     hdr_resultcase.append(\
                         {'Passed': self._passed(t['type'], test_query, test_text, ignore_case ),\

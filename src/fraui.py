@@ -31,6 +31,7 @@ class fractui(object):
         subprs_geturlc.add_argument('-d', '--depth', help='depth of crawling. default=1', type=int, default=1)
         subprs_geturlc.add_argument('-o', '--output', help='output filename', required=True)
         subprs_geturlc.add_argument('-D', '--domain', help='domain/FQDN to collect. e.g. www.akamai.com www2.akamai.com ...', nargs='+', required=True)
+        subprs_geturlc.add_argument('-H', '--headers', help='''custom reqest headers to be appended on geturlc requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'  ''', default='{}')
         subprs_geturlc.set_defaults(func=self.do_geturls)
 
 
@@ -186,8 +187,9 @@ class fractui(object):
     def do_geturls(self, args):
         self.verbose(args)
         logging.debug(args)
+        headers=json.loads(args.headers)
         
-        hc=Htmlcrwlr(args.entrypoint, args.domain, args.depth)
+        hc=Htmlcrwlr(args.entrypoint, args.domain, args.depth, headers)
         hc.start()
         hc.save(args.output)
 

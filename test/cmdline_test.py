@@ -23,6 +23,7 @@ class testFractCommnand(unittest.TestCase):
         self.HOMEPAGE_URL = 'https://fract.akamaized.net/'
         self.CSS_URL = 'https://fract.akamaized.net/css/main.css'
         self.TESTHOST = 'fract.akamaized.net'
+        self.HEADERS = "{'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'}"
         self.TESTHOST_STAGING = 'fract.akamaized-staging.net'
         self.URLLIST = '"' + os.path.join(envpathout, 'urllist.txt') + '"'
         self.TOPURLLIST = '"' + os.path.join(envpathin, 'fract.akamaized.net_urls.csv') + '"'
@@ -123,7 +124,10 @@ class testFractCommnand(unittest.TestCase):
         2. check if https://fract.akamaized.net/css/main.css in urllist.txt
         '''
         logging.info('Testing: URL generation')
-        self.COMMAND = 'python3 {} geturlc -e {} -d 1 -o {} -D {}'.format(fraui_path, self.HOMEPAGE_URL, self.URLLIST, self.TESTHOST)
+        # 2019/10/21 For Botman Start
+        #self.COMMAND = 'python3 {} geturlc -e {} -d 1 -o {} -D {}'.format(fraui_path, self.HOMEPAGE_URL, self.URLLIST, self.TESTHOST)
+        self.COMMAND = 'python3 {} geturlc -e {} -d 1 -o {} -D {} -H {}'.format(fraui_path, self.HOMEPAGE_URL, self.URLLIST, self.TESTHOST, self.HEADERS)
+        # 2019/10/21 For Botman End
         self.do_cmd(self.COMMAND)
         self.assertTrue(os.path.isfile(self.URLLIST.strip('"')))
         if os.path.isfile(self.URLLIST):

@@ -77,7 +77,7 @@ class Htmlpsr(HTMLParser):
 
 
 class Htmlcrwlr(object):
-    def __init__(self, entrypoint, domains, maxdepth=3):
+    def __init__(self, entrypoint, domains, maxdepth=3, headers={}):
         '''
         in: entrypoint - url of starting point: 'http://abc.com/jp/'
         in: domains - list of domains for targets
@@ -98,6 +98,7 @@ class Htmlcrwlr(object):
         self.anchors['unparsed'][entrypoint] = {'depth':0}
         self.domains = domains
         self.maxdepth=maxdepth
+        self.headers=headers
         self.a = fract.Actor()
 
     def __str__(self):
@@ -134,7 +135,8 @@ class Htmlcrwlr(object):
 
         depth=stat['depth']
         # get html
-        ret=self.a.get(url)
+        #ret=self.a.get(url)
+        ret=self.a.get(url, headers=self.headers)
         logging.debug('request: {} - {}'.format(url, ret.resh('status_code')))
 
         if ret.resh('status_code') == 200:

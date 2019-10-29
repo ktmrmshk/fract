@@ -73,6 +73,9 @@ Changelog
   - Fract worker `sprett woker`, `sprett testgen_pls` and `sprett run_pls` command are introduced to run process in parallel. 
   - No check on `X-Check-Cacheable` header by default as it's not reliable checkpoint. Use `sprett testgen --strict-check-cacheability` if you need to check `X-Check-Cacheable`.
   - Testcase and result (JSON format) changed to have new field `LoadTime` and `Comment`, which contains actual laoding time at request and generator's info respectively.
+* 2019/10/29 - v1.04 
+  - Custom request header support for geturlc
+  - Ignore query string which has key: `gclid`, `_ga` or start with `utm_`
   
   
 

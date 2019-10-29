@@ -109,6 +109,8 @@ optional arguments:
   -D DOMAIN [DOMAIN ...], --domain DOMAIN [DOMAIN ...]
                         domain/FQDN to collect. e.g. www.akamai.com
                         www2.akamai.com ...
+  -H HEADERS, --headers HEADERS
+                        custom reqest headers to be appended on geturlc requests. Specify json format e.g. -H '{"User-Agent":"iPhone", "Referer":"http://abc.com"}'
 ```
 
 

@@ -111,7 +111,10 @@ class test_Htmlcrwlr(unittest.TestCase):
 
         
     def test_start3(self):
-        hc = Htmlcrwlr('http://www.uniqlo.com/', ['www.uniqlo.com'], 1)
+        # 2019/10/19 For Bot Manager Start
+        headers= json.loads('{"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"}')
+        hc = Htmlcrwlr('http://www.uniqlo.com/', ['www.uniqlo.com'], 1, headers=headers)
+        # 2019/10/19 For Bot Manager End
         hc.start()
         logging.warning(hc)
 
@@ -342,7 +345,9 @@ class test_FraseGen(unittest.TestCase):
 
     def test_get_from_akamai_logurl(self):
         fg=FraseGen()
-        fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        # 2019/10/19 For Bot Manager Start
+        fg.get_from_akamai_logurl('testurls.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net', headers='{"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"}')
+        # 2019/10/19 For Bot Manager End
         self.assertTrue( len(fg.testcases) == 30)
         fg.save('out.txt')
 
@@ -376,7 +381,9 @@ class test_FraseGen(unittest.TestCase):
 
     def test_gen_from_top_urlog(self):
         fg=FraseGen()
-        fg.gen_from_top_urlog('topurl.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net')
+        # 2019/10/19 For Bot Manager Start
+        fg.gen_from_top_urlog('topurl.csv', 'www.uniqlo.com', 'www.uniqlo.com', 'e1753.b.akamaiedge-staging.net', headers='{"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"}')
+        # 2019/10/19 For Bot Manager End
         fg.save('out.json')
 
     #2018/11/29 Rum-off Start

@@ -77,7 +77,7 @@ class Htmlpsr(HTMLParser):
 
 
 class Htmlcrwlr(object):
-    def __init__(self, entrypoint, domains, maxdepth=3):
+    def __init__(self, entrypoint, domains, maxdepth=3, headers={}):
         '''
         in: entrypoint - url of starting point: 'http://abc.com/jp/'
         in: domains - list of domains for targets
@@ -98,6 +98,7 @@ class Htmlcrwlr(object):
         self.anchors['unparsed'][entrypoint] = {'depth':0}
         self.domains = domains
         self.maxdepth=maxdepth
+        self.headers=headers
         self.a = fract.Actor()
 
     def __str__(self):
@@ -126,15 +127,22 @@ class Htmlcrwlr(object):
         stat=dict()
         while len( self.anchors['unparsed'] ) != 0: 
             url, stat = self.anchors['unparsed'].popitem()
-            self._scan_singlepage(url, stat)
+            # 2019/10/19 For Bot Manager Start
+            self._scan_singlepage(url, stat, self.headers)
+            # 2019/10/19 For Bot Manager End
         return
 
 
-    def _scan_singlepage(self, url, stat):
+    # 2019/10/19 For Bot Manager Start
+    def _scan_singlepage(self, url, stat, headers={}):
+        # 2019/10/19 For Bot Manager End
 
         depth=stat['depth']
         # get html
-        ret=self.a.get(url)
+        # 2019/10/19 For Bot Manager Start
+        #ret=self.a.get(url)
+        ret=self.a.get(url, headers=headers)
+        # 2019/10/19 For Bot Manager End
         logging.debug('request: {} - {}'.format(url, ret.resh('status_code')))
 
         if ret.resh('status_code') == 200:
@@ -346,7 +354,9 @@ class FraseGen(object):
         sp[0] = dp
         return '/'.join(sp)
 
-    def get_from_akamai_logurl(self, filename, dp, src_ghost, dst_ghost, proto='https://'):
+# 2019/10/19 For Bot Manager Start
+    def get_from_akamai_logurl(self, filename, dp, src_ghost, dst_ghost, proto='https://', headers={}):
+        # 2019/10/19 For Bot Manager End
         '''
         in: filename of file that includes list of top url list provided akamai log
         out: None
@@ -356,7 +366,9 @@ class FraseGen(object):
         with open(filename) as f:
             for line in f:
                 url = proto + self._replaceDP(line.strip(), dp)
-                tc = self.gen(url, src_ghost, dst_ghost) 
+                # 2019/10/21 Bot Manager Start
+                tc = self.gen(url, src_ghost, dst_ghost, headers=headers) 
+                # 2019/10/21 Bot Manager End
                 logging.debug('testcase => {}'.format(tc))
                 self.testcases.append( tc )
                 cnt+=1
@@ -402,8 +414,9 @@ class FraseGen(object):
     def load(self, filename):
         pass
 
-
-    def gen_from_top_urlog(self, csvfile, dp, src_ghost, dst_ghost, proto='https://'):
+    # 2019/10/19 For Bot Manager Start
+    def gen_from_top_urlog(self, csvfile, dp, src_ghost, dst_ghost, proto='https://', headers={}):
+        # 2019/10/19 For Bot Manager End
         '''
         in: csvfile - akamai's log containing top 500 urls
         '''
@@ -420,7 +433,9 @@ class FraseGen(object):
                     # TOP URL
                     urlpart = line.split(',')[0]
                     url = proto + self._replaceDP(urlpart.strip(), dp)
-                    tc = self.gen(url, src_ghost, dst_ghost)
+                    # 2019/10/21 Bot Manager Start
+                    tc = self.gen(url, src_ghost, dst_ghost, headers=headers)
+                    # 2019/10/21 Bot Manager End
                     logging.debug('testcase => {}'.format(tc))
                     self.testcases.append( tc )
                 else:

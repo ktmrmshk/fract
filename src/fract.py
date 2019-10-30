@@ -1,7 +1,7 @@
 import json, logging, yaml
 import re, requests
 import random, hashlib
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qsl
 from version import VERSION, strnow
 '''
 Backlog:
@@ -545,11 +545,18 @@ class Fract(object):
         '''
         hdr_resultcase = list()
         has_this_header = False
+        # 2019/10/15 Ignore gclid Query String Start
+        ignore_query_list_exact = ['gclid', '_ga']
+        ignore_query_startwith = 'utm_'
+        is_location_header = False
         if header_name in response_header:
             has_this_header = True
             logging.debug('hdr value: {}: {}'.format(header_name, response_header[ header_name ]))
+            if header_name.lower() == 'location':
+                is_location_header = True
         else:
             logging.debug('hdr value: {}: Not Included on Response'.format(header_name))
+        # 2019/10/15 Ignore gclid Query String End
 
         # parse each testcase
         for t in testlist:
@@ -560,10 +567,49 @@ class Fract(object):
                 ignore_case = False
                 if 'option' in t:
                     ignore_case = t['option'].get('ignore_case', False)
-                hdr_resultcase.append(\
-                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
+                # 2019/10/15 Ignore gclid Query String Start
+                if is_location_header:
+                    logging.debug('is location header: header name : {}'.format(header_name))
+                    # Add process for gclid, ga, utm_
+                    # details for gclid, ga, utm_ start
+                    urlparse_query = urlparse(t['query'])
+                    queryString_query = parse_qsl(urlparse_query.query, keep_blank_values=True)
+                    test_query = ''
+                    for kvinquery in queryString_query:
+                        key = kvinquery[0]
+                        logging.debug('key in query : {}'.format(key))
+                        value = kvinquery[1]
+                        if key in ignore_query_list_exact or key.startswith(ignore_query_startwith):
+                            continue
+                        else:
+                            test_query = test_query + key + ':' + value + ','
+                    test_query = urlparse_query.scheme + urlparse_query.netloc + urlparse_query.path + urlparse_query.params + test_query + urlparse_query.fragment + '' if urlparse_query.username is None else urlparse_query.username + '' if urlparse_query.password is None else urlparse_query.password + '' if urlparse_query.hostname is None else urlparse_query.hostname + '' if urlparse_query.port is None else urlparse_query.port
+                    logging.debug('test_query : {}'.format(test_query))
+
+                    urlparse_text = urlparse(str(response_header[ header_name ]))
+                    queryString_text = parse_qsl(urlparse_text.query, keep_blank_values=True)
+                    test_text = ''
+                    for kvintext in queryString_text:
+                        key = kvintext[0]
+                        value = kvintext[1]
+                        if key in ignore_query_list_exact or key.startswith(ignore_query_startwith):
+                            continue
+                        else:
+                            test_text = test_text + key + ':' + value + ','
+                    test_text = urlparse_text.scheme + urlparse_text.netloc + urlparse_text.path + urlparse_text.params + test_text + urlparse_text.fragment + '' if urlparse_text.username is None else urlparse_text.username + '' if urlparse_text.password is None else urlparse_text.password + '' if urlparse_text.hostname is None else urlparse_text.hostname + '' if urlparse_text.port is None else urlparse_text.port
+                    logging.debug('test_text : {}'.format(test_text))
+                    
+                    hdr_resultcase.append(\
+                        {'Passed': self._passed(t['type'], test_query, test_text, ignore_case ),\
                         'Value': response_header[ header_name ],\
                         'TestCase': t })
+                        # details for gclid, ga, utm_ end
+                else:
+                # 2019/10/15 Ignore gclid, ga, utm_ Query String End
+                    hdr_resultcase.append(\
+                        {'Passed': self._passed(t['type'], t['query'], str(response_header[ header_name ]), ignore_case ),\
+                        'Value': response_header[ header_name ],\
+                        'TestCase': t })     
             else: # header not in response
                 logging.debug('  -> test failed: testcase={}'.format(t['query']) )
                 hdr_resultcase.append(\

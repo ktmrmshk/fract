@@ -278,7 +278,10 @@ from fract import Actor, ActorResponse
 class test_Actor(unittest.TestCase):
     def setUp(self):
         self.actor = Actor()
-        self.actorresponse = self.actor.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip'})
+        #self.actorresponse = self.actor.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip'})
+        # 2019/10/21 For Botman Start
+        self.actorresponse = self.actor.get('https://space.ktmrmshk.com/abc/example.html?abc=123', ghost='space.ktmrmshk.com.edgekey-staging.net', headers={'Accept-Encoding': 'gzip', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36'})
+        # 2019/10/21 For Botman End
     def tearDown(self):
         pass
 
@@ -375,6 +378,14 @@ class test_Fract(unittest.TestCase):
         ret = self.fr._check_headercase('X-Cache-Key', [{"type":"regex","query":"/HOGE/foo/bar","option":{"ignore_case":True}}], {'X-Cache-Key': 'D/S/123/hoge/foo/bar/dot.jpg'})
         self.assertTrue( ret[0]['Passed'] == True )
 
+    def test_check_header_gclid(self):
+        testcase = FractTestHdiff()
+        testcase.import_query('''{"TestType": "hassert", "Request": {"Ghost": "a850.dscr.akamai-staging.net", "Method": "GET", "Url": "https://fract.akamaized-staging.net/testing/gclid/first", "Headers": {"User-Agent": "MacOS", "Pragma": "akamai-x-cache-on,akamai-x-cache-remote-on,akamai-x-check-cacheable,akamai-x-get-cache-key,akamai-x-get-extracted-values,akamai-x-get-request-id,akamai-x-serial-no, akamai-x-get-true-cache-key", "X-Akamai-Cloudlet-Cost": "true", "Cookie": "akamai-rum=off"}}, "TestCase": {"X-Cache-Key": [{"type": "regex", "query": "/728260/", "option": {"ignore_case": false}}, {"type": "regex", "query": "/000/", "option": {"ignore_case": false}}, {"type": "contain", "query": "/fract.akamaized-staging.net/col", "option": {"ignore_case": false}}], "status_code": [{"type": "regex", "query": "302", "option": {"ignore_case": false}}], "Location": [{"type": "exact", "query": "https://fract.akamaized-staging.net/testing/gclid/first?gclid=EAIaIQobChMIodSq1veA4wIVQXZgCh2QGQmGEAAYASAAEgKs3_D_BwE&_ga=2.108142722.1227508989.1571126780-1104359897.1571126780&utm_medium=email&utm_source=uq_html&utm_term=uh_191016_crm_welcome5&abc=123&123=abc", "option": {"ignore_case": false}}]}, "Comment": "This test was gened by FraseGen - v1.04 at 2019/10/21, 17:26:22 JST", "TestId": "88fe95419ddb43f5dd95cd6cde44c50687a54c73127284d06b70d59fd90540fd", "Active": true, "LoadTime": 0.180052} ''')
+        ret = self.fr.run(testcase)
+        self.assertTrue( ret.query['TestType'] == 'hassert')
+        self.assertTrue( ret.query['Passed'] == True )
+        self.assertTrue( 'LoadTime' in ret.query )
+        logging.info('FractResult: {}'.format(ret))
 
 
     def test_run_hdiff(self):
